@@ -20,7 +20,7 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 4. The result report is generated at result/ as default.
 
 ###Configuration
-Hera lists the alternative configurations in conf/tachyon-perf-env.sh
+Here lists the alternative configurations in conf/tachyon-perf-env.sh
  * tachyon.perf.tfs.address - the Tachyon Master address, like tachyon://master:19998
  * tachyon.perf.tfs.dir - the workspace dir in Tachyon File System
  * tachyon.perf.read.files.per.thread - the number of files to read for each read thread
