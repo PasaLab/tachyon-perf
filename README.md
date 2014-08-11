@@ -21,14 +21,15 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 
 ###Configuration
 Here lists the alternative configurations in conf/tachyon-perf-env.sh
- * tachyon.perf.tfs.address - the Tachyon Master address, like tachyon://master:19998
- * tachyon.perf.tfs.dir - the workspace dir in Tachyon File System
- * tachyon.perf.read.files.per.thread - the number of files to read for each read thread
- * tachyon.perf.read.identical - if true, all the read threads will read the same files
- * tachyon.perf.read.mode -  the read mode of read test, should be RANDOM or SEQUENCE
- * tachyon.perf.read.threads.num - the threads num of read test
- * tachyon.perf.write.file.length.bytes - the file size of write test, in bytes
- * tachyon.perf.write.files.per.thread - the number of files to write for each write thread
- * tachyon.perf.write.threads.num - the threads num of write test
- * tachyon.perf.out.dir - the report output path
-
+| Property Name                        | Meaning                                                   |
+| -------------------------------------|:---------------------------------------------------------:|
+| tachyon.perf.tfs.address             | the Tachyon Master address, like tachyon://master:19998   |
+| tachyon.perf.tfs.dir                 | the workspace dir in Tachyon File System                  |
+| tachyon.perf.read.files.per.thread   | the number of files to read for each read thread          |
+| tachyon.perf.read.identical          | if true, all the read threads will read the same files    |
+| tachyon.perf.read.mode               | the read mode of read test, should be RANDOM or SEQUENCE  |
+| tachyon.perf.read.threads.num        | the threads num of read test                              |
+| tachyon.perf.write.file.length.bytes | the file size of write test, in bytes                     |
+| tachyon.perf.write.files.per.thread  | the number of files to write for each write thread        |
+| tachyon.perf.write.threads.num       | the threads num of write test                             |
+| tachyon.perf.out.dir                 | the report output path                                    |
