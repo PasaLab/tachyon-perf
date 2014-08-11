@@ -7,8 +7,8 @@ A  general performance test framework for [Tachyon](http://tachyon-project.org/)
 As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guideliens [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
 
 ##Compile Tachyon-Perf
-1. The default Tachyon version is set to 0.5.0. If you run a different version Tachyon, please copy the jar to the correct path. You can see 'lib/org/tachyonproject/tachyon/0.5.0/' as example.
-2. The compiling command is 'mvn install', and you can specify the Tachyon version by '-Dtachyon.version=X.X.X' as a compile parameter.
+1. The default Tachyon version is set to 0.5.0. If you run a different version Tachyon, please copy the jar to the correct path. You can see `lib/org/tachyonproject/tachyon/0.5.0/` as example.
+2. The compiling command is `mvn install`, and you can specify the Tachyon version by `-Dtachyon.version=X.X.X` as a compile parameter.
 
 ##Run Tachyon-Perf Tests
 1. Copy `conf/tachyon-perf-env.sh.template` to `conf/tachyon-perf-env.sh` and configure it.
