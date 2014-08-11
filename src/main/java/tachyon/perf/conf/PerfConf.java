@@ -42,7 +42,7 @@ public class PerfConf extends Utils {
     }
     TACHYON_PERF_HOME = getProperty("tachyon.perf.home", "/tmp/tachyon_perf_default_home");
 
-    TFS_ADDRESS = getProperty("tachyon.perf.tfs.address", "tachyon://master:19998");
+    TFS_ADDRESS = getProperty("tachyon.perf.tfs.address", "tachyon://localhost:19998");
     TFS_DIR = getProperty("tachyon.perf.tfs.dir", "/tachyon-perf-workspace");
     READ_THREADS_NUM = getIntProperty("tachyon.perf.read.threads.num", 4);
     WRITE_THREADS_NUM = getIntProperty("tachyon.perf.write.threads.num", 4);
