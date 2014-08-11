@@ -34,47 +34,47 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
     <tr>
         <td>tachyon.perf.tfs.dir</td>
         <td>the workspace dir in Tachyon File System</td>
-        <td>Default Value</td>
+        <td>/tachyon-perf-workspace</td>
     </tr>
     <tr>
         <td>tachyon.perf.read.files.per.thread</td>
         <td>the number of files to read for each read thread</td>
-        <td>Default Value</td>
+        <td>10</td>
     </tr>
     <tr>
         <td>tachyon.perf.read.identical</td>
         <td>if true, all the read threads will read the same files</td>
-        <td>Default Value</td>
+        <td>false</td>
     </tr>
     <tr>
         <td>tachyon.perf.read.mode</td>
         <td>the read mode of read test, should be RANDOM or SEQUENCE</td>
-        <td>Default Value</td>
+        <td>RANDOM</td>
     </tr>
     <tr>
         <td>tachyon.perf.read.threads.num</td>
         <td>the threads num of read test</td>
-        <td>Default Value</td>
+        <td>4</td>
     </tr>
     <tr>
         <td>tachyon.perf.write.file.length.bytes</td>
         <td>the file size of write test, in bytes</td>
-        <td>Default Value</td>
+        <td>128 * tachyon.Constants.MB</td>
     </tr>
     <tr>
         <td>tachyon.perf.write.files.per.thread</td>
         <td>the number of files to write for each write thread</td>
-        <td>Default Value</td>
+        <td>10</td>
     </tr>
     <tr>
         <td>tachyon.perf.write.threads.num</td>
         <td>the threads num of write test</td>
-        <td>Default Value</td>
+        <td>4</td>
     </tr>
     <tr>
         <td>tachyon.perf.out.dir</td>
         <td>the report output path</td>
-        <td>Default Value</td>
+        <td>TACHYON_PERF_HOME + "/result"</td>
     </tr>
 </table>
 
