@@ -3,24 +3,23 @@ Tachyon-Perf
 
 A  general performance test framework for [Tachyon](http://tachyon-project.org/).The master branch is in version 0.1-SNAPSHOT.
 
-##Getting Start
-###Prerequisites
+##Prerequisites
 As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guideliens [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
 
-###Compile Tachyon-Perf
+##Compile Tachyon-Perf
 1. The default Tachyon version is set to 0.5.0. If you run a different version Tachyon, please copy the jar to the correct path. You can see 'lib/org/tachyonproject/tachyon/0.5.0/' as example.
 2. The compiling command is 'mvn install', and you can specify the Tachyon version by '-Dtachyon.version=X.X.X' as a compile parameter.
 
-###Run Tachyon-Perf Tests
-1. Copy conf/tachyon-perf-env.sh.template to conf/tachyon-perf-env.sh and configure it.
-2. Edit conf/slaves and distribute the tachyon-perf directory to all the same path on the slave nodes.
-3. The running command is './bin/tachyon-perf <Read|Write> <READTYPE|WRITETYPE>'
- * The first parameter is Read or Write, means the read test or the write test.
- * The second parameter is the read type or the write type, which is defined in Tachyon. For example, CACHE(read type) or CACHE_THROUGH(write type).
-4. The result report is generated at result/ as default.
+##Run Tachyon-Perf Tests
+1. Copy `conf/tachyon-perf-env.sh.template` to `conf/tachyon-perf-env.sh` and configure it.
+2. Edit `conf/slaves` and distribute the tachyon-perf directory to all the same path on the slave nodes.
+3. The running command is `./bin/tachyon-perf <Read|Write> <READTYPE|WRITETYPE>`
+ * The first parameter is `Read` or `Write`, means the read test or the write test.
+ * The second parameter is the read type or the write type, which is defined in Tachyon. For example, `CACHE(read type)` or `CACHE_THROUGH(write type)`.
+4. The result report is generated at `result/` as default.
 
-###Configuration
-Here, we list the alternative configurations in conf/tachyon-perf-env.sh
+##Configuration
+Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
 <table>
     <tr>
         <td><b>Property Name</b></td>
