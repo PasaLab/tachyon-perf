@@ -20,16 +20,62 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 4. The result report is generated at result/ as default.
 
 ###Configuration
-Here lists the alternative configurations in conf/tachyon-perf-env.sh
-| Property Name                        | Meaning                                                   |
-| -------------------------------------|:---------------------------------------------------------:|
-| tachyon.perf.tfs.address             | the Tachyon Master address, like tachyon://master:19998   |
-| tachyon.perf.tfs.dir                 | the workspace dir in Tachyon File System                  |
-| tachyon.perf.read.files.per.thread   | the number of files to read for each read thread          |
-| tachyon.perf.read.identical          | if true, all the read threads will read the same files    |
-| tachyon.perf.read.mode               | the read mode of read test, should be RANDOM or SEQUENCE  |
-| tachyon.perf.read.threads.num        | the threads num of read test                              |
-| tachyon.perf.write.file.length.bytes | the file size of write test, in bytes                     |
-| tachyon.perf.write.files.per.thread  | the number of files to write for each write thread        |
-| tachyon.perf.write.threads.num       | the threads num of write test                             |
-| tachyon.perf.out.dir                 | the report output path                                    |
+Here, we list the alternative configurations in conf/tachyon-perf-env.sh
+<table>
+    <tr>
+        <td><b>Property Name</b></td>
+        <td><b>Meaning</b></td>
+        <td><b>Default Value</b></td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.tfs.address</td>
+        <td>the Tachyon Master address</td>
+        <td>tachyon://localhost:19998</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.tfs.dir</td>
+        <td>the workspace dir in Tachyon File System</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.read.files.per.thread</td>
+        <td>the number of files to read for each read thread</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.read.identical</td>
+        <td>if true, all the read threads will read the same files</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.read.mode</td>
+        <td>the read mode of read test, should be RANDOM or SEQUENCE</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.read.threads.num</td>
+        <td>the threads num of read test</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.write.file.length.bytes</td>
+        <td>the file size of write test, in bytes</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.write.files.per.thread</td>
+        <td>the number of files to write for each write thread</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.write.threads.num</td>
+        <td>the threads num of write test</td>
+        <td>Default Value</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.out.dir</td>
+        <td>the report output path</td>
+        <td>Default Value</td>
+    </tr>
+</table>
+
