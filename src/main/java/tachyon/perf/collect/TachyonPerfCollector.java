@@ -236,7 +236,7 @@ public class TachyonPerfCollector {
       sbNodesData.append("\t[");
       for (float readThroughput : allReadThroughput) {
         totalReadThroughput += readThroughput;
-        sbNodesData.append(readThroughput + ",");
+        sbNodesData.append(formatFloat(readThroughput, 2) + ",");
       }
       sbNodesData.deleteCharAt(sbNodesData.length() - 1);
       sbNodesData.append("],\n");
@@ -246,7 +246,7 @@ public class TachyonPerfCollector {
       sbNodesData.append("\t[");
       for (float writeThroughput : allWriteThroughput) {
         totalWriteThroughput += writeThroughput;
-        sbNodesData.append(writeThroughput + ",");
+        sbNodesData.append(formatFloat(writeThroughput, 2) + ",");
       }
       sbNodesData.deleteCharAt(sbNodesData.length() - 1);
       sbNodesData.append("],\n");
@@ -256,13 +256,18 @@ public class TachyonPerfCollector {
 
     for (int i = 0; i < mNodes.size(); i ++) {
       sbReadData.append("\t{\"State\": \"" + mNodes.get(i) + "\", ").append(
-          "\"Read Throughput\": \"" + nodeReadThroughput.get(i) + "\"},\n");
+          "\"Read Throughput\": \"" + formatFloat(nodeReadThroughput.get(i), 2) + "\"},\n");
       sbWriteData.append("\t{\"State\": \"" + mNodes.get(i) + "\", ").append(
-          "\"Write Throughput\": \"" + nodeWriteThroughput.get(i) + "\"},\n");
+          "\"Write Throughput\": \"" + formatFloat(nodeWriteThroughput.get(i), 2) + "\"},\n");
     }
     sbReadData.append("];\n");
     sbWriteData.append("];\n");
 
     return sbReadData.toString() + sbWriteData.toString() + sbNodesData.toString();
+  }
+
+  private float formatFloat(float f, int scale) {
+    int scale_10 = (int) Math.pow(10, scale);
+    return ((int) (f * scale_10)) * 1.0f / scale_10;
   }
 }
