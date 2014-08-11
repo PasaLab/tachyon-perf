@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+function printUsage {
+  echo "Usage: tachyon-perf <Read|Write> <READTYPE|WRITETYPE>"
+  echo "where READTYPE is one of:"
+  echo -e "  CACHE, NO_CACHE"
+  echo "and WRITETYPE is one of:"
+  echo -e "  MUST_CACHE, TRY_CACHE, CACHE_THROUGH, THROUGH, ASYNC_THROUGH"
+}
+
+# if less than 2 args specified, show usage
+if [ $# -le 1 ]; then
+  printUsage
+  exit 1
+fi
+
+bin=`cd "$( dirname "$0" )"; pwd`
+
+DEFAULT_PERF_LIBEXEC_DIR="$bin"/../libexec
+TACHYON_PERF_LIBEXEC_DIR=${TACHYON_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
+. $TACHYON_PERF_LIBEXEC_DIR/tachyon-perf-config.sh
+
+NODELIST=$TACHYON_PERF_CONF_DIR/slaves
+
+nodeid=0
+for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
+  echo -n "Connection to $slave... "
+  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $nodeid $1 $2 2>&1
+  sleep 0.02
+  nodeid='expr $nodeid + 1'
+done
+
+wait
