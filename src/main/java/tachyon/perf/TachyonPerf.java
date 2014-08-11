@@ -55,6 +55,7 @@ public class TachyonPerf {
   }
 
   private final PerfConf PERF_CONF;
+  private final long START_TIME;
 
   private final int ID;
   private final TestType TEST_TYPE;
@@ -79,6 +80,7 @@ public class TachyonPerf {
    */
   public TachyonPerf(String nodeid, String testType, String RWType) throws IOException {
     PERF_CONF = PerfConf.get();
+    START_TIME = System.currentTimeMillis();
     ID = Integer.parseInt(nodeid);
     TEST_TYPE = TestType.getTestType(testType);
     if (TEST_TYPE.isRead()) {
@@ -151,7 +153,7 @@ public class TachyonPerf {
    * @throws IOException
    */
   public void generateReport() throws IOException {
-    mReport = new TestReport(mPerfThreads, TEST_TYPE);
+    mReport = new TestReport(START_TIME, mPerfThreads, TEST_TYPE);
     mReport.generateReport();
   }
 

@@ -18,23 +18,26 @@ public class TestReport {
   private static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
   private final PerfConf PERF_CONF;
+  private final long START_TIME;
 
   private TestType mTestType;
   private int mThreadNum;
 
   private long[] mTestTimeMs;
-  private long mTotalBytes;
+  private long[] mTestBytes;
   private int mSuccessFiles;
 
-  public TestReport(PerfThread[] perfThreads, TestType testType) {
+  public TestReport(long startTimeMs, PerfThread[] perfThreads, TestType testType) {
     PERF_CONF = PerfConf.get();
+    START_TIME = startTimeMs;
     mTestType = testType;
     mThreadNum = perfThreads.length;
     mTestTimeMs = new long[mThreadNum];
+    mTestBytes = new long[mThreadNum];
     for (int i = 0; i < mThreadNum; i ++) {
       ThreadReport report = perfThreads[i].getReport();
       mTestTimeMs[i] = report.getEndTimeMs() - report.getStartTimeMs();
-      mTotalBytes += report.getTotalSizeByte();
+      mTestBytes[i] = report.getTotalSizeByte();
       mSuccessFiles += report.getSuccessFileNum();
     }
   }
@@ -55,17 +58,6 @@ public class TestReport {
     return days + "d-" + hours + "h-" + minutes + "m-" + seconds + "s";
   }
 
-  private String parseSizeByte(long bytes) {
-    final String[] UNITS = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-    float ret = bytes;
-    int index = 0;
-    while ((ret >= 1024) && (index < UNITS.length - 1)) {
-      ret /= 1024;
-      index ++;
-    }
-    return ret + UNITS[index];
-  }
-
   // TODO: generate with d3
   public void generateReport() throws IOException {
     StringBuffer sb = new StringBuffer();
@@ -76,11 +68,13 @@ public class TestReport {
     long workerSpaceBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
     sb.append(workerSpaceBytes + "\n");
 
-    sb.append(mTestType + "\n");
+    sb.append(START_TIME + "\n");
+    //sb.append(mTestType + "\n");
     sb.append(mThreadNum + "\n");
-    sb.append(mSuccessFiles + "\n");
-    sb.append(parseSizeByte(mTotalBytes) + "\n");
+    //sb.append(mSuccessFiles + "\n");
+
     for (int i = 0; i < mThreadNum; i ++) {
+      sb.append(mTestBytes[i] + "\n");
       sb.append(mTestTimeMs[i] + "\n");
     }
 
@@ -89,7 +83,7 @@ public class TestReport {
       outDir.mkdirs();
     }
 
-    File reportFile = new File(PERF_CONF.OUT_FOLDER + "/report");
+    File reportFile = new File(PERF_CONF.OUT_FOLDER + "/report_" + mTestType);
     FileOutputStream fos = new FileOutputStream(reportFile);
     fos.write(sb.toString().getBytes());
     LOG.info("Report generated at path: " + PERF_CONF.OUT_FOLDER);

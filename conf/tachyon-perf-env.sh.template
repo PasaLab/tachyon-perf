@@ -15,6 +15,7 @@ fi
 
 export JAVA="$JAVA_HOME/bin/java"
 
+export TACHYON_PERF_OUT_DIR=$TACHYON_PERF_HOME/result
 export TACHYON_CONF_DIR_SH=/tachyonhome/conf/tachyon-env.sh
 
 CONF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -30,5 +31,5 @@ export TACHYON_PERF_JAVA_OPTS+="
   -Dtachyon.perf.write.file.length.bytes=134217728
   -Dtachyon.perf.write.files.per.thread=10
   -Dtachyon.perf.write.threads.num=4
-  -Dtachyon.perf.out.dir=$TACHYON_PERF_HOME/result
+  -Dtachyon.perf.out.dir=$TACHYON_PERF_OUT_DIR
 "
