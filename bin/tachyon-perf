@@ -27,7 +27,7 @@ for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
   echo -n "Connection to $slave... "
   ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $nodeid $1 $2 2>&1
   sleep 0.02
-  nodeid='expr $nodeid + 1'
+  nodeid=`expr $nodeid + 1`
 done
 
 wait
