@@ -80,8 +80,6 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
 </table>
 
 ##Generating Test Reports
-To make the test report easy and friendly to read, we demostrate the test results with charts and diagrams by adopting D3 javascript.After running both write and read tests(all tests are successful and finished), you can generate an HTML report with command
- * `./bin/tachyon-perf-collect`
-Then the report will be generated at `$TACHYON_PERF_OUT_DIR/webreport/report.html`. It's in the HTML format so you can open it with your web browser.
+To make the test report easy and friendly to read, we demostrate the test results with charts and diagrams by adopting D3 javascript.After running both write and read tests(all tests are successful and finished), you can generate an HTML report with command `./bin/tachyon-perf-collect`. Then the report will be generated at `$TACHYON_PERF_OUT_DIR/webreport/report.html`. It's in the HTML format so you can open it with your web browser.
 
 
