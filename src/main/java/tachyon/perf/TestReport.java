@@ -21,16 +21,18 @@ public class TestReport {
   private final long START_TIME;
 
   private TestType mTestType;
+  private String mRWType;
   private int mThreadNum;
 
   private long[] mTestTimeMs;
   private long[] mTestBytes;
   private int mSuccessFiles;
 
-  public TestReport(long startTimeMs, PerfThread[] perfThreads, TestType testType) {
+  public TestReport(long startTimeMs, PerfThread[] perfThreads, TestType testType, String rwType) {
     PERF_CONF = PerfConf.get();
     START_TIME = startTimeMs;
     mTestType = testType;
+    mRWType = rwType;
     mThreadNum = perfThreads.length;
     mTestTimeMs = new long[mThreadNum];
     mTestBytes = new long[mThreadNum];
@@ -68,10 +70,11 @@ public class TestReport {
     long workerSpaceBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
     sb.append(workerSpaceBytes + "\n");
 
+    sb.append(mRWType + "\n");
     sb.append(START_TIME + "\n");
-    //sb.append(mTestType + "\n");
+    // sb.append(mTestType + "\n");
     sb.append(mThreadNum + "\n");
-    //sb.append(mSuccessFiles + "\n");
+    // sb.append(mSuccessFiles + "\n");
 
     for (int i = 0; i < mThreadNum; i ++) {
       sb.append(mTestBytes[i] + "\n");

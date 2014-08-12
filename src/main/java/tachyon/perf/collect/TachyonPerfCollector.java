@@ -34,6 +34,8 @@ public class TachyonPerfCollector {
   private StringBuffer mHtmlContent;
   private long mStartTimeMs = Long.MAX_VALUE;
   private boolean mSuccess = true;
+  private String mReadType;
+  private String mWriteType;
 
   private List<String> mNodes;
   private List<Integer> mAvaliableCores;
@@ -111,6 +113,12 @@ public class TachyonPerfCollector {
     long memoryBytes = Long.parseLong(reportInput.readLine());
     if (!isReadReport) {
       mWorkerMemory.add(memoryBytes);
+    }
+
+    if (isReadReport) {
+      mReadType = reportInput.readLine();
+    } else {
+      mWriteType = reportInput.readLine();
     }
 
     long startTime = Long.parseLong(reportInput.readLine());
@@ -206,6 +214,10 @@ public class TachyonPerfCollector {
         + PERF_CONF.WRITE_FILES_PER_THREAD + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.threads.num" + "</td>\n\t<td>"
         + PERF_CONF.WRITE_THREADS_NUM + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "READ_TYPE" + "</td>\n\t<td>" + mReadType
+        + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "WRITE_TYPE" + "</td>\n\t<td>" + mWriteType
+        + "</td>\n</tr>\n");
     return sbPerfConf.toString();
   }
 

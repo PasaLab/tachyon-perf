@@ -153,7 +153,13 @@ public class TachyonPerf {
    * @throws IOException
    */
   public void generateReport() throws IOException {
-    mReport = new TestReport(START_TIME, mPerfThreads, TEST_TYPE);
+    String rwType;
+    if (TEST_TYPE.isRead()) {
+      rwType = READ_TYPE.name();
+    } else {
+      rwType = WRITE_TYPE.name();
+    }
+    mReport = new TestReport(START_TIME, mPerfThreads, TEST_TYPE, rwType);
     mReport.generateReport();
   }
 
