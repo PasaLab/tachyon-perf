@@ -16,7 +16,8 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 3. The running command is `./bin/tachyon-perf <Read|Write> <READTYPE|WRITETYPE>`
  * The first parameter is `Read` or `Write`, means the read test or the write test.
  * The second parameter is the read type or the write type, which is defined in Tachyon. For example, `CACHE(read type)` or `CACHE_THROUGH(write type)`.
-4. The result report is generated at `result/` as default.
+4. When TachyonPerf is running, the remaining running nodes information will be printed on the console. For some reasons, if you want to abort the tests, you can press `Ctrl + C` to terminate current thread and use the command `./bin/tachyon-perf-abort` to abort test on each node.
+5. After all the tests run successfully, each node will generate a result report, default at `result/`. For more understandable report, see the section "Generating Test Reports".
 
 ##Configuration
 Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
@@ -80,7 +81,7 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
 
 ##Generating Test Reports
 To make the test report easy and friendly to read, we demostrate the test results with charts and diagrams by adopting D3 javascript.After running both write and read tests(all tests are successful and finished), you can generate an HTML report with command
- *`./bin/tachyon-perf-collect`
+ * `./bin/tachyon-perf-collect`
 Then the report will be generated at `$TACHYON_PERF_OUT_DIR/webreport/report.html`. It's in the HTML format so you can open it with your web browser.
 
 
