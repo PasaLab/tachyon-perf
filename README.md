@@ -28,6 +28,11 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
         <td><b>Default Value</b></td>
     </tr>
     <tr>
+        <td>tachyon.perf.status.debug</td>
+        <td>if true, the node names of the running status will be printed</td>
+        <td>false</td>
+    </tr>
+    <tr>
         <td>tachyon.perf.tfs.address</td>
         <td>the Tachyon Master address</td>
         <td>tachyon://localhost:19998</td>
