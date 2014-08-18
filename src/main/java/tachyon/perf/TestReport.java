@@ -13,7 +13,6 @@ import tachyon.perf.thread.ThreadReport;
 /**
  * The test report for a Tachyon-Perf process
  */
-// TODO: the report is too simple now, add the d3
 public class TestReport {
   private static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
@@ -26,6 +25,7 @@ public class TestReport {
 
   private long[] mTestTimeMs;
   private long[] mTestBytes;
+  private boolean mSuccess;
   private int mSuccessFiles;
 
   public TestReport(long startTimeMs, PerfThread[] perfThreads, TestType testType, String rwType) {
@@ -36,10 +36,14 @@ public class TestReport {
     mThreadNum = perfThreads.length;
     mTestTimeMs = new long[mThreadNum];
     mTestBytes = new long[mThreadNum];
+    mSuccess = true;
     for (int i = 0; i < mThreadNum; i ++) {
       ThreadReport report = perfThreads[i].getReport();
       mTestTimeMs[i] = report.getEndTimeMs() - report.getStartTimeMs();
       mTestBytes[i] = report.getTotalSizeByte();
+      if (!report.getSuccess()) {
+        mSuccess = false;
+      }
       mSuccessFiles += report.getSuccessFileNum();
     }
   }
@@ -60,9 +64,10 @@ public class TestReport {
     return days + "d-" + hours + "h-" + minutes + "m-" + seconds + "s";
   }
 
-  // TODO: generate with d3
   public void generateReport() throws IOException {
     StringBuffer sb = new StringBuffer();
+
+    sb.append(mSuccess + "\n");
 
     int cpus = Runtime.getRuntime().availableProcessors();
     sb.append(cpus + "\n");
@@ -90,5 +95,9 @@ public class TestReport {
     FileOutputStream fos = new FileOutputStream(reportFile);
     fos.write(sb.toString().getBytes());
     LOG.info("Report generated at path: " + PERF_CONF.OUT_FOLDER);
+  }
+
+  public boolean getSuccess() {
+    return mSuccess;
   }
 }

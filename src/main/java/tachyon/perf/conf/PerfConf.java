@@ -20,6 +20,7 @@ public class PerfConf extends Utils {
   }
 
   public final String TACHYON_PERF_HOME;
+  public final boolean STATUS_DEBUG;
 
   public final long FILE_LENGTH;
   public final String OUT_FOLDER;
@@ -41,6 +42,7 @@ public class PerfConf extends Utils {
       }
     }
     TACHYON_PERF_HOME = getProperty("tachyon.perf.home", "/tmp/tachyon_perf_default_home");
+    STATUS_DEBUG = getBooleanProperty("tachyon.perf.status.debug", false);
 
     TFS_ADDRESS = getProperty("tachyon.perf.tfs.address", "tachyon://localhost:19998");
     TFS_DIR = getProperty("tachyon.perf.tfs.dir", "/tachyon-perf-workspace");

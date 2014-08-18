@@ -30,6 +30,7 @@ public class ReadThread extends PerfThread {
       tachyonClient = TachyonFS.get(mTfsAddress);
     } catch (IOException e) {
       LOG.error("Read Thread " + ID + " falied to connect Tachyon");
+      mThreadReport.error();
       throw new RuntimeException(e);
     }
 
@@ -44,7 +45,8 @@ public class ReadThread extends PerfThread {
         is.close();
       } catch (IOException e) {
         LOG.error("Read thread " + ID + "failed to read file, FileId: " + fileId, e);
-        continue;
+        mThreadReport.error();
+        break;
       }
       mThreadReport.successFiles(1);
     }

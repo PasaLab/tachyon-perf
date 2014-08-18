@@ -15,21 +15,45 @@ fi
 
 export JAVA="$JAVA_HOME/bin/java"
 
-export TACHYON_PERF_OUT_DIR=$TACHYON_PERF_HOME/result
-export TACHYON_CONF_DIR_SH=/tachyonhome/conf/tachyon-env.sh
+#the Tachyon Master address
+export TACHYON_PERF_TFS_ADRESS="tachyon://master:19998"
+
+#the workspace dir in Tachyon File System
+export TACHYON_PERF_WORKSPACE="/tachyon-perf-workspace"
+
+#the report output path
+export TACHYON_PERF_OUT_DIR="$TACHYON_PERF_HOME/result"
+
+#the Tachyon configuration file
+export TACHYON_CONF_DIR_SH="/tachyonhome/conf/tachyon-env.sh"
+
+#the Write Test threads, files and file length
+TACHYON_PERF_WRITE_THREADS=4
+TACHYON_PERF_WRITE_FILES_PER_THREAD=10
+TACHYON_PERF_WRITE_FILE_LENGTH_BYTES=134217728
+
+#the Read Test threads, files and mode. The mode should be RANDOM or SEQUENCE
+TACHYON_PERF_READ_THREADS=4
+TACHYON_PERF_READ_FILES_PER_THREAD=10
+TACHYON_PERF_READ_IDENTICAL="false"
+TACHYON_PERF_READ_MODE="RANDOM"
+
+#if true, the TachyonPerfSupervision will print the names of those running and remaining nodes
+TACHYON_PERF_STATUS_DEBUG="false"
 
 CONF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export TACHYON_PERF_JAVA_OPTS+="
   -Dlog4j.configuration=file:$CONF_DIR/log4j.properties
-  -Dtachyon.perf.tfs.address=tachyon://master:19998
-  -Dtachyon.perf.tfs.dir=/tachyon-perf-workspace
-  -Dtachyon.perf.read.files.per.thread=10
-  -Dtachyon.perf.read.identical=false
-  -Dtachyon.perf.read.mode=RANDOM
-  -Dtachyon.perf.read.threads.num=4
-  -Dtachyon.perf.write.file.length.bytes=134217728
-  -Dtachyon.perf.write.files.per.thread=10
-  -Dtachyon.perf.write.threads.num=4
+  -Dtachyon.perf.status.debug=$TACHYON_PERF_STATUS_DEBUG
+  -Dtachyon.perf.tfs.address=$TACHYON_PERF_TFS_ADRESS
+  -Dtachyon.perf.tfs.dir=$TACHYON_PERF_WORKSPACE
+  -Dtachyon.perf.read.files.per.thread=$TACHYON_PERF_READ_FILES_PER_THREAD
+  -Dtachyon.perf.read.identical=$TACHYON_PERF_READ_IDENTICAL
+  -Dtachyon.perf.read.mode=$TACHYON_PERF_READ_MODE
+  -Dtachyon.perf.read.threads.num=$TACHYON_PERF_READ_THREADS
+  -Dtachyon.perf.write.file.length.bytes=$TACHYON_PERF_WRITE_FILE_LENGTH_BYTES
+  -Dtachyon.perf.write.files.per.thread=$TACHYON_PERF_WRITE_FILES_PER_THREAD
+  -Dtachyon.perf.write.threads.num=$TACHYON_PERF_WRITE_THREADS
   -Dtachyon.perf.out.dir=$TACHYON_PERF_OUT_DIR
 "

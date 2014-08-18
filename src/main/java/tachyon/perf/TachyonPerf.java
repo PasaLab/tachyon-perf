@@ -54,7 +54,7 @@ public class TachyonPerf {
     }
 
     try {
-      perf.success();
+      perf.end();
     } catch (IOException e) {
       LOG.error("Error when create success file", e);
     }
@@ -153,6 +153,15 @@ public class TachyonPerf {
     LOG.info("Create " + threadsNum + " write test thread");
   }
 
+  public void end() throws IOException {
+    TachyonFS tfs = TachyonFS.get(PERF_CONF.TFS_ADDRESS);
+    if (mReport.getSuccess()) {
+      tfs.createFile(PERF_CONF.TFS_DIR + "/" + ID + "/SUCCESS");
+    } else {
+      tfs.createFile(PERF_CONF.TFS_DIR + "/" + ID + "/FAILED");
+    }
+  }
+
   /**
    * Generate the test report and output it to the configured OUT_DIR
    * 
@@ -182,6 +191,10 @@ public class TachyonPerf {
     if (tfs.exist(tfsSuccessPath)) {
       tfs.delete(tfsSuccessPath, true);
     }
+    String tfsFailedPath = PERF_CONF.TFS_DIR + "/" + ID + "/FAILED";
+    if (tfs.exist(tfsFailedPath)) {
+      tfs.delete(tfsFailedPath, true);
+    }
 
     if (TEST_TYPE.isRead()) {
       setupReadTest(tfs);
@@ -205,11 +218,6 @@ public class TachyonPerf {
       mTestThreads.add(perfThread);
       perfThread.start();
     }
-  }
-
-  public void success() throws IOException {
-    TachyonFS tfs = TachyonFS.get(PERF_CONF.TFS_ADDRESS);
-    tfs.createFile(PERF_CONF.TFS_DIR + "/" + ID + "/SUCCESS");
   }
 
   /**

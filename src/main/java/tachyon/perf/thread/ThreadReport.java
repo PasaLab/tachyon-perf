@@ -10,13 +10,24 @@ public class ThreadReport {
   private int mSuccessFileNum;
   private long mTotalSizeByte;
 
+  private boolean mSuccess;
+
   public ThreadReport() {
     mSuccessFileNum = 0;
     mTotalSizeByte = 0;
+    mSuccess = true;
   }
 
   public void end() {
     mEndTimeMs = System.currentTimeMillis();
+  }
+
+  public void error() {
+    mSuccess = false;
+  }
+
+  public boolean getSuccess() {
+    return mSuccess;
   }
 
   public long getStartTimeMs() {

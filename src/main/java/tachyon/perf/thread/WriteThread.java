@@ -34,6 +34,7 @@ public class WriteThread extends PerfThread {
       tachyonClient = TachyonFS.get(mTfsAddress);
     } catch (IOException e) {
       LOG.error("Write Thread " + ID + " falied to connect Tachyon");
+      mThreadReport.error();
       throw new RuntimeException(e);
     }
 
@@ -60,7 +61,8 @@ public class WriteThread extends PerfThread {
         os.close();
       } catch (IOException e) {
         LOG.error("Write thread " + ID + "failed to write file " + fileName, e);
-        continue;
+        mThreadReport.error();
+        break;
       }
       mThreadReport.successFiles(1);
     }

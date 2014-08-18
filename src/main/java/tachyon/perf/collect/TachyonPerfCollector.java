@@ -32,9 +32,11 @@ public class TachyonPerfCollector {
   private final String WEB_RESOURCE_DIR;
 
   private StringBuffer mHtmlContent;
-  private long mStartTimeMs = Long.MAX_VALUE;
-  private boolean mSuccess = true;
+  private int mReadFailed = 0;
+  private long mReadStartTimeMs = Long.MAX_VALUE;
   private String mReadType;
+  private int mWriteFailed = 0;
+  private long mWriteStartTimeMs = Long.MAX_VALUE;
   private String mWriteType;
 
   private List<String> mNodes;
@@ -86,6 +88,10 @@ public class TachyonPerfCollector {
       String[] parts = reportFile.getName().split("_");
       nodes.add(parts[3]);
     }
+    if (nodes.size() == 0) {
+      System.err.println("Failed to collect data. Make sure run both write and read tests.");
+      return false;
+    }
 
     try {
       for (String node : nodes) {
@@ -105,6 +111,15 @@ public class TachyonPerfCollector {
 
   private void loadSingleReportFile(File reportFile, boolean isReadReport) throws IOException {
     BufferedReader reportInput = new BufferedReader(new FileReader(reportFile));
+    boolean success = Boolean.parseBoolean(reportInput.readLine());
+    if (!success) {
+      if (isReadReport) {
+        mReadFailed ++;
+      } else {
+        mWriteFailed ++;
+      }
+    }
+
     int cores = Integer.parseInt(reportInput.readLine());
     if (!isReadReport) {
       mAvaliableCores.add(cores);
@@ -122,8 +137,14 @@ public class TachyonPerfCollector {
     }
 
     long startTime = Long.parseLong(reportInput.readLine());
-    if (startTime < mStartTimeMs) {
-      mStartTimeMs = startTime;
+    if (isReadReport) {
+      if (startTime < mReadStartTimeMs) {
+        mReadStartTimeMs = startTime;
+      }
+    } else {
+      if (startTime < mWriteStartTimeMs) {
+        mWriteStartTimeMs = startTime;
+      }
     }
 
     int threadNum = Integer.parseInt(reportInput.readLine());
@@ -143,20 +164,23 @@ public class TachyonPerfCollector {
   }
 
   public void generateHtmlReport() {
-    mSuccess = collectData();
+    boolean collectSuccess = collectData();
     String totalState = "";
     String nodesInfo = "";
     String perfConf = "";
     String nodesThroughput = "";
     String throughputData = "";
-    if (!mSuccess) {
+    if (!collectSuccess) {
+      totalState = "\n<h2>Tachyon-Perf. Error when collect test results.</h2>\n";
+    } else if ((mReadFailed + mWriteFailed) != 0) {
       totalState =
-          "\n<h2>Tachyon-Perf Job ID : " + mStartTimeMs + "</h2>\n<h3>Job Status: " + "Failed"
-              + "</h3>\n";
+          "\n<h2>Tachyon-Perf Job ID : " + mWriteStartTimeMs + "|" + mReadStartTimeMs
+              + "</h2>\n<h3>Job Status: Failed (" + mWriteFailed + " Write Tests Failed and "
+              + mReadFailed + " Read Tests Failed)</h3>\n";
     } else {
       totalState =
-          "\n<h2>Tachyon-Perf Job ID : " + mStartTimeMs + "</h2>\n<h3>Job Status: "
-              + "Finished Successfully" + "</h3>\n";
+          "\n<h2>Tachyon-Perf Job ID : " + mWriteStartTimeMs + "|" + mReadStartTimeMs
+              + "</h2>\n<h3>Job Status: Finished Successfully</h3>\n";
       nodesInfo = generateNodesInfo();
       perfConf = generatePerfConf();
       nodesThroughput = generateNodesThroughput();
@@ -166,10 +190,9 @@ public class TachyonPerfCollector {
     try {
       FileOutputStream htmlOutput = new FileOutputStream(htmlReportFile);
       String finalReport =
-          mHtmlContent.toString().replace("$$TOTAL_STATE", totalState)
-              .replace("$$NODES_INFO", nodesInfo).replace("$$PERF_CONF", perfConf)
-              .replace("$$NODES_THROUGHPUT", nodesThroughput)
-              .replace("$$THROUGHPUT_DATA", throughputData);
+          mHtmlContent.toString().replace("$$TOTAL_STATE", totalState).replace("$$NODES_INFO",
+              nodesInfo).replace("$$PERF_CONF", perfConf).replace("$$NODES_THROUGHPUT",
+              nodesThroughput).replace("$$THROUGHPUT_DATA", throughputData);
       htmlOutput.write(finalReport.getBytes());
       htmlOutput.close();
     } catch (IOException e) {
@@ -183,16 +206,16 @@ public class TachyonPerfCollector {
     int totalCores = 0;
     long totalBytes = 0;
     for (int i = 0; i < mNodes.size(); i ++) {
-      sbNodesInfo.append("<tr>\n").append("\t<td>" + mNodes.get(i) + "</td>\n")
-          .append("\t<td>" + mAvaliableCores.get(i) + "</td>\n")
-          .append("\t<td>" + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "</td>\n")
-          .append("</tr>\n");
+      sbNodesInfo.append("<tr>\n").append("\t<td>" + mNodes.get(i) + "</td>\n").append(
+          "\t<td>" + mAvaliableCores.get(i) + "</td>\n").append(
+          "\t<td>" + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "</td>\n").append(
+          "</tr>\n");
       totalCores += mAvaliableCores.get(i);
       totalBytes += mWorkerMemory.get(i);
     }
-    sbNodesInfo.append("<tr>\n").append("\t<td><b>Total</b></td>\n")
-        .append("\t<td>" + totalCores + "</td>\n")
-        .append("\t<td>" + PerfConstants.parseSizeByte(totalBytes) + "</td>\n").append("</tr>");
+    sbNodesInfo.append("<tr>\n").append("\t<td><b>Total</b></td>\n").append(
+        "\t<td>" + totalCores + "</td>\n").append(
+        "\t<td>" + PerfConstants.parseSizeByte(totalBytes) + "</td>\n").append("</tr>");
     return sbNodesInfo.toString();
   }
 
@@ -224,10 +247,10 @@ public class TachyonPerfCollector {
   private String generateNodesThroughput() {
     StringBuffer sbNodesThroughput = new StringBuffer("\n");
     for (int i = 0; i < mNodes.size(); i ++) {
-      sbNodesThroughput.append("<tr>\n")
-          .append("\t<th>" + mNodes.get(i) + " <br>(each row represents a thread)</th>\n")
-          .append("\t<th id=\"svg" + (2 * i) + "\"></th>\n")
-          .append("\t<th id=\"svg" + (2 * i + 1) + "\"></th>\n").append("</tr>\n");
+      sbNodesThroughput.append("<tr>\n").append(
+          "\t<th>" + mNodes.get(i) + " <br>(each row represents a thread)</th>\n").append(
+          "\t<th id=\"svg" + (2 * i) + "\"></th>\n").append(
+          "\t<th id=\"svg" + (2 * i + 1) + "\"></th>\n").append("</tr>\n");
     }
     return sbNodesThroughput.toString();
   }
