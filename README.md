@@ -4,7 +4,7 @@ Tachyon-Perf
 A  general performance test framework for [Tachyon](http://tachyon-project.org/).The master branch is in version 0.1-SNAPSHOT.
 
 ##Prerequisites
-As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guideliens [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
+As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guidelines [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
 
 ##Compile Tachyon-Perf
 1. The default Tachyon version is set to 0.5.0. If you run a different version Tachyon, please copy the jar to the correct path. You can see `lib/org/tachyonproject/tachyon/0.5.0/` as example.
