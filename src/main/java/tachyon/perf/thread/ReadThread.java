@@ -7,49 +7,54 @@ import tachyon.client.InStream;
 import tachyon.client.ReadType;
 import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
+import tachyon.perf.conf.PerfConf;
 
 public class ReadThread extends PerfThread {
   private static final int DEFALUT_READ_GRAIN = 4194304;// 4MB
 
+  private byte[] mContent;
   private List<Integer> mReadFileList;
   private ReadType mReadType;
-  private byte[] mContent;
+  private String mTfsAddress;
 
-  public ReadThread(int id, String tfsAddress, List<Integer> readFileList, ReadType readType) {
-    super(id, tfsAddress);
+  public ReadThread(int id, List<Integer> readFileList, ReadType readType) {
+    super(id);
+    mThreadReport = new RWThreadReport();
+
+    mContent = new byte[DEFALUT_READ_GRAIN];
     mReadFileList = readFileList;
     mReadType = readType;
-    mContent = new byte[DEFALUT_READ_GRAIN];
+    mTfsAddress = PerfConf.get().TFS_ADDRESS;
   }
 
   @Override
   public void run() {
-    mThreadReport.start();
+    mThreadReport.setStartTimeMs(System.currentTimeMillis());
     TachyonFS tachyonClient;
     try {
       tachyonClient = TachyonFS.get(mTfsAddress);
     } catch (IOException e) {
       LOG.error("Read Thread " + ID + " falied to connect Tachyon");
-      mThreadReport.error();
       throw new RuntimeException(e);
     }
 
+    mThreadReport.setSuccess(true);
     for (int fileId : mReadFileList) {
       try {
         TachyonFile file = tachyonClient.getFile(fileId);
         InStream is = file.getInStream(mReadType);
         int readLen;
         while ((readLen = is.read(mContent)) > 0) {
-          mThreadReport.successContent(readLen);
+          ((RWThreadReport) mThreadReport).addSuccessBytes(readLen);
         }
         is.close();
       } catch (IOException e) {
         LOG.error("Read thread " + ID + "failed to read file, FileId: " + fileId, e);
-        mThreadReport.error();
+        mThreadReport.setSuccess(false);
         break;
       }
-      mThreadReport.successFiles(1);
+      ((RWThreadReport) mThreadReport).addSuccessFiles(1);
     }
-    mThreadReport.end();
+    mThreadReport.setFinishTimeMs(System.currentTimeMillis());
   }
 }

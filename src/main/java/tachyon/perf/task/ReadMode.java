@@ -1,4 +1,4 @@
-package tachyon.perf;
+package tachyon.perf.task;
 
 import java.io.IOException;
 

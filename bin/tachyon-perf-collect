@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 function printUsage {
-  echo "Usage: tachyon-perf-collect"
+  echo "Usage: tachyon-perf-collect <TaskType>"
 }
 
-# if more than 0 args specified, show usage
-if [ $# -ge 1 ]; then
+# if less than 1 args specified, show usage
+if [ $# -le 0 ]; then
   printUsage
   exit 1
 fi
@@ -18,19 +18,14 @@ TACHYON_PERF_LIBEXEC_DIR=${TACHYON_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
 
 NODELIST=$TACHYON_PERF_CONF_DIR/slaves
 
-export TACHYON_PERF_OUT_NODES_DIR=$TACHYON_PERF_OUT_DIR/nodes
-mkdir -p $TACHYON_PERF_OUT_NODES_DIR
+TACHYON_PERF_OUT_REPORTS_DIR=$TACHYON_PERF_OUT_DIR/reports_$1
+mkdir -p $TACHYON_PERF_OUT_REPORTS_DIR
 
 for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
   echo -n "Collect from $slave... "
-  scp $slave:$TACHYON_PERF_OUT_DIR/report_Read $TACHYON_PERF_OUT_NODES_DIR/node_report_Read_$slave
-  sleep 0.02
-  scp $slave:$TACHYON_PERF_OUT_DIR/report_Write $TACHYON_PERF_OUT_NODES_DIR/node_report_Write_$slave
+  scp $slave:$TACHYON_PERF_OUT_DIR/report-$1 $TACHYON_PERF_OUT_REPORTS_DIR/report-$1-$slave
   sleep 0.02
 done
 wait
 
-mkdir -p $TACHYON_PERF_OUT_DIR/webreport
-cp $TACHYON_PERF_HOME/src/webresource/* $TACHYON_PERF_OUT_DIR/webreport/
-
-$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.collect.TachyonPerfCollector $TACHYON_PERF_OUT_DIR $TACHYON_PERF_HOME/src/webresource
+$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.tools.TachyonPerfCollector $1 $TACHYON_PERF_OUT_REPORTS_DIR

@@ -1,4 +1,4 @@
-package tachyon.perf.collect;
+package tachyon.perf.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,24 +12,26 @@ import java.util.Set;
 
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.task.RWTaskReport;
+import tachyon.perf.task.TaskType;
 
 /**
  * This class is used to generate an html report
  */
-public class TachyonPerfCollector {
+public class TachyonPerfHtmlReport {
   public static void main(String[] args) {
     if (args.length != 2) {
       System.err.println("Wrong program arguments.");
       System.exit(-1);
     }
 
-    TachyonPerfCollector perfCollector = new TachyonPerfCollector(args[0], args[1]);
+    TachyonPerfHtmlReport perfCollector = new TachyonPerfHtmlReport(args[0], args[1]);
     perfCollector.generateHtmlReport();
   }
 
   private final PerfConf PERF_CONF;
   private final String REPORT_DIR;
-  private final String WEB_RESOURCE_DIR;
+  private final String WEB_FRAME_FILE_NAME;
 
   private StringBuffer mHtmlContent;
   private int mReadFailed = 0;
@@ -45,10 +47,10 @@ public class TachyonPerfCollector {
   private List<Float[]> mReadThroughput;
   private List<Float[]> mWriteThroughput;
 
-  public TachyonPerfCollector(String reportDir, String webResourceDir) {
+  public TachyonPerfHtmlReport(String reportDir, String webFrameFileName) {
     PERF_CONF = PerfConf.get();
     REPORT_DIR = reportDir;
-    WEB_RESOURCE_DIR = webResourceDir;
+    WEB_FRAME_FILE_NAME = webFrameFileName;
     mHtmlContent = new StringBuffer();
     try {
       initialWebResource();
@@ -60,7 +62,7 @@ public class TachyonPerfCollector {
   }
 
   private void initialWebResource() throws IOException {
-    File htmlFrameFile = new File(WEB_RESOURCE_DIR + "/frame.html");
+    File htmlFrameFile = new File(WEB_FRAME_FILE_NAME);
     BufferedReader frameInput = new BufferedReader(new FileReader(htmlFrameFile));
     String line = frameInput.readLine();
     while (line != null) {
@@ -77,7 +79,7 @@ public class TachyonPerfCollector {
     mReadThroughput = new ArrayList<Float[]>();
     mWriteThroughput = new ArrayList<Float[]>();
 
-    File reportFileDir = new File(REPORT_DIR + "/nodes");
+    File reportFileDir = new File(REPORT_DIR + "/node-reports");
     if (!reportFileDir.isDirectory()) {
       System.err.println("Failed to collect data. Make sure run both write and read tests.");
       return false;
@@ -85,8 +87,8 @@ public class TachyonPerfCollector {
     File[] reportFiles = reportFileDir.listFiles();
     Set<String> nodes = new HashSet<String>();
     for (File reportFile : reportFiles) {
-      String[] parts = reportFile.getName().split("_");
-      nodes.add(parts[3]);
+      String[] parts = reportFile.getName().split("-");
+      nodes.add(parts[parts.length - 1]);
     }
     if (nodes.size() == 0) {
       System.err.println("Failed to collect data. Make sure run both write and read tests.");
@@ -95,11 +97,15 @@ public class TachyonPerfCollector {
 
     try {
       for (String node : nodes) {
-        File readReportFile = new File(REPORT_DIR + "/nodes/node_report_Read_" + node);
-        File writeReportFile = new File(REPORT_DIR + "/nodes/node_report_Write_" + node);
+        File readReportFile =
+            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX
+                + "-" + TaskType.Read.toString() + "-" + node);
+        File writeReportFile =
+            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX
+                + "-" + TaskType.Write.toString() + "-" + node);
         mNodes.add(node);
-        loadSingleReportFile(readReportFile, true);
-        loadSingleReportFile(writeReportFile, false);
+        loadSingleReadTaskReport(readReportFile);
+        loadSingleWriteTaskReport(writeReportFile);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -109,58 +115,46 @@ public class TachyonPerfCollector {
     return true;
   }
 
-  private void loadSingleReportFile(File reportFile, boolean isReadReport) throws IOException {
-    BufferedReader reportInput = new BufferedReader(new FileReader(reportFile));
-    boolean success = Boolean.parseBoolean(reportInput.readLine());
-    if (!success) {
-      if (isReadReport) {
-        mReadFailed ++;
-      } else {
-        mWriteFailed ++;
-      }
+  private void loadSingleReadTaskReport(File readTaskReportFile) throws IOException {
+    RWTaskReport readTaskReport = RWTaskReport.loadFromFile(readTaskReportFile);
+    mReadType = readTaskReport.getRWType();
+    if (readTaskReport.getStartTimeMs() < mReadStartTimeMs) {
+      mReadStartTimeMs = readTaskReport.getStartTimeMs();
     }
+    if (!readTaskReport.getSuccess()) {
+      mReadFailed ++;
+      return;
+    }
+    long[] bytes = readTaskReport.getSuccessBytes();
+    long[] timeMs = readTaskReport.getThreadTimeMs();
+    Float[] throughput = new Float[bytes.length];
+    for (int i = 0; i < bytes.length; i ++) {
+      // now throughput is in MB/s
+      throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
+    }
+    mReadThroughput.add(throughput);
+  }
 
-    int cores = Integer.parseInt(reportInput.readLine());
-    if (!isReadReport) {
-      mAvaliableCores.add(cores);
+  private void loadSingleWriteTaskReport(File writeTaskReportFile) throws IOException {
+    RWTaskReport writeTaskReport = RWTaskReport.loadFromFile(writeTaskReportFile);
+    mAvaliableCores.add(writeTaskReport.getCores());
+    mWorkerMemory.add(writeTaskReport.getTachyonWorkerBytes());
+    mWriteType = writeTaskReport.getRWType();
+    if (writeTaskReport.getStartTimeMs() < mWriteStartTimeMs) {
+      mWriteStartTimeMs = writeTaskReport.getStartTimeMs();
     }
-
-    long memoryBytes = Long.parseLong(reportInput.readLine());
-    if (!isReadReport) {
-      mWorkerMemory.add(memoryBytes);
+    if (!writeTaskReport.getSuccess()) {
+      mWriteFailed ++;
+      return;
     }
-
-    if (isReadReport) {
-      mReadType = reportInput.readLine();
-    } else {
-      mWriteType = reportInput.readLine();
+    long[] bytes = writeTaskReport.getSuccessBytes();
+    long[] timeMs = writeTaskReport.getThreadTimeMs();
+    Float[] throughput = new Float[bytes.length];
+    for (int i = 0; i < bytes.length; i ++) {
+      // now throughput is in MB/s
+      throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
     }
-
-    long startTime = Long.parseLong(reportInput.readLine());
-    if (isReadReport) {
-      if (startTime < mReadStartTimeMs) {
-        mReadStartTimeMs = startTime;
-      }
-    } else {
-      if (startTime < mWriteStartTimeMs) {
-        mWriteStartTimeMs = startTime;
-      }
-    }
-
-    int threadNum = Integer.parseInt(reportInput.readLine());
-    Float[] throughput = new Float[threadNum];
-    for (int i = 0; i < threadNum; i ++) {
-      long bytes = Long.parseLong(reportInput.readLine());
-      long time = Long.parseLong(reportInput.readLine());
-      throughput[i] = bytes / 1024.0f / 1024.0f / (time / 1000.0f);
-    }
-    if (isReadReport) {
-      mReadThroughput.add(throughput);
-    } else {
-      mWriteThroughput.add(throughput);
-    }
-
-    reportInput.close();
+    mWriteThroughput.add(throughput);
   }
 
   public void generateHtmlReport() {
@@ -186,7 +180,7 @@ public class TachyonPerfCollector {
       nodesThroughput = generateNodesThroughput();
       throughputData = generateThroughputData();
     }
-    File htmlReportFile = new File(REPORT_DIR + "/webreport/report.html");
+    File htmlReportFile = new File(REPORT_DIR + "/report.html");
     try {
       FileOutputStream htmlOutput = new FileOutputStream(htmlReportFile);
       String finalReport =
@@ -195,6 +189,7 @@ public class TachyonPerfCollector {
               nodesThroughput).replace("$$THROUGHPUT_DATA", throughputData);
       htmlOutput.write(finalReport.getBytes());
       htmlOutput.close();
+      System.out.println("Html Report generated at " + REPORT_DIR + "/report.html");
     } catch (IOException e) {
       System.err.println("Failed to write report data.");
       e.printStackTrace();

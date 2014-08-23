@@ -18,9 +18,6 @@ TACHYON_PERF_LIBEXEC_DIR=${TACHYON_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
 
 NODELIST=$TACHYON_PERF_CONF_DIR/slaves
 
-export TACHYON_PERF_OUT_NODES_DIR=$TACHYON_PERF_OUT_DIR/nodes
-mkdir -p $TACHYON_PERF_OUT_NODES_DIR
-
 for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
   echo -n "Abort test on $slave... "
   ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-abort.sh 2>&1

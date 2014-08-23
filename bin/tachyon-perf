@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
 function printUsage {
-  echo "Usage: tachyon-perf <Read|Write> <READTYPE|WRITETYPE>"
-  echo "where READTYPE is one of:"
+  echo "Usage: tachyon-perf <TaskType> [args...]"
+  echo "now TaskType is one of:"
+  echo -e "  Read, Write"
+  echo "for Read Task, the args should be one of:"
   echo -e "  CACHE, NO_CACHE"
-  echo "and WRITETYPE is one of:"
+  echo "for Write Task, the args should be one of:"
   echo -e "  MUST_CACHE, TRY_CACHE, CACHE_THROUGH, THROUGH, ASYNC_THROUGH"
 }
 
-# if less than 2 args specified, show usage
-if [ $# -le 1 ]; then
+# if less than 1 args specified, show usage
+if [ $# -le 0 ]; then
   printUsage
   exit 1
 fi
@@ -27,11 +29,11 @@ SLAVES=`cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`
 for slave in $SLAVES; do
   echo -n "Connection to $slave... "
   scp $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh $slave:$TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh
-  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $nodeid $1 $2 2>&1
+  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $slave $nodeid $* 2>&1
   sleep 0.02
   nodeid=`expr $nodeid + 1`
 done
 
 wait
 
-$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_STATUS_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.TachyonPerfSupervision $1 $2 $nodeid $SLAVES
+$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_STATUS_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.tools.TachyonPerfSupervision $nodeid $SLAVES $*

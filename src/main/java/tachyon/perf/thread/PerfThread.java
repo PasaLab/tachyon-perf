@@ -12,13 +12,10 @@ public abstract class PerfThread implements Runnable {
 
   public final int ID;
 
-  protected String mTfsAddress;
   protected ThreadReport mThreadReport;
 
-  protected PerfThread(int id, String tfsAddress) {
+  protected PerfThread(int id) {
     ID = id;
-    mTfsAddress = tfsAddress;
-    mThreadReport = new ThreadReport();
   }
 
   public ThreadReport getReport() {
