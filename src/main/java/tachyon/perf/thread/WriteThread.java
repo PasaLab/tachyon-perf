@@ -8,24 +8,25 @@ import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
 import tachyon.client.WriteType;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 
 public class WriteThread extends PerfThread {
-  private static final int DEFALUT_WRITE_GRAIN = 4194304;// 4MB
-
   private byte[] mContent;
   private long mFileLength;
   private String mTfsAddress;
   private List<String> mWriteFileList;
+  private int mWriteGrainBytes;
   private WriteType mWriteType;
 
   public WriteThread(int id, List<String> writeFileList, WriteType writeType) {
     super(id);
     mThreadReport = new RWThreadReport();
 
-    mContent = new byte[DEFALUT_WRITE_GRAIN];
-    PerfConf perfConf = PerfConf.get();
-    mFileLength = perfConf.FILE_LENGTH;
-    mTfsAddress = perfConf.TFS_ADDRESS;
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    mWriteGrainBytes = perfTaskConf.WRITE_GRAIN_BYTES;
+    mContent = new byte[mWriteGrainBytes];
+    mFileLength = perfTaskConf.WRITE_FILE_LENGTH;
+    mTfsAddress = PerfConf.get().TFS_ADDRESS;
     mWriteFileList = writeFileList;
     mWriteType = writeType;
     // TODO: content initialize?
@@ -54,10 +55,10 @@ public class WriteThread extends PerfThread {
         TachyonFile file = tachyonClient.getFile(fileId);
         OutStream os = file.getOutStream(mWriteType);
         long remainLength = mFileLength;
-        while (remainLength >= DEFALUT_WRITE_GRAIN) {
+        while (remainLength >= mWriteGrainBytes) {
           os.write(mContent);
-          ((RWThreadReport) mThreadReport).addSuccessBytes(DEFALUT_WRITE_GRAIN);
-          remainLength -= DEFALUT_WRITE_GRAIN;
+          ((RWThreadReport) mThreadReport).addSuccessBytes(mWriteGrainBytes);
+          remainLength -= mWriteGrainBytes;
         }
         if (remainLength > 0) {
           os.write(mContent, 0, (int) remainLength);

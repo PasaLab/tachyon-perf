@@ -20,18 +20,11 @@ public class PerfConf extends Utils {
   }
 
   public final String TACHYON_PERF_HOME;
-  public final boolean STATUS_DEBUG;
 
-  public final long FILE_LENGTH;
   public final String OUT_FOLDER;
-  public final int READ_FILES_PER_THREAD;
-  public final boolean READ_IDENTICAL;
-  public final String READ_MODE;
-  public final int READ_THREADS_NUM;
+  public final boolean STATUS_DEBUG;
   public final String TFS_ADDRESS;
   public final String TFS_DIR;
-  public final int WRITE_FILES_PER_THREAD;
-  public final int WRITE_THREADS_NUM;
 
   private PerfConf() {
     if (System.getProperty("tachyon.perf.home") == null) {
@@ -43,17 +36,8 @@ public class PerfConf extends Utils {
     }
     TACHYON_PERF_HOME = getProperty("tachyon.perf.home", "/tmp/tachyon_perf_default_home");
     STATUS_DEBUG = getBooleanProperty("tachyon.perf.status.debug", false);
-
     TFS_ADDRESS = getProperty("tachyon.perf.tfs.address", "tachyon://localhost:19998");
     TFS_DIR = getProperty("tachyon.perf.tfs.dir", "/tachyon-perf-workspace");
-    READ_THREADS_NUM = getIntProperty("tachyon.perf.read.threads.num", 4);
-    WRITE_THREADS_NUM = getIntProperty("tachyon.perf.write.threads.num", 4);
-    FILE_LENGTH =
-        getLongProperty("tachyon.perf.write.file.length.bytes", 128 * tachyon.Constants.MB);
-    READ_FILES_PER_THREAD = getIntProperty("tachyon.perf.read.files.per.thread", 10);
-    READ_IDENTICAL = getBooleanProperty("tachyon.perf.read.identical", false);
-    READ_MODE = getProperty("tachyon.perf.read.mode", "RANDOM");
-    WRITE_FILES_PER_THREAD = getIntProperty("tachyon.perf.write.files.per.thread", 10);
     OUT_FOLDER = getProperty("tachyon.perf.out.dir", TACHYON_PERF_HOME + "/result");
   }
 }

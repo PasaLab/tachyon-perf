@@ -10,6 +10,7 @@ import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.ReadThread;
 
@@ -56,6 +57,7 @@ public class ReadTask extends PerfTask {
   @Override
   public boolean setup() {
     PerfConf perfConf = PerfConf.get();
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
       if (tfs.exist(mTfsFailedPath)) {
@@ -84,11 +86,11 @@ public class ReadTask extends PerfTask {
       }
       LOG.info("The read dir " + readDir + ", contains " + readFileCandidates.size() + " files");
 
-      ReadMode readMode = ReadMode.getReadMode(perfConf.READ_MODE);
-      int threadsNum = perfConf.READ_THREADS_NUM;
+      ReadMode readMode = ReadMode.getReadMode(perfTaskConf.READ_MODE);
+      int threadsNum = perfTaskConf.READ_THREADS_NUM;
       List<Integer>[] readFileList =
-          ListGenerator.generateReadFiles(threadsNum, perfConf.READ_FILES_PER_THREAD,
-              readFileCandidates, readMode, perfConf.READ_IDENTICAL);
+          ListGenerator.generateReadFiles(threadsNum, perfTaskConf.READ_FILES_PER_THREAD,
+              readFileCandidates, readMode, perfTaskConf.READ_IDENTICAL);
       mReadThreads = new PerfThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
         mReadThreads[i] = new ReadThread(i, readFileList[i], READ_TYPE);

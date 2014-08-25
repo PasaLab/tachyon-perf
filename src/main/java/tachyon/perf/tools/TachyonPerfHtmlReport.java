@@ -12,6 +12,7 @@ import java.util.Set;
 
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.task.RWTaskReport;
 import tachyon.perf.task.TaskType;
 
@@ -29,7 +30,6 @@ public class TachyonPerfHtmlReport {
     perfCollector.generateHtmlReport();
   }
 
-  private final PerfConf PERF_CONF;
   private final String REPORT_DIR;
   private final String WEB_FRAME_FILE_NAME;
 
@@ -48,7 +48,6 @@ public class TachyonPerfHtmlReport {
   private List<Float[]> mWriteThroughput;
 
   public TachyonPerfHtmlReport(String reportDir, String webFrameFileName) {
-    PERF_CONF = PerfConf.get();
     REPORT_DIR = reportDir;
     WEB_FRAME_FILE_NAME = webFrameFileName;
     mHtmlContent = new StringBuffer();
@@ -184,9 +183,10 @@ public class TachyonPerfHtmlReport {
     try {
       FileOutputStream htmlOutput = new FileOutputStream(htmlReportFile);
       String finalReport =
-          mHtmlContent.toString().replace("$$TOTAL_STATE", totalState).replace("$$NODES_INFO",
-              nodesInfo).replace("$$PERF_CONF", perfConf).replace("$$NODES_THROUGHPUT",
-              nodesThroughput).replace("$$THROUGHPUT_DATA", throughputData);
+          mHtmlContent.toString().replace("$$TOTAL_STATE", totalState)
+              .replace("$$NODES_INFO", nodesInfo).replace("$$PERF_CONF", perfConf)
+              .replace("$$NODES_THROUGHPUT", nodesThroughput)
+              .replace("$$THROUGHPUT_DATA", throughputData);
       htmlOutput.write(finalReport.getBytes());
       htmlOutput.close();
       System.out.println("Html Report generated at " + REPORT_DIR + "/report.html");
@@ -201,37 +201,42 @@ public class TachyonPerfHtmlReport {
     int totalCores = 0;
     long totalBytes = 0;
     for (int i = 0; i < mNodes.size(); i ++) {
-      sbNodesInfo.append("<tr>\n").append("\t<td>" + mNodes.get(i) + "</td>\n").append(
-          "\t<td>" + mAvaliableCores.get(i) + "</td>\n").append(
-          "\t<td>" + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "</td>\n").append(
-          "</tr>\n");
+      sbNodesInfo.append("<tr>\n").append("\t<td>" + mNodes.get(i) + "</td>\n")
+          .append("\t<td>" + mAvaliableCores.get(i) + "</td>\n")
+          .append("\t<td>" + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "</td>\n")
+          .append("</tr>\n");
       totalCores += mAvaliableCores.get(i);
       totalBytes += mWorkerMemory.get(i);
     }
-    sbNodesInfo.append("<tr>\n").append("\t<td><b>Total</b></td>\n").append(
-        "\t<td>" + totalCores + "</td>\n").append(
-        "\t<td>" + PerfConstants.parseSizeByte(totalBytes) + "</td>\n").append("</tr>");
+    sbNodesInfo.append("<tr>\n").append("\t<td><b>Total</b></td>\n")
+        .append("\t<td>" + totalCores + "</td>\n")
+        .append("\t<td>" + PerfConstants.parseSizeByte(totalBytes) + "</td>\n").append("</tr>");
     return sbNodesInfo.toString();
   }
 
   private String generatePerfConf() {
     StringBuffer sbPerfConf = new StringBuffer("\n");
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.tfs.address" + "</td>\n\t<td>"
-        + PERF_CONF.TFS_ADDRESS + "</td>\n</tr>\n");
+        + PerfConf.get().TFS_ADDRESS + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.files.per.thread" + "</td>\n\t<td>"
-        + PERF_CONF.READ_FILES_PER_THREAD + "</td>\n</tr>\n");
+        + perfTaskConf.READ_FILES_PER_THREAD + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.grain.bytes" + "</td>\n\t<td>"
+        + perfTaskConf.READ_GRAIN_BYTES + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.identical" + "</td>\n\t<td>"
-        + PERF_CONF.READ_IDENTICAL + "</td>\n</tr>\n");
+        + perfTaskConf.READ_IDENTICAL + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.mode" + "</td>\n\t<td>"
-        + PERF_CONF.READ_MODE + "</td>\n</tr>\n");
+        + perfTaskConf.READ_MODE + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.threads.num" + "</td>\n\t<td>"
-        + PERF_CONF.READ_THREADS_NUM + "</td>\n</tr>\n");
+        + perfTaskConf.READ_THREADS_NUM + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.file.length.bytes" + "</td>\n\t<td>"
-        + PERF_CONF.FILE_LENGTH + "</td>\n</tr>\n");
+        + perfTaskConf.WRITE_FILE_LENGTH + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.files.per.thread" + "</td>\n\t<td>"
-        + PERF_CONF.WRITE_FILES_PER_THREAD + "</td>\n</tr>\n");
+        + perfTaskConf.WRITE_FILES_PER_THREAD + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.grain.bytes" + "</td>\n\t<td>"
+        + perfTaskConf.WRITE_GRAIN_BYTES + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.threads.num" + "</td>\n\t<td>"
-        + PERF_CONF.WRITE_THREADS_NUM + "</td>\n</tr>\n");
+        + perfTaskConf.WRITE_THREADS_NUM + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "READ_TYPE" + "</td>\n\t<td>" + mReadType
         + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "WRITE_TYPE" + "</td>\n\t<td>" + mWriteType
@@ -242,10 +247,10 @@ public class TachyonPerfHtmlReport {
   private String generateNodesThroughput() {
     StringBuffer sbNodesThroughput = new StringBuffer("\n");
     for (int i = 0; i < mNodes.size(); i ++) {
-      sbNodesThroughput.append("<tr>\n").append(
-          "\t<th>" + mNodes.get(i) + " <br>(each row represents a thread)</th>\n").append(
-          "\t<th id=\"svg" + (2 * i) + "\"></th>\n").append(
-          "\t<th id=\"svg" + (2 * i + 1) + "\"></th>\n").append("</tr>\n");
+      sbNodesThroughput.append("<tr>\n")
+          .append("\t<th>" + mNodes.get(i) + " <br>(each row represents a thread)</th>\n")
+          .append("\t<th id=\"svg" + (2 * i) + "\"></th>\n")
+          .append("\t<th id=\"svg" + (2 * i + 1) + "\"></th>\n").append("</tr>\n");
     }
     return sbNodesThroughput.toString();
   }

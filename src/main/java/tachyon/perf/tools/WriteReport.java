@@ -9,6 +9,7 @@ import java.util.List;
 
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.task.RWTaskReport;
 import tachyon.perf.task.TaskType;
 
@@ -77,12 +78,14 @@ public class WriteReport extends PerfReport {
 
   private String generateWriteConf() {
     StringBuffer sbWriteConf = new StringBuffer();
-    PerfConf perfConf = PerfConf.get();
-    sbWriteConf.append("tachyon.perf.tfs.address\t" + perfConf.TFS_ADDRESS + "\n");
-    sbWriteConf.append("tachyon.perf.write.file.length.bytes\t" + perfConf.FILE_LENGTH + "\n");
-    sbWriteConf.append("tachyon.perf.write.files.per.thread\t" + perfConf.WRITE_FILES_PER_THREAD
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    sbWriteConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
+    sbWriteConf.append("tachyon.perf.write.file.length.bytes\t" + perfTaskConf.WRITE_FILE_LENGTH
         + "\n");
-    sbWriteConf.append("tachyon.perf.write.threads.num\t" + perfConf.WRITE_THREADS_NUM + "\n");
+    sbWriteConf.append("tachyon.perf.write.files.per.thread\t"
+        + perfTaskConf.WRITE_FILES_PER_THREAD + "\n");
+    sbWriteConf.append("tachyon.perf.write.grain.bytes\t" + perfTaskConf.WRITE_GRAIN_BYTES);
+    sbWriteConf.append("tachyon.perf.write.threads.num\t" + perfTaskConf.WRITE_THREADS_NUM + "\n");
     sbWriteConf.append("WRITE_TYPE\t" + mWriteType + "\n");
     return sbWriteConf.toString();
   }

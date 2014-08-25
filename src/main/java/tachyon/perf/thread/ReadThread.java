@@ -8,12 +8,12 @@ import tachyon.client.ReadType;
 import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 
 public class ReadThread extends PerfThread {
-  private static final int DEFALUT_READ_GRAIN = 4194304;// 4MB
-
   private byte[] mContent;
   private List<Integer> mReadFileList;
+  private int mReadGrainBytes;
   private ReadType mReadType;
   private String mTfsAddress;
 
@@ -21,7 +21,8 @@ public class ReadThread extends PerfThread {
     super(id);
     mThreadReport = new RWThreadReport();
 
-    mContent = new byte[DEFALUT_READ_GRAIN];
+    mReadGrainBytes = PerfTaskConf.get().READ_GRAIN_BYTES;
+    mContent = new byte[mReadGrainBytes];
     mReadFileList = readFileList;
     mReadType = readType;
     mTfsAddress = PerfConf.get().TFS_ADDRESS;

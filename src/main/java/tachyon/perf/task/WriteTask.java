@@ -10,6 +10,7 @@ import tachyon.client.WriteType;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.WriteThread;
 
@@ -56,6 +57,7 @@ public class WriteTask extends PerfTask {
   @Override
   public boolean setup() {
     PerfConf perfConf = PerfConf.get();
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
       String writeDir = perfConf.TFS_DIR + "/" + ID;
@@ -66,9 +68,10 @@ public class WriteTask extends PerfTask {
       tfs.mkdir(writeDir);
       LOG.info("Create the write dir " + writeDir);
 
-      int threadsNum = perfConf.WRITE_THREADS_NUM;
+      int threadsNum = perfTaskConf.WRITE_THREADS_NUM;
       List<String>[] writeFileList =
-          ListGenerator.generateWriteFiles(threadsNum, perfConf.WRITE_FILES_PER_THREAD, writeDir);
+          ListGenerator.generateWriteFiles(threadsNum, perfTaskConf.WRITE_FILES_PER_THREAD,
+              writeDir);
       mWriteThreads = new PerfThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
         mWriteThreads[i] = new WriteThread(i, writeFileList[i], WRITE_TYPE);

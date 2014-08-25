@@ -9,6 +9,7 @@ import java.util.List;
 
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.task.RWTaskReport;
 import tachyon.perf.task.TaskType;
 
@@ -77,13 +78,14 @@ public class ReadReport extends PerfReport {
 
   private String generateReadConf() {
     StringBuffer sbReadConf = new StringBuffer();
-    PerfConf perfConf = PerfConf.get();
-    sbReadConf.append("tachyon.perf.tfs.address\t" + perfConf.TFS_ADDRESS + "\n");
-    sbReadConf.append("tachyon.perf.read.files.per.thread\t" + perfConf.READ_FILES_PER_THREAD
+    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    sbReadConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
+    sbReadConf.append("tachyon.perf.read.files.per.thread\t" + perfTaskConf.READ_FILES_PER_THREAD
         + "\n");
-    sbReadConf.append("tachyon.perf.read.identical\t" + perfConf.READ_IDENTICAL + "\n");
-    sbReadConf.append("tachyon.perf.read.mode\t" + perfConf.READ_MODE + "\n");
-    sbReadConf.append("tachyon.perf.read.threads.num\t" + perfConf.READ_THREADS_NUM + "\n");
+    sbReadConf.append("tachyon.perf.read.grain.bytes\t" + perfTaskConf.READ_GRAIN_BYTES);
+    sbReadConf.append("tachyon.perf.read.identical\t" + perfTaskConf.READ_IDENTICAL + "\n");
+    sbReadConf.append("tachyon.perf.read.mode\t" + perfTaskConf.READ_MODE + "\n");
+    sbReadConf.append("tachyon.perf.read.threads.num\t" + perfTaskConf.READ_THREADS_NUM + "\n");
     sbReadConf.append("READ_TYPE\t" + mReadType + "\n");
     return sbReadConf.toString();
   }

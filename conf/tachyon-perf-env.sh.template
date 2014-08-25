@@ -31,12 +31,14 @@ export TACHYON_CONF_DIR_SH="/tachyonhome/conf/tachyon-env.sh"
 TACHYON_PERF_WRITE_THREADS=4
 TACHYON_PERF_WRITE_FILES_PER_THREAD=10
 TACHYON_PERF_WRITE_FILE_LENGTH_BYTES=134217728
+TACHYON_PERF_WRITE_GRAIN_BYTES=4194304
 
 #the Read Test threads, files and mode. The mode should be RANDOM or SEQUENCE
 TACHYON_PERF_READ_THREADS=4
 TACHYON_PERF_READ_FILES_PER_THREAD=10
 TACHYON_PERF_READ_IDENTICAL="false"
 TACHYON_PERF_READ_MODE="RANDOM"
+TACHYON_PERF_READ_GRAIN_BYTES=4194304
 
 #if true, the TachyonPerfSupervision will print the names of those running and remaining nodes
 TACHYON_PERF_STATUS_DEBUG="false"
@@ -49,11 +51,13 @@ export TACHYON_PERF_JAVA_OPTS+="
   -Dtachyon.perf.tfs.address=$TACHYON_PERF_TFS_ADRESS
   -Dtachyon.perf.tfs.dir=$TACHYON_PERF_WORKSPACE
   -Dtachyon.perf.read.files.per.thread=$TACHYON_PERF_READ_FILES_PER_THREAD
+  -Dtachyon.perf.read.grain.bytes=$TACHYON_PERF_READ_GRAIN_BYTES
   -Dtachyon.perf.read.identical=$TACHYON_PERF_READ_IDENTICAL
   -Dtachyon.perf.read.mode=$TACHYON_PERF_READ_MODE
   -Dtachyon.perf.read.threads.num=$TACHYON_PERF_READ_THREADS
   -Dtachyon.perf.write.file.length.bytes=$TACHYON_PERF_WRITE_FILE_LENGTH_BYTES
   -Dtachyon.perf.write.files.per.thread=$TACHYON_PERF_WRITE_FILES_PER_THREAD
+  -Dtachyon.perf.write.grain.bytes=$TACHYON_PERF_WRITE_GRAIN_BYTES
   -Dtachyon.perf.write.threads.num=$TACHYON_PERF_WRITE_THREADS
   -Dtachyon.perf.out.dir=$TACHYON_PERF_OUT_DIR
 "
