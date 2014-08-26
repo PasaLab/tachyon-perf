@@ -49,7 +49,7 @@ public class ReadThread extends PerfThread {
           ((RWThreadReport) mThreadReport).addSuccessBytes(readLen);
         }
         is.close();
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOG.error("Read thread " + ID + "failed to read file, FileId: " + fileId, e);
         mThreadReport.setSuccess(false);
         break;

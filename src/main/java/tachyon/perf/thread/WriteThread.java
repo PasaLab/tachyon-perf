@@ -65,7 +65,7 @@ public class WriteThread extends PerfThread {
           ((RWThreadReport) mThreadReport).addSuccessBytes(remainLength);
         }
         os.close();
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOG.error("Write thread " + ID + "failed to write file " + fileName, e);
         mThreadReport.setSuccess(false);
         break;

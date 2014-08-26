@@ -116,6 +116,13 @@ public class TachyonPerfSupervision {
       System.exit(-1);
     }
 
+    if (!(sNodeTasks[0] instanceof Supervisible)) {
+      LOG.warn("TaskType " + taskType.toString() + " doesn't support Supervisible.");
+      System.out.println("TaskType " + taskType.toString() + " doesn't support Supervisible.");
+      System.out.println("TachyonPerfSupervision Exit.");
+      System.exit(0);
+    }
+
     PerfConf perfConf = PerfConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
@@ -123,7 +130,7 @@ public class TachyonPerfSupervision {
         Thread.sleep(2000);
         for (int i = 0; i < sNodeStates.length; i ++) {
           if (sNodeStates[i] == NODE_STATE_INITIAL) {
-            String readyPath = sNodeTasks[i].getTfsReadyPath();
+            String readyPath = ((Supervisible) sNodeTasks[i]).getTfsReadyPath();
             if (tfs.exist(readyPath)) {
               tfs.delete(readyPath, true);
               sNodeStates[i] = NODE_STATE_RUNNING;
@@ -132,8 +139,8 @@ public class TachyonPerfSupervision {
               LOG.info(runningInfo);
             }
           } else if (sNodeStates[i] == NODE_STATE_RUNNING) {
-            String failedPath = sNodeTasks[i].getTfsFailedPath();
-            String successPath = sNodeTasks[i].getTfsSuccessPath();
+            String failedPath = ((Supervisible) sNodeTasks[i]).getTfsFailedPath();
+            String successPath = ((Supervisible) sNodeTasks[i]).getTfsSuccessPath();
             if (tfs.exist(failedPath)) {
               tfs.delete(failedPath, true);
               sNodeStates[i] = NODE_STATE_FAILED;

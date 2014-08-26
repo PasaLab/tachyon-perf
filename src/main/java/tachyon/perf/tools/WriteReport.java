@@ -7,18 +7,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.RWTaskReport;
 import tachyon.perf.task.TaskType;
+import tachyon.perf.task.WriteTaskReport;
 
 public class WriteReport extends PerfReport {
   private String mFailedNodes;
   private int mFailedTasks;
   private long mId;
   private int mNodesNum;
-  private String mWriteType;
+  private WriteType mWriteType;
 
   private List<String> mNodes;
   private List<Integer> mAvaliableCores;
@@ -41,9 +42,9 @@ public class WriteReport extends PerfReport {
     mWriteThroughput = new ArrayList<Float[]>(mNodesNum);
 
     for (File taskReportFile : taskReportFiles) {
-      RWTaskReport taskReport = RWTaskReport.loadFromFile(taskReportFile);
+      WriteTaskReport taskReport = WriteTaskReport.loadFromFile(taskReportFile);
       mNodes.add(taskReport.NODE_NAME);
-      mWriteType = taskReport.getRWType();
+      mWriteType = taskReport.getWriteType();
       mAvaliableCores.add(taskReport.getCores());
       mWorkerMemory.add(taskReport.getTachyonWorkerBytes());
       if (taskReport.getStartTimeMs() < mId) {
@@ -55,7 +56,7 @@ public class WriteReport extends PerfReport {
         mWriteThroughput.add(new Float[0]);
         continue;
       }
-      long[] bytes = taskReport.getSuccessBytes();
+      long[] bytes = taskReport.getWriteBytes();
       long[] timeMs = taskReport.getThreadTimeMs();
       Float[] throughput = new Float[bytes.length];
       for (int i = 0; i < bytes.length; i ++) {
@@ -84,9 +85,9 @@ public class WriteReport extends PerfReport {
         + "\n");
     sbWriteConf.append("tachyon.perf.write.files.per.thread\t"
         + perfTaskConf.WRITE_FILES_PER_THREAD + "\n");
-    sbWriteConf.append("tachyon.perf.write.grain.bytes\t" + perfTaskConf.WRITE_GRAIN_BYTES);
+    sbWriteConf.append("tachyon.perf.write.grain.bytes\t" + perfTaskConf.WRITE_GRAIN_BYTES + "\n");
     sbWriteConf.append("tachyon.perf.write.threads.num\t" + perfTaskConf.WRITE_THREADS_NUM + "\n");
-    sbWriteConf.append("WRITE_TYPE\t" + mWriteType + "\n");
+    sbWriteConf.append("WRITE_TYPE\t" + mWriteType.toString() + "\n");
     return sbWriteConf.toString();
   }
 

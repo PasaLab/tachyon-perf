@@ -1,6 +1,5 @@
 package tachyon.perf.task;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,59 +7,40 @@ import java.util.List;
 import tachyon.client.TachyonFS;
 import tachyon.client.WriteType;
 import tachyon.org.apache.thrift.TException;
-import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.WriteThread;
+import tachyon.perf.tools.Supervisible;
 
-public class WriteTask extends PerfTask {
+public class WriteTask extends PerfTask implements Supervisible {
   private final WriteType WRITE_TYPE;
 
   private PerfThread[] mWriteThreads;
   private List<Thread> mWriteThreadsList;
 
   protected WriteTask(String nodeName, int id, List<String> args) throws IOException {
-    super(nodeName, id, TaskType.Write);
+    super();
     if (args.size() < 1) {
       throw new IOException("Error when new WriteTask: not enough args.");
     }
     WRITE_TYPE = WriteType.getOpType(args.get(0));
-    mTaskReport = new RWTaskReport(nodeName, args.get(0));
-    PerfConf perfConf = PerfConf.get();
-    mTfsFailedPath = perfConf.TFS_DIR + "/" + ID + "/FAILED";
-    mTfsReadyPath = perfConf.TFS_DIR + "/" + ID + "/READY";
-    mTfsSuccessPath = perfConf.TFS_DIR + "/" + ID + "/SUCCESS";
   }
 
   @Override
-  public boolean generateReport() {
-    mTaskReport.setSuccess(true);
-    ((RWTaskReport) mTaskReport).setFromRWThreads(mWriteThreads);
-    mTaskReport.setFinishTimeMs(System.currentTimeMillis());
-    String outDirPath = PerfConf.get().OUT_FOLDER;
-    File outDir = new File(outDirPath);
-    if (!outDir.exists()) {
-      outDir.mkdirs();
-    }
-    String reportFileName =
-        outDirPath + "/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX + "-" + TASK_TYPE.toString();
-    try {
-      mTaskReport.writeToFile(reportFileName);
-    } catch (IOException e) {
-      LOG.error("Error when generate the write task report", e);
-      return false;
-    }
+  public boolean cleanupTask(TaskReport taskReport) {
+    taskReport.setSuccess(true);
+    ((WriteTaskReport) taskReport).setFromWriteThreads(mWriteThreads);
     return true;
   }
 
   @Override
-  public boolean setup() {
+  public boolean setupTask(TaskReport taskReport) {
     PerfConf perfConf = PerfConf.get();
     PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
-      String writeDir = perfConf.TFS_DIR + "/" + ID;
+      String writeDir = perfConf.TFS_DIR + "/" + getId();
       if (tfs.exist(writeDir)) {
         tfs.delete(writeDir, true);
         LOG.warn("The write dir " + writeDir + " already exists, delete it");
@@ -77,8 +57,6 @@ public class WriteTask extends PerfTask {
         mWriteThreads[i] = new WriteThread(i, writeFileList[i], WRITE_TYPE);
       }
       LOG.info("Create " + threadsNum + " write threads");
-
-      tfs.createFile(mTfsReadyPath);
       tfs.close();
     } catch (IOException e) {
       LOG.error("Error when setup write task", e);
@@ -90,7 +68,7 @@ public class WriteTask extends PerfTask {
   }
 
   @Override
-  public boolean start() {
+  public boolean startTask(TaskReport taskReport) {
     mWriteThreadsList = new ArrayList<Thread>(mWriteThreads.length);
     for (int i = 0; i < mWriteThreads.length; i ++) {
       Thread writeThread = new Thread(mWriteThreads[i]);
@@ -106,5 +84,20 @@ public class WriteTask extends PerfTask {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public String getTfsFailedPath() {
+    return PerfConf.get().TFS_DIR + "/" + getId() + "/FAILED";
+  }
+
+  @Override
+  public String getTfsReadyPath() {
+    return PerfConf.get().TFS_DIR + "/" + getId() + "/READY";
+  }
+
+  @Override
+  public String getTfsSuccessPath() {
+    return PerfConf.get().TFS_DIR + "/" + getId() + "/SUCCESS";
   }
 }

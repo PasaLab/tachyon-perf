@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import tachyon.client.ReadType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.RWTaskReport;
+import tachyon.perf.task.ReadTaskReport;
 import tachyon.perf.task.TaskType;
 
 public class ReadReport extends PerfReport {
@@ -18,7 +19,7 @@ public class ReadReport extends PerfReport {
   private int mFailedTasks;
   private long mId;
   private int mNodesNum;
-  private String mReadType;
+  private ReadType mReadType;
 
   private List<String> mNodes;
   private List<Integer> mAvaliableCores;
@@ -41,9 +42,9 @@ public class ReadReport extends PerfReport {
     mReadThroughput = new ArrayList<Float[]>(mNodesNum);
 
     for (File taskReportFile : taskReportFiles) {
-      RWTaskReport taskReport = RWTaskReport.loadFromFile(taskReportFile);
+      ReadTaskReport taskReport = ReadTaskReport.loadFromFile(taskReportFile);
       mNodes.add(taskReport.NODE_NAME);
-      mReadType = taskReport.getRWType();
+      mReadType = taskReport.getReadType();
       mAvaliableCores.add(taskReport.getCores());
       mWorkerMemory.add(taskReport.getTachyonWorkerBytes());
       if (taskReport.getStartTimeMs() < mId) {
@@ -55,7 +56,7 @@ public class ReadReport extends PerfReport {
         mReadThroughput.add(new Float[0]);
         continue;
       }
-      long[] bytes = taskReport.getSuccessBytes();
+      long[] bytes = taskReport.getReadBytes();
       long[] timeMs = taskReport.getThreadTimeMs();
       Float[] throughput = new Float[bytes.length];
       for (int i = 0; i < bytes.length; i ++) {
@@ -82,11 +83,11 @@ public class ReadReport extends PerfReport {
     sbReadConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
     sbReadConf.append("tachyon.perf.read.files.per.thread\t" + perfTaskConf.READ_FILES_PER_THREAD
         + "\n");
-    sbReadConf.append("tachyon.perf.read.grain.bytes\t" + perfTaskConf.READ_GRAIN_BYTES);
+    sbReadConf.append("tachyon.perf.read.grain.bytes\t" + perfTaskConf.READ_GRAIN_BYTES + "\n");
     sbReadConf.append("tachyon.perf.read.identical\t" + perfTaskConf.READ_IDENTICAL + "\n");
     sbReadConf.append("tachyon.perf.read.mode\t" + perfTaskConf.READ_MODE + "\n");
     sbReadConf.append("tachyon.perf.read.threads.num\t" + perfTaskConf.READ_THREADS_NUM + "\n");
-    sbReadConf.append("READ_TYPE\t" + mReadType + "\n");
+    sbReadConf.append("READ_TYPE\t" + mReadType.toString() + "\n");
     return sbReadConf.toString();
   }
 

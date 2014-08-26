@@ -10,11 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import tachyon.client.ReadType;
+import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.RWTaskReport;
+import tachyon.perf.task.ReadTaskReport;
 import tachyon.perf.task.TaskType;
+import tachyon.perf.task.WriteTaskReport;
 
 /**
  * This class is used to generate an html report
@@ -36,10 +39,10 @@ public class TachyonPerfHtmlReport {
   private StringBuffer mHtmlContent;
   private int mReadFailed = 0;
   private long mReadStartTimeMs = Long.MAX_VALUE;
-  private String mReadType;
+  private ReadType mReadType;
   private int mWriteFailed = 0;
   private long mWriteStartTimeMs = Long.MAX_VALUE;
-  private String mWriteType;
+  private WriteType mWriteType;
 
   private List<String> mNodes;
   private List<Integer> mAvaliableCores;
@@ -115,8 +118,8 @@ public class TachyonPerfHtmlReport {
   }
 
   private void loadSingleReadTaskReport(File readTaskReportFile) throws IOException {
-    RWTaskReport readTaskReport = RWTaskReport.loadFromFile(readTaskReportFile);
-    mReadType = readTaskReport.getRWType();
+    ReadTaskReport readTaskReport = ReadTaskReport.loadFromFile(readTaskReportFile);
+    mReadType = readTaskReport.getReadType();
     if (readTaskReport.getStartTimeMs() < mReadStartTimeMs) {
       mReadStartTimeMs = readTaskReport.getStartTimeMs();
     }
@@ -124,7 +127,7 @@ public class TachyonPerfHtmlReport {
       mReadFailed ++;
       return;
     }
-    long[] bytes = readTaskReport.getSuccessBytes();
+    long[] bytes = readTaskReport.getReadBytes();
     long[] timeMs = readTaskReport.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
     for (int i = 0; i < bytes.length; i ++) {
@@ -135,10 +138,10 @@ public class TachyonPerfHtmlReport {
   }
 
   private void loadSingleWriteTaskReport(File writeTaskReportFile) throws IOException {
-    RWTaskReport writeTaskReport = RWTaskReport.loadFromFile(writeTaskReportFile);
+    WriteTaskReport writeTaskReport = WriteTaskReport.loadFromFile(writeTaskReportFile);
     mAvaliableCores.add(writeTaskReport.getCores());
     mWorkerMemory.add(writeTaskReport.getTachyonWorkerBytes());
-    mWriteType = writeTaskReport.getRWType();
+    mWriteType = writeTaskReport.getWriteType();
     if (writeTaskReport.getStartTimeMs() < mWriteStartTimeMs) {
       mWriteStartTimeMs = writeTaskReport.getStartTimeMs();
     }
@@ -146,7 +149,7 @@ public class TachyonPerfHtmlReport {
       mWriteFailed ++;
       return;
     }
-    long[] bytes = writeTaskReport.getSuccessBytes();
+    long[] bytes = writeTaskReport.getWriteBytes();
     long[] timeMs = writeTaskReport.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
     for (int i = 0; i < bytes.length; i ++) {
@@ -237,9 +240,9 @@ public class TachyonPerfHtmlReport {
         + perfTaskConf.WRITE_GRAIN_BYTES + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.threads.num" + "</td>\n\t<td>"
         + perfTaskConf.WRITE_THREADS_NUM + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "READ_TYPE" + "</td>\n\t<td>" + mReadType
+    sbPerfConf.append("<tr>\n\t<td>" + "READ_TYPE" + "</td>\n\t<td>" + mReadType.toString()
         + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "WRITE_TYPE" + "</td>\n\t<td>" + mWriteType
+    sbPerfConf.append("<tr>\n\t<td>" + "WRITE_TYPE" + "</td>\n\t<td>" + mWriteType.toString()
         + "</td>\n</tr>\n");
     return sbPerfConf.toString();
   }

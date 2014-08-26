@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import tachyon.perf.task.PerfTask;
+import tachyon.perf.task.TaskReport;
 import tachyon.perf.task.TaskType;
 
 /**
@@ -39,20 +40,17 @@ public class TachyonPerf {
 
     try {
       PerfTask task = PerfTask.getPerfTask(args[0], nodeId, taskType, remainArgs);
-      if (!task.setup()) {
+      TaskReport taskReport = TaskReport.getTaskReport(args[0], nodeId, taskType, remainArgs);
+      if (!task.setup(taskReport)) {
         LOG.error("Failed to setup task");
         System.exit(-1);
       }
-      if (!task.start()) {
+      if (!task.start(taskReport)) {
         LOG.error("Failed to start task");
         System.exit(-1);
       }
-      if (!task.generateReport()) {
-        LOG.error("Failed to generate the task report");
-        System.exit(-1);
-      }
-      if (!task.end()) {
-        LOG.error("Failed to end the task");
+      if (!task.cleanup(taskReport)) {
+        LOG.error("Failed to cleanup the task");
         System.exit(-1);
       }
     } catch (IOException e) {
