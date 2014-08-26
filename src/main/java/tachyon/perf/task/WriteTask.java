@@ -31,14 +31,14 @@ public class WriteTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  public boolean cleanupTask(TaskReport taskReport) {
+  protected boolean cleanupTask(TaskReport taskReport) {
     taskReport.setSuccess(true);
     ((WriteTaskReport) taskReport).setFromWriteThreads(mWriteThreads);
     return true;
   }
 
   @Override
-  public boolean setupTask(TaskReport taskReport) {
+  protected boolean setupTask(TaskReport taskReport) {
     PerfConf perfConf = PerfConf.get();
     PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
@@ -71,7 +71,7 @@ public class WriteTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  public boolean startTask(TaskReport taskReport) {
+  protected boolean startTask(TaskReport taskReport) {
     mWriteThreadsList = new ArrayList<Thread>(mWriteThreads.length);
     for (int i = 0; i < mWriteThreads.length; i ++) {
       Thread writeThread = new Thread(mWriteThreads[i]);
