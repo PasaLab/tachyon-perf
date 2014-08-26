@@ -11,6 +11,9 @@ import tachyon.client.ReadType;
 import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.RWThreadReport;
 
+/**
+ * Record the statistics of read test.
+ */
 public class ReadTaskReport extends TaskReport {
   public static ReadTaskReport loadFromFile(File reportFile) throws IOException {
     BufferedReader fin = new BufferedReader(new FileReader(reportFile));

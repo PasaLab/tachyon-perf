@@ -6,6 +6,9 @@ import java.io.IOException;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.task.TaskType;
 
+/**
+ * Generate a total report for the specified test.
+ */
 public class TachyonPerfCollector {
   public static void main(String[] args) {
     if (args.length != 2) {

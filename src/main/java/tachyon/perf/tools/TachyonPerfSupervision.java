@@ -13,6 +13,9 @@ import tachyon.perf.conf.PerfConf;
 import tachyon.perf.task.PerfTask;
 import tachyon.perf.task.TaskType;
 
+/**
+ * Monitor the node states.
+ */
 public class TachyonPerfSupervision {
   private static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
   private static final int NODE_STATE_FAILED = -1;

@@ -13,6 +13,9 @@ import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.WriteThread;
 import tachyon.perf.tools.Supervisible;
 
+/**
+ * The write test task. It will write files to Tachyon in multi-thread.
+ */
 public class WriteTask extends PerfTask implements Supervisible {
   private final WriteType WRITE_TYPE;
 

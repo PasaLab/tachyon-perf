@@ -1,5 +1,9 @@
 package tachyon.perf.thread;
 
+/**
+ * The base thread statistics class for Tachyon-Perf. Now it's used for read thread and write
+ * thread.
+ */
 public abstract class ThreadReport {
   protected long mFinishTimeMs;
   protected long mStartTimeMs;

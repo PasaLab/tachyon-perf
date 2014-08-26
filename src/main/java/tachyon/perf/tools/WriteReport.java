@@ -14,6 +14,9 @@ import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.task.TaskType;
 import tachyon.perf.task.WriteTaskReport;
 
+/**
+ * Total report for write test.
+ */
 public class WriteReport extends PerfReport {
   private String mFailedNodes;
   private int mFailedTasks;

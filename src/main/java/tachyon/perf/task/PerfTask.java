@@ -12,6 +12,10 @@ import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.tools.Supervisible;
 
+/**
+ * The abstract class for all the test tasks. For new test, you should create a new class which
+ * extends this.
+ */
 public abstract class PerfTask {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
@@ -23,7 +27,9 @@ public abstract class PerfTask {
       ret = new ReadTask(nodeName, id, args);
     } else if (taskType.isWrite()) {
       ret = new WriteTask(nodeName, id, args);
-    } else {
+    }
+    /* Add your own Task here */
+    else {
       throw new IOException("Unsupport TaskType: " + taskType.toString());
     }
     ret.mId = id;
@@ -51,10 +57,31 @@ public abstract class PerfTask {
     return mTaskType;
   }
 
+  /**
+   * Setup the task. Do some preparations.
+   * 
+   * @param taskReport
+   *          The statistics of this task
+   * @return true if setup successfully, false otherwise
+   */
   protected abstract boolean setupTask(TaskReport taskReport);
 
+  /**
+   * Run the task.
+   * 
+   * @param taskReport
+   *          The statistics of this task
+   * @return true if setup successfully, false otherwise
+   */
   protected abstract boolean startTask(TaskReport taskReport);
 
+  /**
+   * Cleanup the task. Do some following work.
+   * 
+   * @param taskReport
+   *          The statistics of this task
+   * @return true if setup successfully, false otherwise
+   */
   protected abstract boolean cleanupTask(TaskReport taskReport);
 
   public boolean setup(TaskReport taskReport) {

@@ -10,6 +10,9 @@ import tachyon.client.TachyonFile;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 
+/**
+ * Thread to read files from Tachyon.
+ */
 public class ReadThread extends PerfThread {
   private byte[] mContent;
   private List<Integer> mReadFileList;

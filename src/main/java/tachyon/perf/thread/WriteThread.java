@@ -10,6 +10,9 @@ import tachyon.client.WriteType;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 
+/**
+ * Thread to write files to Tachyon.
+ */
 public class WriteThread extends PerfThread {
   private byte[] mContent;
   private long mFileLength;

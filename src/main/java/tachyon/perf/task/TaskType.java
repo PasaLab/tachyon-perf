@@ -2,6 +2,9 @@ package tachyon.perf.task;
 
 import java.io.IOException;
 
+/**
+ * TaskType for different tests. New test must add new type here.
+ */
 public enum TaskType {
   /**
    * A read test
@@ -18,7 +21,10 @@ public enum TaskType {
     } else if (taskType.equals("Write")) {
       return Write;
     }
-    throw new IOException("Unknown TaskType : " + taskType);
+    /* Add your own TaskType here */
+    else {
+      throw new IOException("Unknown TaskType : " + taskType);
+    }
   }
 
   private final int mValue;

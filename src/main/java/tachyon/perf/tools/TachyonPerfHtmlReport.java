@@ -20,7 +20,8 @@ import tachyon.perf.task.TaskType;
 import tachyon.perf.task.WriteTaskReport;
 
 /**
- * This class is used to generate an html report
+ * This class is used to generate an html report. The prerequisite is that both write and read tests
+ * are finished.
  */
 public class TachyonPerfHtmlReport {
   public static void main(String[] args) {

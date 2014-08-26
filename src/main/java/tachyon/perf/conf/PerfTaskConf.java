@@ -1,5 +1,9 @@
 package tachyon.perf.conf;
 
+/**
+ * Tachyon-Perf configurations for task. For new test, you may add some configurations here and
+ * modify the conf/tachyon-perf-env.sh
+ */
 public class PerfTaskConf extends Utils {
   private static PerfTaskConf PERF_TASK_CONF = null;
 

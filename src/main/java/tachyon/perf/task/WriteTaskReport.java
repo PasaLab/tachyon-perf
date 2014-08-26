@@ -11,6 +11,9 @@ import tachyon.client.WriteType;
 import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.RWThreadReport;
 
+/**
+ * Record the statistics of write test.
+ */
 public class WriteTaskReport extends TaskReport {
   public static WriteTaskReport loadFromFile(File reportFile) throws IOException {
     BufferedReader fin = new BufferedReader(new FileReader(reportFile));

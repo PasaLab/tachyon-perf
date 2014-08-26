@@ -1,5 +1,8 @@
 package tachyon.perf.thread;
 
+/**
+ * Record statistics for read thread and write thread.
+ */
 public class RWThreadReport extends ThreadReport {
   private long mSuccessBytes = 0;
   private int mSuccessFiles = 0;

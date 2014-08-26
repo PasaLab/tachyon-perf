@@ -7,6 +7,10 @@ import org.apache.log4j.Logger;
 
 import tachyon.perf.PerfConstants;
 
+/**
+ * The abstract class for all test statistics. For new test, you should implement your own
+ * TaskReport.
+ */
 public abstract class TaskReport {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
@@ -17,7 +21,9 @@ public abstract class TaskReport {
       ret = new ReadTaskReport(nodeName, args.get(0));
     } else if (taskType.isWrite()) {
       ret = new WriteTaskReport(nodeName, args.get(0));
-    } else {
+    }
+    /* Add your own TaskReport here */
+    else {
       throw new IOException("Unsupport TaskType: " + taskType.toString());
     }
     return ret;
@@ -60,5 +66,12 @@ public abstract class TaskReport {
     mSuccess = success;
   }
 
+  /**
+   * Output this task report to file.
+   * 
+   * @param fileName
+   *          the name of the output file
+   * @throws IOException
+   */
   public abstract void writeToFile(String fileName) throws IOException;
 }

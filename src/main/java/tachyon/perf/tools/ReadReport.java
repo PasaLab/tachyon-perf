@@ -14,6 +14,9 @@ import tachyon.perf.conf.PerfTaskConf;
 import tachyon.perf.task.ReadTaskReport;
 import tachyon.perf.task.TaskType;
 
+/**
+ * Total report for read test.
+ */
 public class ReadReport extends PerfReport {
   private String mFailedNodes;
   private int mFailedTasks;

@@ -13,6 +13,9 @@ import tachyon.perf.thread.PerfThread;
 import tachyon.perf.thread.ReadThread;
 import tachyon.perf.tools.Supervisible;
 
+/**
+ * The read test task. It will read files from Tachyon in multi-thread.
+ */
 public class ReadTask extends PerfTask implements Supervisible {
   private final ReadType READ_TYPE;
 

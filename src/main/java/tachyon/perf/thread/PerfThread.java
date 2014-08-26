@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import tachyon.perf.PerfConstants;
 
 /**
- * The base test thread class for Tachyon-Perf
+ * The base test thread class for Tachyon-Perf. Now it's used for read test and write test.
  */
 public abstract class PerfThread implements Runnable {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
