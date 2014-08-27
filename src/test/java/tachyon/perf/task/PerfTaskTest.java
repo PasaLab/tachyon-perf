@@ -23,11 +23,11 @@ public class PerfTaskTest {
     Assert.assertEquals(0, ((FooTaskReport) fooTaskReport).getFoo());
     Assert.assertFalse(((FooTaskReport) fooTaskReport).getReady());
     Assert.assertFalse(((FooTaskReport) fooTaskReport).getWritten());
-    fooTask.setup(fooTaskReport);
+    Assert.assertTrue(fooTask.setup(fooTaskReport));
     Assert.assertTrue(((FooTaskReport) fooTaskReport).getReady());
-    fooTask.start(fooTaskReport);
+    Assert.assertTrue(fooTask.run(fooTaskReport));
     Assert.assertEquals(5, ((FooTaskReport) fooTaskReport).getFoo());
-    fooTask.cleanupTask(fooTaskReport);
+    Assert.assertTrue(fooTask.cleanupTask(fooTaskReport));
     fooTaskReport.writeToFile("test");
     Assert.assertTrue(((FooTaskReport) fooTaskReport).getWritten());
   }

@@ -73,7 +73,7 @@ public abstract class PerfTask {
    *          The statistics of this task
    * @return true if setup successfully, false otherwise
    */
-  protected abstract boolean startTask(TaskReport taskReport);
+  protected abstract boolean runTask(TaskReport taskReport);
 
   /**
    * Cleanup the task. Do some following work.
@@ -112,7 +112,7 @@ public abstract class PerfTask {
     return setupTask(taskReport);
   }
 
-  public boolean start(TaskReport taskReport) {
+  public boolean run(TaskReport taskReport) {
     if (this instanceof Supervisible) {
       try {
         TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
@@ -126,7 +126,7 @@ public abstract class PerfTask {
         LOG.warn("Error when close TachyonFS", e);
       }
     }
-    return startTask(taskReport);
+    return runTask(taskReport);
   }
 
   public boolean cleanup(TaskReport taskReport) {

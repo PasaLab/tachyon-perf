@@ -45,7 +45,7 @@ public class TachyonPerf {
         LOG.error("Failed to setup task");
         System.exit(-1);
       }
-      if (!task.start(taskReport)) {
+      if (!task.run(taskReport)) {
         LOG.error("Failed to start task");
         System.exit(-1);
       }

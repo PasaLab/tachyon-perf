@@ -80,7 +80,7 @@ public class ReadTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  protected boolean startTask(TaskReport taskReport) {
+  protected boolean runTask(TaskReport taskReport) {
     mReadThreadsList = new ArrayList<Thread>(mReadThreads.length);
     for (int i = 0; i < mReadThreads.length; i ++) {
       Thread readThread = new Thread(mReadThreads[i]);

@@ -71,7 +71,7 @@ public class WriteTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  protected boolean startTask(TaskReport taskReport) {
+  protected boolean runTask(TaskReport taskReport) {
     mWriteThreadsList = new ArrayList<Thread>(mWriteThreads.length);
     for (int i = 0; i < mWriteThreads.length; i ++) {
       Thread writeThread = new Thread(mWriteThreads[i]);

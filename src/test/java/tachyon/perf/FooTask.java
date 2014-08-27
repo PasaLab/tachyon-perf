@@ -15,7 +15,7 @@ public class FooTask extends PerfTask {
   }
 
   @Override
-  protected boolean startTask(TaskReport taskReport) {
+  protected boolean runTask(TaskReport taskReport) {
     ((FooTaskReport) taskReport).setFoo(5);
     return true;
   }
