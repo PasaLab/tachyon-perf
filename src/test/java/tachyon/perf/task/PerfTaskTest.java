@@ -7,12 +7,31 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import tachyon.perf.FooTask;
+import tachyon.perf.FooTaskReport;
 import tachyon.perf.tools.Supervisible;
 
 /**
  * Unit tests for tachyon.perf.task.PerfTask
  */
 public class PerfTaskTest {
+  @Test
+  public void fooTaskTest() throws IOException {
+    PerfTask fooTask = new FooTask();
+    TaskReport fooTaskReport = new FooTaskReport("test");
+    Assert.assertFalse(fooTaskReport.mSuccess);
+    Assert.assertEquals(0, ((FooTaskReport) fooTaskReport).getFoo());
+    Assert.assertFalse(((FooTaskReport) fooTaskReport).getReady());
+    Assert.assertFalse(((FooTaskReport) fooTaskReport).getWritten());
+    fooTask.setup(fooTaskReport);
+    Assert.assertTrue(((FooTaskReport) fooTaskReport).getReady());
+    fooTask.start(fooTaskReport);
+    Assert.assertEquals(5, ((FooTaskReport) fooTaskReport).getFoo());
+    fooTask.cleanupTask(fooTaskReport);
+    fooTaskReport.writeToFile("test");
+    Assert.assertTrue(((FooTaskReport) fooTaskReport).getWritten());
+  }
+
   @Test
   public void readTaskConstructorTest() throws IOException {
     List<String> args = new ArrayList<String>(1);
