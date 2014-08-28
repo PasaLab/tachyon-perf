@@ -1,39 +1,50 @@
-package tachyon.perf.thread;
+package tachyon.perf.benchmark.read;
 
 import java.io.IOException;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import tachyon.client.InStream;
 import tachyon.client.ReadType;
 import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
+import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Thread to read files from Tachyon.
  */
-public class ReadThread extends PerfThread {
+public class ReadThread implements Runnable {
+  protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
+
+  public final int ID;
+
   private byte[] mContent;
   private List<Integer> mReadFileList;
   private int mReadGrainBytes;
   private ReadType mReadType;
+  private ReadThreadStatistic mStatistic;
   private String mTfsAddress;
 
   public ReadThread(int id, List<Integer> readFileList, ReadType readType) {
-    super(id);
-    mThreadReport = new RWThreadReport();
-
+    ID = id;
     mReadGrainBytes = PerfTaskConf.get().READ_GRAIN_BYTES;
     mContent = new byte[mReadGrainBytes];
     mReadFileList = readFileList;
     mReadType = readType;
+    mStatistic = new ReadThreadStatistic();
     mTfsAddress = PerfConf.get().TFS_ADDRESS;
+  }
+
+  public ReadThreadStatistic getStatistic() {
+    return mStatistic;
   }
 
   @Override
   public void run() {
-    mThreadReport.setStartTimeMs(System.currentTimeMillis());
+    mStatistic.setStartTimeMs(System.currentTimeMillis());
     TachyonFS tachyonClient;
     try {
       tachyonClient = TachyonFS.get(mTfsAddress);
@@ -42,23 +53,23 @@ public class ReadThread extends PerfThread {
       throw new RuntimeException(e);
     }
 
-    mThreadReport.setSuccess(true);
+    mStatistic.setSuccess(true);
     for (int fileId : mReadFileList) {
       try {
         TachyonFile file = tachyonClient.getFile(fileId);
         InStream is = file.getInStream(mReadType);
         int readLen;
         while ((readLen = is.read(mContent)) > 0) {
-          ((RWThreadReport) mThreadReport).addSuccessBytes(readLen);
+          mStatistic.addSuccessBytes(readLen);
         }
         is.close();
       } catch (Exception e) {
         LOG.error("Read thread " + ID + "failed to read file, FileId: " + fileId, e);
-        mThreadReport.setSuccess(false);
+        mStatistic.setSuccess(false);
         break;
       }
-      ((RWThreadReport) mThreadReport).addSuccessFiles(1);
+      mStatistic.addSuccessFiles(1);
     }
-    mThreadReport.setFinishTimeMs(System.currentTimeMillis());
+    mStatistic.setFinishTimeMs(System.currentTimeMillis());
   }
 }

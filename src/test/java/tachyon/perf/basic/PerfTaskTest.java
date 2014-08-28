@@ -1,4 +1,4 @@
-package tachyon.perf.task;
+package tachyon.perf.basic;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +9,8 @@ import org.junit.Test;
 
 import tachyon.perf.FooTask;
 import tachyon.perf.FooTaskReport;
-import tachyon.perf.tools.Supervisible;
+import tachyon.perf.benchmark.read.ReadTask;
+import tachyon.perf.benchmark.write.WriteTask;
 
 /**
  * Unit tests for tachyon.perf.task.PerfTask

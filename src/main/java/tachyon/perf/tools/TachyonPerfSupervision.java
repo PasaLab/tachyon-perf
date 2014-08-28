@@ -9,9 +9,10 @@ import org.apache.log4j.Logger;
 import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.Supervisible;
+import tachyon.perf.basic.TaskType;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.task.PerfTask;
-import tachyon.perf.task.TaskType;
 
 /**
  * Monitor the node states.

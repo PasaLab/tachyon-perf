@@ -1,4 +1,4 @@
-package tachyon.perf.tools;
+package tachyon.perf.basic;
 
 /**
  * Interface for Supervision supporting. For new test, if you want TachyonPerfSupervision to monitor

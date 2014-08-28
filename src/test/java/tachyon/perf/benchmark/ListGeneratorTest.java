@@ -1,10 +1,12 @@
-package tachyon.perf.task;
+package tachyon.perf.benchmark;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import tachyon.perf.benchmark.read.ReadMode;
 
 /**
  * Unit tests for tachyon.perf.task.ListGenerator

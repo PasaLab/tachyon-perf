@@ -2,7 +2,7 @@ package tachyon.perf;
 
 import java.io.IOException;
 
-import tachyon.perf.task.TaskReport;
+import tachyon.perf.basic.TaskReport;
 
 /**
  * A simple task report class just used for unit tests.

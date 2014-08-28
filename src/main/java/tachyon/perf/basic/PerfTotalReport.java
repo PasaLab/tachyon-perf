@@ -1,20 +1,22 @@
-package tachyon.perf.tools;
+package tachyon.perf.basic;
 
 import java.io.File;
 import java.io.IOException;
 
-import tachyon.perf.task.TaskType;
+import tachyon.perf.basic.TaskType;
+import tachyon.perf.benchmark.read.ReadTotalReport;
+import tachyon.perf.benchmark.write.WriteTotalReport;
 
 /**
- * The abstract class of Tachyon-Perf Report. For new test, if you want TachyonPerfCollector to
- * generate a total report for you, you should create a new class which extends this.
+ * The abstract class of Tachyon-Perf Total Report. For new test, if you want TachyonPerfCollector
+ * to generate a total report for you, you should create a new class which extends this.
  */
-public abstract class PerfReport {
-  public static PerfReport get(TaskType taskType) throws IOException {
+public abstract class PerfTotalReport {
+  public static PerfTotalReport get(TaskType taskType) throws IOException {
     if (taskType.isRead()) {
-      return new ReadReport(taskType);
+      return new ReadTotalReport(taskType);
     } else if (taskType.isWrite()) {
-      return new WriteReport(taskType);
+      return new WriteTotalReport(taskType);
     }
     /* Add your own Report here */
     else {
@@ -24,7 +26,7 @@ public abstract class PerfReport {
 
   protected final TaskType TASK_TYPE;
 
-  protected PerfReport(TaskType taskType) {
+  protected PerfTotalReport(TaskType taskType) {
     TASK_TYPE = taskType;
   }
 

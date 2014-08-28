@@ -1,4 +1,4 @@
-package tachyon.perf.task;
+package tachyon.perf.benchmark.write;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,11 +7,12 @@ import java.util.List;
 import tachyon.client.TachyonFS;
 import tachyon.client.WriteType;
 import tachyon.org.apache.thrift.TException;
+import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.Supervisible;
+import tachyon.perf.basic.TaskReport;
+import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.thread.PerfThread;
-import tachyon.perf.thread.WriteThread;
-import tachyon.perf.tools.Supervisible;
 
 /**
  * The write test task. It will write files to Tachyon in multi-thread.
@@ -19,10 +20,10 @@ import tachyon.perf.tools.Supervisible;
 public class WriteTask extends PerfTask implements Supervisible {
   private final WriteType WRITE_TYPE;
 
-  private PerfThread[] mWriteThreads;
+  private WriteThread[] mWriteThreads;
   private List<Thread> mWriteThreadsList;
 
-  protected WriteTask(String nodeName, int id, List<String> args) throws IOException {
+  public WriteTask(String nodeName, int id, List<String> args) throws IOException {
     super();
     if (args.size() < 1) {
       throw new IOException("Error when new WriteTask: not enough args.");
@@ -55,7 +56,7 @@ public class WriteTask extends PerfTask implements Supervisible {
       List<String>[] writeFileList =
           ListGenerator.generateWriteFiles(threadsNum, perfTaskConf.WRITE_FILES_PER_THREAD,
               writeDir);
-      mWriteThreads = new PerfThread[threadsNum];
+      mWriteThreads = new WriteThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
         mWriteThreads[i] = new WriteThread(i, writeFileList[i], WRITE_TYPE);
       }

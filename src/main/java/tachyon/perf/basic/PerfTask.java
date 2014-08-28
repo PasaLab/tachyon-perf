@@ -1,4 +1,4 @@
-package tachyon.perf.task;
+package tachyon.perf.basic;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,9 @@ import org.apache.log4j.Logger;
 import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.benchmark.read.ReadTask;
+import tachyon.perf.benchmark.write.WriteTask;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.tools.Supervisible;
 
 /**
  * The abstract class for all the test tasks. For new test, you should create a new class which

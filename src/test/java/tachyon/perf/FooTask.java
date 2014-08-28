@@ -1,7 +1,7 @@
 package tachyon.perf;
 
-import tachyon.perf.task.PerfTask;
-import tachyon.perf.task.TaskReport;
+import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.TaskReport;
 
 /**
  * A simple task class just used for unit tests.

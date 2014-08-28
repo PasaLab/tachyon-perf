@@ -13,11 +13,11 @@ import java.util.Set;
 import tachyon.client.ReadType;
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.basic.TaskType;
+import tachyon.perf.benchmark.read.ReadTaskReport;
+import tachyon.perf.benchmark.write.WriteTaskReport;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.ReadTaskReport;
-import tachyon.perf.task.TaskType;
-import tachyon.perf.task.WriteTaskReport;
 
 /**
  * This class is used to generate an html report. The prerequisite is that both write and read tests

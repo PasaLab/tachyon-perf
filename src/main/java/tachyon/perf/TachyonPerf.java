@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import tachyon.perf.task.PerfTask;
-import tachyon.perf.task.TaskReport;
-import tachyon.perf.task.TaskType;
+import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.TaskReport;
+import tachyon.perf.basic.TaskType;
 
 /**
  * Entry point for a tachyon-perf process

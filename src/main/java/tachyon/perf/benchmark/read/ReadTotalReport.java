@@ -1,4 +1,4 @@
-package tachyon.perf.tools;
+package tachyon.perf.benchmark.read;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,15 +9,15 @@ import java.util.List;
 
 import tachyon.client.ReadType;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.basic.PerfTotalReport;
+import tachyon.perf.basic.TaskType;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.ReadTaskReport;
-import tachyon.perf.task.TaskType;
 
 /**
  * Total report for read test.
  */
-public class ReadReport extends PerfReport {
+public class ReadTotalReport extends PerfTotalReport {
   private String mFailedNodes;
   private int mFailedTasks;
   private long mId;
@@ -29,7 +29,7 @@ public class ReadReport extends PerfReport {
   private List<Long> mWorkerMemory;
   private List<Float[]> mReadThroughput;
 
-  protected ReadReport(TaskType taskType) {
+  public ReadTotalReport(TaskType taskType) {
     super(taskType);
     mFailedNodes = "";
     mFailedTasks = 0;

@@ -3,8 +3,9 @@ package tachyon.perf.tools;
 import java.io.File;
 import java.io.IOException;
 
+import tachyon.perf.basic.PerfTotalReport;
+import tachyon.perf.basic.TaskType;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.task.TaskType;
 
 /**
  * Generate a total report for the specified test.
@@ -23,7 +24,7 @@ public class TachyonPerfCollector {
       if (reportFiles == null || reportFiles.length == 0) {
         throw new IOException("No task report exists under " + args[1]);
       }
-      PerfReport summaryReport = PerfReport.get(taskType);
+      PerfTotalReport summaryReport = PerfTotalReport.get(taskType);
       summaryReport.initialFromTaskReports(reportFiles);
       String outputFileName = PerfConf.get().OUT_FOLDER + "/TachyonPerfReport-" + args[0];
       summaryReport.writeToFile(outputFileName);

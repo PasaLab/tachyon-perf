@@ -1,4 +1,4 @@
-package tachyon.perf.task;
+package tachyon.perf.basic;
 
 import java.io.IOException;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import tachyon.perf.PerfConstants;
+import tachyon.perf.benchmark.read.ReadTaskReport;
+import tachyon.perf.benchmark.write.WriteTaskReport;
 
 /**
  * The abstract class for all test statistics. For new test, you should implement your own

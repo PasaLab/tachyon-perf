@@ -1,10 +1,10 @@
-package tachyon.perf.task;
+package tachyon.perf.benchmark;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import tachyon.perf.task.ReadMode;
+import tachyon.perf.benchmark.read.ReadMode;
 
 /**
  * Test file list generator

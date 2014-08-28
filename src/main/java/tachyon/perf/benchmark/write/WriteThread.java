@@ -1,43 +1,53 @@
-package tachyon.perf.thread;
+package tachyon.perf.benchmark.write;
 
 import java.io.IOException;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import tachyon.client.OutStream;
 import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
 import tachyon.client.WriteType;
+import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Thread to write files to Tachyon.
  */
-public class WriteThread extends PerfThread {
+public class WriteThread implements Runnable {
+  protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
+
+  public final int ID;
   private byte[] mContent;
   private long mFileLength;
   private String mTfsAddress;
   private List<String> mWriteFileList;
   private int mWriteGrainBytes;
+  private WriteThreadStatistic mStatistic;
   private WriteType mWriteType;
 
   public WriteThread(int id, List<String> writeFileList, WriteType writeType) {
-    super(id);
-    mThreadReport = new RWThreadReport();
-
+    ID = id;
     PerfTaskConf perfTaskConf = PerfTaskConf.get();
     mWriteGrainBytes = perfTaskConf.WRITE_GRAIN_BYTES;
     mContent = new byte[mWriteGrainBytes];
     mFileLength = perfTaskConf.WRITE_FILE_LENGTH;
     mTfsAddress = PerfConf.get().TFS_ADDRESS;
     mWriteFileList = writeFileList;
+    mStatistic = new WriteThreadStatistic();
     mWriteType = writeType;
     // TODO: content initialize?
   }
 
+  public WriteThreadStatistic getStatistic() {
+    return mStatistic;
+  }
+
   @Override
   public void run() {
-    mThreadReport.setStartTimeMs(System.currentTimeMillis());
+    mStatistic.setStartTimeMs(System.currentTimeMillis());
     TachyonFS tachyonClient;
     try {
       tachyonClient = TachyonFS.get(mTfsAddress);
@@ -46,7 +56,7 @@ public class WriteThread extends PerfThread {
       throw new RuntimeException(e);
     }
 
-    mThreadReport.setSuccess(true);
+    mStatistic.setSuccess(true);
     for (String fileName : mWriteFileList) {
       try {
         int fileId = -1;
@@ -60,21 +70,21 @@ public class WriteThread extends PerfThread {
         long remainLength = mFileLength;
         while (remainLength >= mWriteGrainBytes) {
           os.write(mContent);
-          ((RWThreadReport) mThreadReport).addSuccessBytes(mWriteGrainBytes);
+          mStatistic.addSuccessBytes(mWriteGrainBytes);
           remainLength -= mWriteGrainBytes;
         }
         if (remainLength > 0) {
           os.write(mContent, 0, (int) remainLength);
-          ((RWThreadReport) mThreadReport).addSuccessBytes(remainLength);
+          mStatistic.addSuccessBytes(remainLength);
         }
         os.close();
       } catch (Exception e) {
         LOG.error("Write thread " + ID + "failed to write file " + fileName, e);
-        mThreadReport.setSuccess(false);
+        mStatistic.setSuccess(false);
         break;
       }
-      ((RWThreadReport) mThreadReport).addSuccessFiles(1);
+      mStatistic.addSuccessFiles(1);
     }
-    mThreadReport.setFinishTimeMs(System.currentTimeMillis());
+    mStatistic.setFinishTimeMs(System.currentTimeMillis());
   }
 }

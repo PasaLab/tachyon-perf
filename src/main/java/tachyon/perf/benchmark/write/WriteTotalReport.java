@@ -1,4 +1,4 @@
-package tachyon.perf.tools;
+package tachyon.perf.benchmark.write;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,15 +9,15 @@ import java.util.List;
 
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.basic.PerfTotalReport;
+import tachyon.perf.basic.TaskType;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.task.TaskType;
-import tachyon.perf.task.WriteTaskReport;
 
 /**
  * Total report for write test.
  */
-public class WriteReport extends PerfReport {
+public class WriteTotalReport extends PerfTotalReport {
   private String mFailedNodes;
   private int mFailedTasks;
   private long mId;
@@ -29,7 +29,7 @@ public class WriteReport extends PerfReport {
   private List<Long> mWorkerMemory;
   private List<Float[]> mWriteThroughput;
 
-  protected WriteReport(TaskType taskType) {
+  public WriteTotalReport(TaskType taskType) {
     super(taskType);
     mFailedNodes = "";
     mFailedTasks = 0;

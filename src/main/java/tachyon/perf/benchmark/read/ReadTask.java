@@ -1,4 +1,4 @@
-package tachyon.perf.task;
+package tachyon.perf.benchmark.read;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,11 +7,12 @@ import java.util.List;
 import tachyon.client.ReadType;
 import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
+import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.Supervisible;
+import tachyon.perf.basic.TaskReport;
+import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
-import tachyon.perf.thread.PerfThread;
-import tachyon.perf.thread.ReadThread;
-import tachyon.perf.tools.Supervisible;
 
 /**
  * The read test task. It will read files from Tachyon in multi-thread.
@@ -19,10 +20,10 @@ import tachyon.perf.tools.Supervisible;
 public class ReadTask extends PerfTask implements Supervisible {
   private final ReadType READ_TYPE;
 
-  private PerfThread[] mReadThreads;
+  private ReadThread[] mReadThreads;
   private List<Thread> mReadThreadsList;
 
-  protected ReadTask(String nodeName, int id, List<String> args) throws IOException {
+  public ReadTask(String nodeName, int id, List<String> args) throws IOException {
     super();
     if (args.size() < 1) {
       throw new IOException("Error when new ReadTask: not enough args.");
@@ -64,7 +65,7 @@ public class ReadTask extends PerfTask implements Supervisible {
       List<Integer>[] readFileList =
           ListGenerator.generateReadFiles(threadsNum, perfTaskConf.READ_FILES_PER_THREAD,
               readFileCandidates, readMode, perfTaskConf.READ_IDENTICAL);
-      mReadThreads = new PerfThread[threadsNum];
+      mReadThreads = new ReadThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
         mReadThreads[i] = new ReadThread(i, readFileList[i], READ_TYPE);
       }
