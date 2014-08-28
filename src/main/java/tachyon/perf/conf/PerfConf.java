@@ -43,7 +43,7 @@ public class PerfConf extends Utils {
     TFS_DIR = getProperty("tachyon.perf.tfs.dir", "/tachyon-perf-workspace");
     OUT_FOLDER = getProperty("tachyon.perf.out.dir", TACHYON_PERF_HOME + "/result");
 
-    FAILED_THEN_ABORT = getBooleanProperty("tachyon.perf.failed.then.abort", true);
+    FAILED_THEN_ABORT = getBooleanProperty("tachyon.perf.failed.abort", true);
     FAILED_PERCENTAGE = getIntProperty("tachyon.perf.failed.percentage", 1);
   }
 }
