@@ -1,0 +1,10 @@
+tests.log*
+.classpath
+.project
+*.iml
+.idea/
+.metadata/
+.settings/
+conf/slaves
+logs/
+target/
