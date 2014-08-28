@@ -33,7 +33,7 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
         <td>false</td>
     </tr>
     <tr>
-        <td>tachyon.perf.failed.then.abort</td>
+        <td>tachyon.perf.failed.abort</td>
         <td>if true, the test will abort when the number of failed nodes is more than a threshold</td>
         <td>true</td>
     </tr>
