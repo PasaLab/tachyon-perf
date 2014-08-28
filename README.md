@@ -33,6 +33,16 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
         <td>false</td>
     </tr>
     <tr>
+        <td>tachyon.perf.failed.then.abort</td>
+        <td>if true, the test will abort when the number of failed nodes is more than a threshold</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>tachyon.perf.failed.percentage</td>
+        <td>the percentage to determine the failed nodes threshold</td>
+        <td>1</td>
+    </tr>
+    <tr>
         <td>tachyon.perf.tfs.address</td>
         <td>the Tachyon Master address</td>
         <td>tachyon://localhost:19998</td>
