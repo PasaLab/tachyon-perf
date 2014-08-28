@@ -26,6 +26,9 @@ public class PerfConf extends Utils {
   public final String TFS_ADDRESS;
   public final String TFS_DIR;
 
+  public final boolean FAILED_THEN_ABORT;
+  public final int FAILED_PERCENTAGE;
+
   private PerfConf() {
     if (System.getProperty("tachyon.perf.home") == null) {
       LOG.warn("tachyon.perf.home is not set. Using /tmp/tachyon_perf_default_home as the default value.");
@@ -39,5 +42,8 @@ public class PerfConf extends Utils {
     TFS_ADDRESS = getProperty("tachyon.perf.tfs.address", "tachyon://localhost:19998");
     TFS_DIR = getProperty("tachyon.perf.tfs.dir", "/tachyon-perf-workspace");
     OUT_FOLDER = getProperty("tachyon.perf.out.dir", TACHYON_PERF_HOME + "/result");
+
+    FAILED_THEN_ABORT = getBooleanProperty("tachyon.perf.failed.then.abort", true);
+    FAILED_PERCENTAGE = getIntProperty("tachyon.perf.failed.percentage", 1);
   }
 }

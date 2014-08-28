@@ -43,10 +43,16 @@ TACHYON_PERF_READ_GRAIN_BYTES=4194304
 #if true, the TachyonPerfSupervision will print the names of those running and remaining nodes
 TACHYON_PERF_STATUS_DEBUG="false"
 
+#if true, the test will abort when the number of failed nodes more than the threshold
+TACHYON_PERF_FAILED_THEN_ABORT="true"
+TACHYON_PERF_FAILED_PERCENTAGE=1
+
 CONF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export TACHYON_PERF_JAVA_OPTS+="
   -Dlog4j.configuration=file:$CONF_DIR/log4j.properties
+  -Dtachyon.perf.failed.then.abort=$TACHYON_PERF_FAILED_THEN_ABORT
+  -Dtachyon.perf.failed.percentage=$TACHYON_PERF_FAILED_PERCENTAGE
   -Dtachyon.perf.status.debug=$TACHYON_PERF_STATUS_DEBUG
   -Dtachyon.perf.tfs.address=$TACHYON_PERF_TFS_ADRESS
   -Dtachyon.perf.tfs.dir=$TACHYON_PERF_WORKSPACE

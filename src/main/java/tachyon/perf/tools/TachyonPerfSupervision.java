@@ -37,6 +37,17 @@ public class TachyonPerfSupervision {
     return (finishedNum == nodesNum);
   }
 
+  private static boolean needAbort(int round, int percentage) {
+    int failedNodes = 0;
+    for (int state : sNodeStates) {
+      if ((state == NODE_STATE_FAILED) || (state == NODE_STATE_INITIAL && round > 30)) {
+        failedNodes ++;
+      }
+    }
+    int failedThreshold = percentage * sNodeStates.length / 100;
+    return (failedNodes > failedThreshold);
+  }
+
   private static void printNodeStatus(boolean debug, List<String> nodes) {
     int runningNodes = 0;
     int successNodes = 0;
@@ -129,6 +140,7 @@ public class TachyonPerfSupervision {
     PerfConf perfConf = PerfConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
+      int round = 0;
       while (!allFinished()) {
         Thread.sleep(2000);
         for (int i = 0; i < sNodeStates.length; i ++) {
@@ -159,7 +171,14 @@ public class TachyonPerfSupervision {
             }
           }
         }
+        round ++;
         printNodeStatus(perfConf.STATUS_DEBUG, nodes);
+        if (perfConf.FAILED_THEN_ABORT && needAbort(round, perfConf.FAILED_PERCENTAGE)) {
+          java.lang.Runtime.getRuntime().exec(
+              perfConf.TACHYON_PERF_HOME + "/bin/tachyon-perf-abort");
+          System.out.println("Enough nodes failed. Abort all the nodes.");
+          LOG.error("Enough nodes failed. Abort all the nodes.");
+        }
       }
       tfs.close();
     } catch (IOException e) {
@@ -175,6 +194,6 @@ public class TachyonPerfSupervision {
       System.out.println("Failed to close the TachyonFS.");
       LOG.warn("Failed to close the TachyonFS.", e);
     }
-    System.out.println("All nodes Finished.");
+    System.out.println("Tachyon-Perf End.");
   }
 }
