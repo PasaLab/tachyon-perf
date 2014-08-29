@@ -6,23 +6,23 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import tachyon.perf.PerfConstants;
-import tachyon.perf.benchmark.read.ReadTaskReport;
-import tachyon.perf.benchmark.write.WriteTaskReport;
+import tachyon.perf.benchmark.read.ReadTaskContext;
+import tachyon.perf.benchmark.write.WriteTaskContext;
 
 /**
  * The abstract class for all test statistics. For new test, you should implement your own
  * TaskReport.
  */
-public abstract class TaskReport {
+public abstract class TaskContext {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
-  public static TaskReport getTaskReport(String nodeName, int id, TaskType taskType,
+  public static TaskContext getTaskContext(String nodeName, int id, TaskType taskType,
       List<String> args) throws IOException {
-    TaskReport ret = null;
+    TaskContext ret = null;
     if (taskType.isRead()) {
-      ret = new ReadTaskReport(nodeName, args.get(0));
+      ret = new ReadTaskContext(nodeName, args.get(0));
     } else if (taskType.isWrite()) {
-      ret = new WriteTaskReport(nodeName, args.get(0));
+      ret = new WriteTaskContext(nodeName, args.get(0));
     }
     /* Add your own TaskReport here */
     else {
@@ -37,7 +37,7 @@ public abstract class TaskReport {
   protected long mStartTimeMs;
   protected boolean mSuccess;
 
-  protected TaskReport(String nodeName) {
+  protected TaskContext(String nodeName) {
     NODE_NAME = nodeName;
     mStartTimeMs = System.currentTimeMillis();
     mFinishTimeMs = mStartTimeMs;

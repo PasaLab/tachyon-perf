@@ -61,32 +61,32 @@ public abstract class PerfTask {
   /**
    * Setup the task. Do some preparations.
    * 
-   * @param taskReport
+   * @param taskContext
    *          The statistics of this task
    * @return true if setup successfully, false otherwise
    */
-  protected abstract boolean setupTask(TaskReport taskReport);
+  protected abstract boolean setupTask(TaskContext taskContext);
 
   /**
    * Run the task.
    * 
-   * @param taskReport
+   * @param taskContext
    *          The statistics of this task
    * @return true if setup successfully, false otherwise
    */
-  protected abstract boolean runTask(TaskReport taskReport);
+  protected abstract boolean runTask(TaskContext taskContext);
 
   /**
    * Cleanup the task. Do some following work.
    * 
-   * @param taskReport
+   * @param taskContext
    *          The statistics of this task
    * @return true if setup successfully, false otherwise
    */
-  protected abstract boolean cleanupTask(TaskReport taskReport);
+  protected abstract boolean cleanupTask(TaskContext taskContext);
 
-  public boolean setup(TaskReport taskReport) {
-    taskReport.setStartTimeMs(System.currentTimeMillis());
+  public boolean setup(TaskContext taskContext) {
+    taskContext.setStartTimeMs(System.currentTimeMillis());
     if (this instanceof Supervisible) {
       try {
         TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
@@ -110,10 +110,10 @@ public abstract class PerfTask {
         LOG.warn("Error when close TachyonFS", e);
       }
     }
-    return setupTask(taskReport);
+    return setupTask(taskContext);
   }
 
-  public boolean run(TaskReport taskReport) {
+  public boolean run(TaskContext taskContext) {
     if (this instanceof Supervisible) {
       try {
         TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
@@ -127,12 +127,12 @@ public abstract class PerfTask {
         LOG.warn("Error when close TachyonFS", e);
       }
     }
-    return runTask(taskReport);
+    return runTask(taskContext);
   }
 
-  public boolean cleanup(TaskReport taskReport) {
-    boolean ret = cleanupTask(taskReport);
-    taskReport.setFinishTimeMs(System.currentTimeMillis());
+  public boolean cleanup(TaskContext taskContext) {
+    boolean ret = cleanupTask(taskContext);
+    taskContext.setFinishTimeMs(System.currentTimeMillis());
     try {
       String outDirPath = PerfConf.get().OUT_FOLDER;
       File outDir = new File(outDirPath);
@@ -140,9 +140,9 @@ public abstract class PerfTask {
         outDir.mkdirs();
       }
       String reportFileName =
-          outDirPath + "/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX + "-"
+          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + "-"
               + mTaskType.toString();
-      taskReport.writeToFile(reportFileName);
+      taskContext.writeToFile(reportFileName);
     } catch (IOException e) {
       LOG.error("Error when generate the task report", e);
       ret = false;
@@ -152,7 +152,7 @@ public abstract class PerfTask {
         TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
         String tfsFailedFilePath = ((Supervisible) this).getTfsFailedPath();
         String tfsSuccessFilePath = ((Supervisible) this).getTfsSuccessPath();
-        if (taskReport.getSuccess() && ret) {
+        if (taskContext.getSuccess() && ret) {
           tfs.createFile(tfsSuccessFilePath);
         } else {
           tfs.createFile(tfsFailedFilePath);

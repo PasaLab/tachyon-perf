@@ -9,7 +9,7 @@ import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.basic.PerfTask;
 import tachyon.perf.basic.Supervisible;
-import tachyon.perf.basic.TaskReport;
+import tachyon.perf.basic.TaskContext;
 import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
@@ -32,14 +32,14 @@ public class ReadTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  protected boolean cleanupTask(TaskReport taskReport) {
-    taskReport.setSuccess(true);
-    ((ReadTaskReport) taskReport).setFromReadThreads(mReadThreads);
+  protected boolean cleanupTask(TaskContext taskContext) {
+    taskContext.setSuccess(true);
+    ((ReadTaskContext) taskContext).setFromReadThreads(mReadThreads);
     return true;
   }
 
   @Override
-  protected boolean setupTask(TaskReport taskReport) {
+  protected boolean setupTask(TaskContext taskContext) {
     PerfConf perfConf = PerfConf.get();
     PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
@@ -81,7 +81,7 @@ public class ReadTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  protected boolean runTask(TaskReport taskReport) {
+  protected boolean runTask(TaskContext taskContext) {
     mReadThreadsList = new ArrayList<Thread>(mReadThreads.length);
     for (int i = 0; i < mReadThreads.length; i ++) {
       Thread readThread = new Thread(mReadThreads[i]);

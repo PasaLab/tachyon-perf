@@ -2,17 +2,17 @@ package tachyon.perf;
 
 import java.io.IOException;
 
-import tachyon.perf.basic.TaskReport;
+import tachyon.perf.basic.TaskContext;
 
 /**
- * A simple task report class just used for unit tests.
+ * A simple task context class just used for unit tests.
  */
-public class FooTaskReport extends TaskReport {
+public class FooTaskContext extends TaskContext {
   private int mFoo;
   private boolean mReady;
   private boolean mWritten;
 
-  public FooTaskReport(String nodeName) {
+  public FooTaskContext(String nodeName) {
     super(nodeName);
     mFoo = 0;
     mReady = false;

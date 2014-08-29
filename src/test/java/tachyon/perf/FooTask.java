@@ -1,7 +1,7 @@
 package tachyon.perf;
 
 import tachyon.perf.basic.PerfTask;
-import tachyon.perf.basic.TaskReport;
+import tachyon.perf.basic.TaskContext;
 
 /**
  * A simple task class just used for unit tests.
@@ -9,20 +9,20 @@ import tachyon.perf.basic.TaskReport;
 public class FooTask extends PerfTask {
 
   @Override
-  protected boolean setupTask(TaskReport taskReport) {
-    ((FooTaskReport) taskReport).setReady(true);
+  protected boolean setupTask(TaskContext taskContext) {
+    ((FooTaskContext) taskContext).setReady(true);
     return true;
   }
 
   @Override
-  protected boolean runTask(TaskReport taskReport) {
-    ((FooTaskReport) taskReport).setFoo(5);
+  protected boolean runTask(TaskContext taskContext) {
+    ((FooTaskContext) taskContext).setFoo(5);
     return true;
   }
 
   @Override
-  protected boolean cleanupTask(TaskReport taskReport) {
-    taskReport.setSuccess(true);
+  protected boolean cleanupTask(TaskContext taskContext) {
+    taskContext.setSuccess(true);
     return true;
   }
 

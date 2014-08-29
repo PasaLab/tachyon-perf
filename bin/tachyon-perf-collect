@@ -18,12 +18,12 @@ TACHYON_PERF_LIBEXEC_DIR=${TACHYON_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
 
 NODELIST=$TACHYON_PERF_CONF_DIR/slaves
 
-TACHYON_PERF_OUT_REPORTS_DIR=$TACHYON_PERF_OUT_DIR/reports_$1
+TACHYON_PERF_OUT_REPORTS_DIR=$TACHYON_PERF_OUT_DIR/contexts_$1
 mkdir -p $TACHYON_PERF_OUT_REPORTS_DIR
 
 for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
   echo -n "Collect from $slave... "
-  scp $slave:$TACHYON_PERF_OUT_DIR/report-$1 $TACHYON_PERF_OUT_REPORTS_DIR/report-$1-$slave
+  scp $slave:$TACHYON_PERF_OUT_DIR/context-$1 $TACHYON_PERF_OUT_REPORTS_DIR/context-$1-$slave
   sleep 0.02
 done
 wait

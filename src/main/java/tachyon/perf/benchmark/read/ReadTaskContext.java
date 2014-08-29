@@ -1,4 +1,4 @@
-package tachyon.perf.benchmark.write;
+package tachyon.perf.benchmark.read;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,18 +7,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import tachyon.client.WriteType;
-import tachyon.perf.basic.TaskReport;
+import tachyon.client.ReadType;
+import tachyon.perf.basic.TaskContext;
 
 /**
- * Record the statistics of write test.
+ * Record the statistics of read test.
  */
-public class WriteTaskReport extends TaskReport {
-  public static WriteTaskReport loadFromFile(File reportFile) throws IOException {
-    BufferedReader fin = new BufferedReader(new FileReader(reportFile));
+public class ReadTaskContext extends TaskContext {
+  public static ReadTaskContext loadFromFile(File contextFile) throws IOException {
+    BufferedReader fin = new BufferedReader(new FileReader(contextFile));
     String nodeName = fin.readLine();
-    String writeType = fin.readLine();
-    WriteTaskReport ret = new WriteTaskReport(nodeName, writeType);
+    String readType = fin.readLine();
+    ReadTaskContext ret = new ReadTaskContext(nodeName, readType);
     ret.mCores = Integer.parseInt(fin.readLine());
     ret.mTachyonWorkerBytes = Long.parseLong(fin.readLine());
     ret.mStartTimeMs = Long.parseLong(fin.readLine());
@@ -27,13 +27,13 @@ public class WriteTaskReport extends TaskReport {
     int threadNum = Integer.parseInt(fin.readLine());
     if (threadNum >= 0) {
       ret.mThreadNum = threadNum;
-      ret.mWriteBytes = new long[threadNum];
-      ret.mWriteFiles = new int[threadNum];
+      ret.mReadBytes = new long[threadNum];
+      ret.mReadFiles = new int[threadNum];
       ret.mThreadTimeMs = new long[threadNum];
       for (int i = 0; i < threadNum; i ++) {
         ret.mThreadTimeMs[i] = Long.parseLong(fin.readLine());
-        ret.mWriteFiles[i] = Integer.parseInt(fin.readLine());
-        ret.mWriteBytes[i] = Long.parseLong(fin.readLine());
+        ret.mReadFiles[i] = Integer.parseInt(fin.readLine());
+        ret.mReadBytes[i] = Long.parseLong(fin.readLine());
       }
     }
     fin.close();
@@ -43,22 +43,34 @@ public class WriteTaskReport extends TaskReport {
   private int mCores;
   private long mTachyonWorkerBytes;
 
-  private long[] mWriteBytes;
-  private int[] mWriteFiles;
+  private long[] mReadBytes;
+  private int[] mReadFiles;
   private int mThreadNum;
   private long[] mThreadTimeMs;
-  private WriteType mWriteType;
+  private ReadType mReadType;
 
-  public WriteTaskReport(String nodeName, String writeType) throws IOException {
+  public ReadTaskContext(String nodeName, String readType) throws IOException {
     super(nodeName);
     mCores = Runtime.getRuntime().availableProcessors();
     mTachyonWorkerBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
     mThreadNum = -1;
-    mWriteType = WriteType.getOpType(writeType);
+    mReadType = ReadType.getOpType(readType);
   }
 
   public int getCores() {
     return mCores;
+  }
+
+  public ReadType getReadType() {
+    return mReadType;
+  }
+
+  public long[] getReadBytes() {
+    return mReadBytes;
+  }
+
+  public int[] getReadFiles() {
+    return mReadFiles;
   }
 
   public long getTachyonWorkerBytes() {
@@ -73,27 +85,15 @@ public class WriteTaskReport extends TaskReport {
     return mThreadTimeMs;
   }
 
-  public WriteType getWriteType() {
-    return mWriteType;
-  }
-
-  public long[] getWriteBytes() {
-    return mWriteBytes;
-  }
-
-  public int[] getWriteFiles() {
-    return mWriteFiles;
-  }
-
-  public void setFromWriteThreads(WriteThread[] writeThreads) {
-    mThreadNum = writeThreads.length;
-    mWriteBytes = new long[mThreadNum];
-    mWriteFiles = new int[mThreadNum];
+  public void setFromReadThreads(ReadThread[] readThreads) {
+    mThreadNum = readThreads.length;
+    mReadBytes = new long[mThreadNum];
+    mReadFiles = new int[mThreadNum];
     mThreadTimeMs = new long[mThreadNum];
     for (int i = 0; i < mThreadNum; i ++) {
-      WriteThreadStatistic statistics = writeThreads[i].getStatistic();
-      mWriteBytes[i] = statistics.getSuccessBytes();
-      mWriteFiles[i] = statistics.getSuccessFiles();
+      ReadThreadStatistic statistics = readThreads[i].getStatistic();
+      mReadBytes[i] = statistics.getSuccessBytes();
+      mReadFiles[i] = statistics.getSuccessFiles();
       mThreadTimeMs[i] = statistics.getFinishTimeMs() - statistics.getStartTimeMs();
       if (!statistics.getSuccess()) {
         mSuccess = false;
@@ -103,10 +103,10 @@ public class WriteTaskReport extends TaskReport {
 
   @Override
   public void writeToFile(String fileName) throws IOException {
-    File reportFile = new File(fileName);
-    BufferedWriter fout = new BufferedWriter(new FileWriter(reportFile));
+    File contextFile = new File(fileName);
+    BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
     fout.write(NODE_NAME + "\n");
-    fout.write(mWriteType.toString() + "\n");
+    fout.write(mReadType.toString() + "\n");
 
     fout.write(mCores + "\n");
     fout.write(mTachyonWorkerBytes + "\n");
@@ -118,8 +118,8 @@ public class WriteTaskReport extends TaskReport {
     if (mThreadNum >= 0) {
       for (int i = 0; i < mThreadNum; i ++) {
         fout.write(mThreadTimeMs[i] + "\n");
-        fout.write(mWriteFiles[i] + "\n");
-        fout.write(mWriteBytes[i] + "\n");
+        fout.write(mReadFiles[i] + "\n");
+        fout.write(mReadBytes[i] + "\n");
       }
     }
     fout.close();

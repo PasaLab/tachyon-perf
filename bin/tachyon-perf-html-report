@@ -22,9 +22,9 @@ mkdir -p $TACHYON_PERF_OUT_DIR/htmlReport/node-reports
 
 for slave in `cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`; do
   echo -n "Collect from $slave... "
-  scp $slave:$TACHYON_PERF_OUT_DIR/report-Write $TACHYON_PERF_OUT_DIR/htmlReport/node-reports/report-Write-$slave
+  scp $slave:$TACHYON_PERF_OUT_DIR/context-Write $TACHYON_PERF_OUT_DIR/htmlReport/node-reports/context-Write-$slave
   sleep 0.02
-  scp $slave:$TACHYON_PERF_OUT_DIR/report-Read $TACHYON_PERF_OUT_DIR/htmlReport/node-reports/report-Read-$slave
+  scp $slave:$TACHYON_PERF_OUT_DIR/context-Read $TACHYON_PERF_OUT_DIR/htmlReport/node-reports/context-Read-$slave
   sleep 0.02
 done
 wait

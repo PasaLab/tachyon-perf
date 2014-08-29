@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import tachyon.perf.FooTask;
-import tachyon.perf.FooTaskReport;
+import tachyon.perf.FooTaskContext;
 import tachyon.perf.benchmark.read.ReadTask;
 import tachyon.perf.benchmark.write.WriteTask;
 
@@ -19,18 +19,18 @@ public class PerfTaskTest {
   @Test
   public void fooTaskTest() throws IOException {
     PerfTask fooTask = new FooTask();
-    TaskReport fooTaskReport = new FooTaskReport("test");
-    Assert.assertFalse(fooTaskReport.mSuccess);
-    Assert.assertEquals(0, ((FooTaskReport) fooTaskReport).getFoo());
-    Assert.assertFalse(((FooTaskReport) fooTaskReport).getReady());
-    Assert.assertFalse(((FooTaskReport) fooTaskReport).getWritten());
-    Assert.assertTrue(fooTask.setup(fooTaskReport));
-    Assert.assertTrue(((FooTaskReport) fooTaskReport).getReady());
-    Assert.assertTrue(fooTask.run(fooTaskReport));
-    Assert.assertEquals(5, ((FooTaskReport) fooTaskReport).getFoo());
-    Assert.assertTrue(fooTask.cleanupTask(fooTaskReport));
-    fooTaskReport.writeToFile("test");
-    Assert.assertTrue(((FooTaskReport) fooTaskReport).getWritten());
+    TaskContext fooTaskContext = new FooTaskContext("test");
+    Assert.assertFalse(fooTaskContext.mSuccess);
+    Assert.assertEquals(0, ((FooTaskContext) fooTaskContext).getFoo());
+    Assert.assertFalse(((FooTaskContext) fooTaskContext).getReady());
+    Assert.assertFalse(((FooTaskContext) fooTaskContext).getWritten());
+    Assert.assertTrue(fooTask.setup(fooTaskContext));
+    Assert.assertTrue(((FooTaskContext) fooTaskContext).getReady());
+    Assert.assertTrue(fooTask.run(fooTaskContext));
+    Assert.assertEquals(5, ((FooTaskContext) fooTaskContext).getFoo());
+    Assert.assertTrue(fooTask.cleanupTask(fooTaskContext));
+    fooTaskContext.writeToFile("test");
+    Assert.assertTrue(((FooTaskContext) fooTaskContext).getWritten());
   }
 
   @Test

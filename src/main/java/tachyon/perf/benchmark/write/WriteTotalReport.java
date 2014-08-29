@@ -37,30 +37,30 @@ public class WriteTotalReport extends PerfTotalReport {
   }
 
   @Override
-  public void initialFromTaskReports(File[] taskReportFiles) throws IOException {
-    mNodesNum = taskReportFiles.length;
+  public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
+    mNodesNum = taskContextFiles.length;
     mNodes = new ArrayList<String>(mNodesNum);
     mAvaliableCores = new ArrayList<Integer>(mNodesNum);
     mWorkerMemory = new ArrayList<Long>(mNodesNum);
     mWriteThroughput = new ArrayList<Float[]>(mNodesNum);
 
-    for (File taskReportFile : taskReportFiles) {
-      WriteTaskReport taskReport = WriteTaskReport.loadFromFile(taskReportFile);
-      mNodes.add(taskReport.NODE_NAME);
-      mWriteType = taskReport.getWriteType();
-      mAvaliableCores.add(taskReport.getCores());
-      mWorkerMemory.add(taskReport.getTachyonWorkerBytes());
-      if (taskReport.getStartTimeMs() < mId) {
-        mId = taskReport.getStartTimeMs();
+    for (File taskContextFile : taskContextFiles) {
+      WriteTaskContext taskContext = WriteTaskContext.loadFromFile(taskContextFile);
+      mNodes.add(taskContext.NODE_NAME);
+      mWriteType = taskContext.getWriteType();
+      mAvaliableCores.add(taskContext.getCores());
+      mWorkerMemory.add(taskContext.getTachyonWorkerBytes());
+      if (taskContext.getStartTimeMs() < mId) {
+        mId = taskContext.getStartTimeMs();
       }
-      if (!taskReport.getSuccess()) {
+      if (!taskContext.getSuccess()) {
         mFailedTasks ++;
-        mFailedNodes = mFailedNodes + taskReport.NODE_NAME + " ";
+        mFailedNodes = mFailedNodes + taskContext.NODE_NAME + " ";
         mWriteThroughput.add(new Float[0]);
         continue;
       }
-      long[] bytes = taskReport.getWriteBytes();
-      long[] timeMs = taskReport.getThreadTimeMs();
+      long[] bytes = taskContext.getWriteBytes();
+      long[] timeMs = taskContext.getThreadTimeMs();
       Float[] throughput = new Float[bytes.length];
       for (int i = 0; i < bytes.length; i ++) {
         // now throughput is in MB/s

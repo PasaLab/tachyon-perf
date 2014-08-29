@@ -19,13 +19,13 @@ public class TachyonPerfCollector {
 
     try {
       TaskType taskType = TaskType.getTaskType(args[0]);
-      File reportsDir = new File(args[1]);
-      File[] reportFiles = reportsDir.listFiles();
-      if (reportFiles == null || reportFiles.length == 0) {
-        throw new IOException("No task report exists under " + args[1]);
+      File contextsDir = new File(args[1]);
+      File[] contextFiles = contextsDir.listFiles();
+      if (contextFiles == null || contextFiles.length == 0) {
+        throw new IOException("No task context files exists under " + args[1]);
       }
       PerfTotalReport summaryReport = PerfTotalReport.get(taskType);
-      summaryReport.initialFromTaskReports(reportFiles);
+      summaryReport.initialFromTaskContexts(contextFiles);
       String outputFileName = PerfConf.get().OUT_FOLDER + "/TachyonPerfReport-" + args[0];
       summaryReport.writeToFile(outputFileName);
       System.out.println("Report generated at " + outputFileName);

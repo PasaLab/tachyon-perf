@@ -33,11 +33,11 @@ public abstract class PerfTotalReport {
   /**
    * Load the statistics of all the nodes and initial this total report.
    * 
-   * @param taskReportFiles
+   * @param taskContextFiles
    *          the statistics files for all the nodes
    * @throws IOException
    */
-  public abstract void initialFromTaskReports(File[] taskReportFiles) throws IOException;
+  public abstract void initialFromTaskContexts(File[] taskContextFiles) throws IOException;
 
   /**
    * Output this total report to file.

@@ -14,8 +14,8 @@ import tachyon.client.ReadType;
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.TaskType;
-import tachyon.perf.benchmark.read.ReadTaskReport;
-import tachyon.perf.benchmark.write.WriteTaskReport;
+import tachyon.perf.benchmark.read.ReadTaskContext;;
+import tachyon.perf.benchmark.write.WriteTaskContext;;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.conf.PerfTaskConf;
 
@@ -82,15 +82,15 @@ public class TachyonPerfHtmlReport {
     mReadThroughput = new ArrayList<Float[]>();
     mWriteThroughput = new ArrayList<Float[]>();
 
-    File reportFileDir = new File(REPORT_DIR + "/node-reports");
-    if (!reportFileDir.isDirectory()) {
+    File contextFileDir = new File(REPORT_DIR + "/node-reports");
+    if (!contextFileDir.isDirectory()) {
       System.err.println("Failed to collect data. Make sure run both write and read tests.");
       return false;
     }
-    File[] reportFiles = reportFileDir.listFiles();
+    File[] contextFiles = contextFileDir.listFiles();
     Set<String> nodes = new HashSet<String>();
-    for (File reportFile : reportFiles) {
-      String[] parts = reportFile.getName().split("-");
+    for (File contextFile : contextFiles) {
+      String[] parts = contextFile.getName().split("-");
       nodes.add(parts[parts.length - 1]);
     }
     if (nodes.size() == 0) {
@@ -100,15 +100,15 @@ public class TachyonPerfHtmlReport {
 
     try {
       for (String node : nodes) {
-        File readReportFile =
-            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX
+        File readContextFile =
+            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX
                 + "-" + TaskType.Read.toString() + "-" + node);
-        File writeReportFile =
-            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_REPORT_FILE_NAME_PREFIX
+        File writeContextFile =
+            new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX
                 + "-" + TaskType.Write.toString() + "-" + node);
         mNodes.add(node);
-        loadSingleReadTaskReport(readReportFile);
-        loadSingleWriteTaskReport(writeReportFile);
+        loadSingleReadTaskContext(readContextFile);
+        loadSingleWriteTaskContext(writeContextFile);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -118,18 +118,18 @@ public class TachyonPerfHtmlReport {
     return true;
   }
 
-  private void loadSingleReadTaskReport(File readTaskReportFile) throws IOException {
-    ReadTaskReport readTaskReport = ReadTaskReport.loadFromFile(readTaskReportFile);
-    mReadType = readTaskReport.getReadType();
-    if (readTaskReport.getStartTimeMs() < mReadStartTimeMs) {
-      mReadStartTimeMs = readTaskReport.getStartTimeMs();
+  private void loadSingleReadTaskContext(File readTaskContextFile) throws IOException {
+    ReadTaskContext readTaskContext = ReadTaskContext.loadFromFile(readTaskContextFile);
+    mReadType = readTaskContext.getReadType();
+    if (readTaskContext.getStartTimeMs() < mReadStartTimeMs) {
+      mReadStartTimeMs = readTaskContext.getStartTimeMs();
     }
-    if (!readTaskReport.getSuccess()) {
+    if (!readTaskContext.getSuccess()) {
       mReadFailed ++;
       return;
     }
-    long[] bytes = readTaskReport.getReadBytes();
-    long[] timeMs = readTaskReport.getThreadTimeMs();
+    long[] bytes = readTaskContext.getReadBytes();
+    long[] timeMs = readTaskContext.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
     for (int i = 0; i < bytes.length; i ++) {
       // now throughput is in MB/s
@@ -138,20 +138,20 @@ public class TachyonPerfHtmlReport {
     mReadThroughput.add(throughput);
   }
 
-  private void loadSingleWriteTaskReport(File writeTaskReportFile) throws IOException {
-    WriteTaskReport writeTaskReport = WriteTaskReport.loadFromFile(writeTaskReportFile);
-    mAvaliableCores.add(writeTaskReport.getCores());
-    mWorkerMemory.add(writeTaskReport.getTachyonWorkerBytes());
-    mWriteType = writeTaskReport.getWriteType();
-    if (writeTaskReport.getStartTimeMs() < mWriteStartTimeMs) {
-      mWriteStartTimeMs = writeTaskReport.getStartTimeMs();
+  private void loadSingleWriteTaskContext(File writeTaskContextFile) throws IOException {
+    WriteTaskContext writeTaskContext = WriteTaskContext.loadFromFile(writeTaskContextFile);
+    mAvaliableCores.add(writeTaskContext.getCores());
+    mWorkerMemory.add(writeTaskContext.getTachyonWorkerBytes());
+    mWriteType = writeTaskContext.getWriteType();
+    if (writeTaskContext.getStartTimeMs() < mWriteStartTimeMs) {
+      mWriteStartTimeMs = writeTaskContext.getStartTimeMs();
     }
-    if (!writeTaskReport.getSuccess()) {
+    if (!writeTaskContext.getSuccess()) {
       mWriteFailed ++;
       return;
     }
-    long[] bytes = writeTaskReport.getWriteBytes();
-    long[] timeMs = writeTaskReport.getThreadTimeMs();
+    long[] bytes = writeTaskContext.getWriteBytes();
+    long[] timeMs = writeTaskContext.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
     for (int i = 0; i < bytes.length; i ++) {
       // now throughput is in MB/s

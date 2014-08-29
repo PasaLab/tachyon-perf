@@ -37,30 +37,30 @@ public class ReadTotalReport extends PerfTotalReport {
   }
 
   @Override
-  public void initialFromTaskReports(File[] taskReportFiles) throws IOException {
-    mNodesNum = taskReportFiles.length;
+  public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
+    mNodesNum = taskContextFiles.length;
     mNodes = new ArrayList<String>(mNodesNum);
     mAvaliableCores = new ArrayList<Integer>(mNodesNum);
     mWorkerMemory = new ArrayList<Long>(mNodesNum);
     mReadThroughput = new ArrayList<Float[]>(mNodesNum);
 
-    for (File taskReportFile : taskReportFiles) {
-      ReadTaskReport taskReport = ReadTaskReport.loadFromFile(taskReportFile);
-      mNodes.add(taskReport.NODE_NAME);
-      mReadType = taskReport.getReadType();
-      mAvaliableCores.add(taskReport.getCores());
-      mWorkerMemory.add(taskReport.getTachyonWorkerBytes());
-      if (taskReport.getStartTimeMs() < mId) {
-        mId = taskReport.getStartTimeMs();
+    for (File taskContextFile : taskContextFiles) {
+      ReadTaskContext taskContext = ReadTaskContext.loadFromFile(taskContextFile);
+      mNodes.add(taskContext.NODE_NAME);
+      mReadType = taskContext.getReadType();
+      mAvaliableCores.add(taskContext.getCores());
+      mWorkerMemory.add(taskContext.getTachyonWorkerBytes());
+      if (taskContext.getStartTimeMs() < mId) {
+        mId = taskContext.getStartTimeMs();
       }
-      if (!taskReport.getSuccess()) {
+      if (!taskContext.getSuccess()) {
         mFailedTasks ++;
-        mFailedNodes = mFailedNodes + taskReport.NODE_NAME + " ";
+        mFailedNodes = mFailedNodes + taskContext.NODE_NAME + " ";
         mReadThroughput.add(new Float[0]);
         continue;
       }
-      long[] bytes = taskReport.getReadBytes();
-      long[] timeMs = taskReport.getThreadTimeMs();
+      long[] bytes = taskContext.getReadBytes();
+      long[] timeMs = taskContext.getThreadTimeMs();
       Float[] throughput = new Float[bytes.length];
       for (int i = 0; i < bytes.length; i ++) {
         // now throughput is in MB/s
