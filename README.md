@@ -13,14 +13,14 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 ##Run Tachyon-Perf Tests
 1. Copy `conf/tachyon-perf-env.sh.template` to `conf/tachyon-perf-env.sh` and configure it.
 2. Edit `conf/slaves` and distribute the tachyon-perf directory to all the same path on the slave nodes.
-3. The running command is `./bin/tachyon-perf <TaskType> [args...]`
- * The first parameter is the type of test task, and now it should be `Read` or `Write`, means the read test or the write test.
- * The following parameters are the args for the test task, and now it should be the read type for Read task or the write type for Write task. The read type and write type are defined in Tachyon, for example, `CACHE(read type)` or `CACHE_THROUGH(write type)`.
+3. The running command is `./bin/tachyon-perf <TaskType>`
+ * The parameter is the type of test task, and now it should be `Read` or `Write`, means the read test or the write test.
+ * The task's configurations are in `conf/<TaskType>.xml`, and you can modify it as your wish. Now there has `conf/Read.xml` and `conf/Write.xml`.
 4. When TachyonPerf is running, the status of the test job will be printed on the console. For some reasons, if you want to abort the tests, you can just press `Ctrl + C` to terminate current thread and then type the command `./bin/tachyon-perf-abort` at the master node to abort test processes on each slave node.
 5. After all the tests finished successfully, each node will generate a result report, locates at `result/` by default. You can also generate a graphical report by following commands in the section "Generating Test Reports".
 
 ##Configuration
-Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
+Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`. The detailed description of task configurations are in their xml files.
 <table>
     <tr>
         <td><b>Property Name</b></td>
@@ -51,41 +51,6 @@ Here, we list the alternative configurations in `conf/tachyon-perf-env.sh`
         <td>tachyon.perf.tfs.dir</td>
         <td>the workspace dir in Tachyon File System</td>
         <td>/tachyon-perf-workspace</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.read.files.per.thread</td>
-        <td>the number of files to read for each read thread</td>
-        <td>10</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.read.identical</td>
-        <td>if true, all the read threads will read the same files</td>
-        <td>false</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.read.mode</td>
-        <td>the read mode of read test, should be RANDOM or SEQUENCE</td>
-        <td>RANDOM</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.read.threads.num</td>
-        <td>the threads num of read test</td>
-        <td>4</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.write.file.length.bytes</td>
-        <td>the file size of write test, in bytes</td>
-        <td>128 * tachyon.Constants.MB</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.write.files.per.thread</td>
-        <td>the number of files to write for each write thread</td>
-        <td>10</td>
-    </tr>
-    <tr>
-        <td>tachyon.perf.write.threads.num</td>
-        <td>the threads num of write test</td>
-        <td>4</td>
     </tr>
     <tr>
         <td>tachyon.perf.out.dir</td>
