@@ -3,26 +3,32 @@
   <property>
     <name>threads.num</name>
     <value>4</value>
+    <description>the threads num of read test</description>
   </property>
   <property>
     <name>files.per.thread</name>
     <value>6</value>
+    <description>the number of files to read for each read thread</description>
   </property>
   <property>
     <name>mode</name>
     <value>RANDOM</value>
+    <description>the read mode of read test, should be RANDOM or SEQUENCE</description>
   </property>
   <property>
     <name>identical</name>
     <value>false</value>
+    <description>if true, all the read threads will read the same files</description>
   </property>
   <property>
     <name>grain.bytes</name>
     <value>4194304</value>
+    <description>the size of the buffer which is read from Tachyon at once</description>
   </property>
   <property>
     <name>read.type</name>
     <value>CACHE</value>
+    <description>the ReadType of the read operation</description>
   </property>
 </configuration>
 
