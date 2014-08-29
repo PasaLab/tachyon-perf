@@ -10,17 +10,16 @@ import java.util.List;
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.PerfTotalReport;
-import tachyon.perf.basic.TaskType;
+import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Total report for write test.
  */
 public class WriteTotalReport extends PerfTotalReport {
-  private String mFailedNodes;
-  private int mFailedTasks;
-  private long mId;
+  private String mFailedNodes = "";
+  private int mFailedTasks = 0;
+  private long mId = Long.MAX_VALUE;
   private int mNodesNum;
   private WriteType mWriteType;
 
@@ -28,13 +27,6 @@ public class WriteTotalReport extends PerfTotalReport {
   private List<Integer> mAvaliableCores;
   private List<Long> mWorkerMemory;
   private List<Float[]> mWriteThroughput;
-
-  public WriteTotalReport(TaskType taskType) {
-    super(taskType);
-    mFailedNodes = "";
-    mFailedTasks = 0;
-    mId = Long.MAX_VALUE;
-  }
 
   @Override
   public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
@@ -46,7 +38,7 @@ public class WriteTotalReport extends PerfTotalReport {
 
     for (File taskContextFile : taskContextFiles) {
       WriteTaskContext taskContext = WriteTaskContext.loadFromFile(taskContextFile);
-      mNodes.add(taskContext.NODE_NAME);
+      mNodes.add(taskContext.getNodeName());
       mWriteType = taskContext.getWriteType();
       mAvaliableCores.add(taskContext.getCores());
       mWorkerMemory.add(taskContext.getTachyonWorkerBytes());
@@ -55,7 +47,7 @@ public class WriteTotalReport extends PerfTotalReport {
       }
       if (!taskContext.getSuccess()) {
         mFailedTasks ++;
-        mFailedNodes = mFailedNodes + taskContext.NODE_NAME + " ";
+        mFailedNodes = mFailedNodes + taskContext.getNodeName() + " ";
         mWriteThroughput.add(new Float[0]);
         continue;
       }
@@ -82,14 +74,12 @@ public class WriteTotalReport extends PerfTotalReport {
 
   private String generateWriteConf() {
     StringBuffer sbWriteConf = new StringBuffer();
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    TaskConfiguration taskConf = TaskConfiguration.get("Write", true);
     sbWriteConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
-    sbWriteConf.append("tachyon.perf.write.file.length.bytes\t" + perfTaskConf.WRITE_FILE_LENGTH
-        + "\n");
-    sbWriteConf.append("tachyon.perf.write.files.per.thread\t"
-        + perfTaskConf.WRITE_FILES_PER_THREAD + "\n");
-    sbWriteConf.append("tachyon.perf.write.grain.bytes\t" + perfTaskConf.WRITE_GRAIN_BYTES + "\n");
-    sbWriteConf.append("tachyon.perf.write.threads.num\t" + perfTaskConf.WRITE_THREADS_NUM + "\n");
+    sbWriteConf.append("file.length.bytes\t" + taskConf.getProperty("file.length.bytes") + "\n");
+    sbWriteConf.append("files.per.thread\t" + taskConf.getProperty("files.per.thread") + "\n");
+    sbWriteConf.append("grain.bytes\t" + taskConf.getProperty("grain.bytes") + "\n");
+    sbWriteConf.append("threads.num\t" + taskConf.getProperty("threads.num") + "\n");
     sbWriteConf.append("WRITE_TYPE\t" + mWriteType.toString() + "\n");
     return sbWriteConf.toString();
   }
@@ -128,7 +118,7 @@ public class WriteTotalReport extends PerfTotalReport {
   public void writeToFile(String fileName) throws IOException {
     File outFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(outFile));
-    fout.write(TASK_TYPE.toString() + " Test - ID : " + mId + "\n");
+    fout.write(mTaskType + " Test - ID : " + mId + "\n");
     if (mFailedTasks == 0) {
       fout.write("Finished Successfully\n");
     } else {

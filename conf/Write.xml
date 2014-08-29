@@ -16,5 +16,9 @@
     <name>grain.bytes</name>
     <value>4194304</value>
   </property>
+  <property>
+    <name>write.type</name>
+    <value>THROUGH</value>
+  </property>
 </configuration>
 

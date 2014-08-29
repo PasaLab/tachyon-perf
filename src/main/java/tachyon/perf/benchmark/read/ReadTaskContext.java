@@ -15,10 +15,10 @@ import tachyon.perf.basic.TaskContext;
  */
 public class ReadTaskContext extends TaskContext {
   public static ReadTaskContext loadFromFile(File contextFile) throws IOException {
+    ReadTaskContext ret = new ReadTaskContext();
     BufferedReader fin = new BufferedReader(new FileReader(contextFile));
-    String nodeName = fin.readLine();
-    String readType = fin.readLine();
-    ReadTaskContext ret = new ReadTaskContext(nodeName, readType);
+    ret.mNodeName = fin.readLine();
+    ret.mReadType = ReadType.getOpType(fin.readLine());
     ret.mCores = Integer.parseInt(fin.readLine());
     ret.mTachyonWorkerBytes = Long.parseLong(fin.readLine());
     ret.mStartTimeMs = Long.parseLong(fin.readLine());
@@ -45,17 +45,9 @@ public class ReadTaskContext extends TaskContext {
 
   private long[] mReadBytes;
   private int[] mReadFiles;
-  private int mThreadNum;
+  private int mThreadNum = -1;
   private long[] mThreadTimeMs;
   private ReadType mReadType;
-
-  public ReadTaskContext(String nodeName, String readType) throws IOException {
-    super(nodeName);
-    mCores = Runtime.getRuntime().availableProcessors();
-    mTachyonWorkerBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
-    mThreadNum = -1;
-    mReadType = ReadType.getOpType(readType);
-  }
 
   public int getCores() {
     return mCores;
@@ -85,6 +77,12 @@ public class ReadTaskContext extends TaskContext {
     return mThreadTimeMs;
   }
 
+  public void initial(ReadType readType) throws IOException {
+    mCores = Runtime.getRuntime().availableProcessors();
+    mTachyonWorkerBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
+    mReadType = readType;
+  }
+
   public void setFromReadThreads(ReadThread[] readThreads) {
     mThreadNum = readThreads.length;
     mReadBytes = new long[mThreadNum];
@@ -105,7 +103,7 @@ public class ReadTaskContext extends TaskContext {
   public void writeToFile(String fileName) throws IOException {
     File contextFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
-    fout.write(NODE_NAME + "\n");
+    fout.write(mNodeName + "\n");
     fout.write(mReadType.toString() + "\n");
 
     fout.write(mCores + "\n");

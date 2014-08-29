@@ -12,24 +12,14 @@ import tachyon.perf.basic.Supervisible;
 import tachyon.perf.basic.TaskContext;
 import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * The read test task. It will read files from Tachyon in multi-thread.
  */
 public class ReadTask extends PerfTask implements Supervisible {
-  private final ReadType READ_TYPE;
-
   private ReadThread[] mReadThreads;
   private List<Thread> mReadThreadsList;
-
-  public ReadTask(String nodeName, int id, List<String> args) throws IOException {
-    super();
-    if (args.size() < 1) {
-      throw new IOException("Error when new ReadTask: not enough args.");
-    }
-    READ_TYPE = ReadType.getOpType(args.get(0));
-  }
+  private ReadType mReadType;
 
   @Override
   protected boolean cleanupTask(TaskContext taskContext) {
@@ -41,10 +31,11 @@ public class ReadTask extends PerfTask implements Supervisible {
   @Override
   protected boolean setupTask(TaskContext taskContext) {
     PerfConf perfConf = PerfConf.get();
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
+      mReadType = ReadType.getOpType(mTaskConf.getProperty("read.type"));
+      ((ReadTaskContext) taskContext).initial(mReadType);
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
-      String readDir = perfConf.TFS_DIR + "/" + getId();
+      String readDir = perfConf.TFS_DIR + "/" + mId;
       if (!tfs.exist(readDir)) {
         LOG.error("The read dir " + readDir + " is not exist. " + "Do the write test fisrt");
         return false;
@@ -60,14 +51,16 @@ public class ReadTask extends PerfTask implements Supervisible {
       }
       LOG.info("The read dir " + readDir + ", contains " + readFileCandidates.size() + " files");
 
-      ReadMode readMode = ReadMode.getReadMode(perfTaskConf.READ_MODE);
-      int threadsNum = perfTaskConf.READ_THREADS_NUM;
+      ReadMode readMode = ReadMode.getReadMode(mTaskConf.getProperty("mode"));
+      int threadsNum = mTaskConf.getIntProperty("threads.num");
+      int grainBytes = mTaskConf.getIntProperty("grain.bytes");
       List<Integer>[] readFileList =
-          ListGenerator.generateReadFiles(threadsNum, perfTaskConf.READ_FILES_PER_THREAD,
-              readFileCandidates, readMode, perfTaskConf.READ_IDENTICAL);
+          ListGenerator.generateReadFiles(threadsNum,
+              mTaskConf.getIntProperty("files.per.thread"), readFileCandidates, readMode,
+              mTaskConf.getBooleanProperty("indentical"));
       mReadThreads = new ReadThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
-        mReadThreads[i] = new ReadThread(i, readFileList[i], READ_TYPE);
+        mReadThreads[i] = new ReadThread(i, readFileList[i], mReadType, grainBytes);
       }
       LOG.info("Create " + threadsNum + " read threads");
       tfs.close();
@@ -101,17 +94,17 @@ public class ReadTask extends PerfTask implements Supervisible {
 
   @Override
   public String getTfsFailedPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/FAILED";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/FAILED";
   }
 
   @Override
   public String getTfsReadyPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/READY";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/READY";
   }
 
   @Override
   public String getTfsSuccessPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/SUCCESS";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/SUCCESS";
   }
 
 }

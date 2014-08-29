@@ -12,24 +12,14 @@ import tachyon.perf.basic.Supervisible;
 import tachyon.perf.basic.TaskContext;
 import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * The write test task. It will write files to Tachyon in multi-thread.
  */
 public class WriteTask extends PerfTask implements Supervisible {
-  private final WriteType WRITE_TYPE;
-
   private WriteThread[] mWriteThreads;
   private List<Thread> mWriteThreadsList;
-
-  public WriteTask(String nodeName, int id, List<String> args) throws IOException {
-    super();
-    if (args.size() < 1) {
-      throw new IOException("Error when new WriteTask: not enough args.");
-    }
-    WRITE_TYPE = WriteType.getOpType(args.get(0));
-  }
+  private WriteType mWriteType;
 
   @Override
   protected boolean cleanupTask(TaskContext taskContext) {
@@ -41,10 +31,11 @@ public class WriteTask extends PerfTask implements Supervisible {
   @Override
   protected boolean setupTask(TaskContext taskContext) {
     PerfConf perfConf = PerfConf.get();
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
     try {
+      mWriteType = WriteType.getOpType(mTaskConf.getProperty("write.type"));
+      ((WriteTaskContext) taskContext).initial(mWriteType);
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
-      String writeDir = perfConf.TFS_DIR + "/" + getId();
+      String writeDir = perfConf.TFS_DIR + "/" + mId;
       if (tfs.exist(writeDir)) {
         tfs.delete(writeDir, true);
         LOG.warn("The write dir " + writeDir + " already exists, delete it");
@@ -52,13 +43,16 @@ public class WriteTask extends PerfTask implements Supervisible {
       tfs.mkdir(writeDir);
       LOG.info("Create the write dir " + writeDir);
 
-      int threadsNum = perfTaskConf.WRITE_THREADS_NUM;
+      int threadsNum = mTaskConf.getIntProperty("threads.num");
       List<String>[] writeFileList =
-          ListGenerator.generateWriteFiles(threadsNum, perfTaskConf.WRITE_FILES_PER_THREAD,
-              writeDir);
+          ListGenerator.generateWriteFiles(threadsNum,
+              mTaskConf.getIntProperty("files.per.thread"), writeDir);
       mWriteThreads = new WriteThread[threadsNum];
       for (int i = 0; i < threadsNum; i ++) {
-        mWriteThreads[i] = new WriteThread(i, writeFileList[i], WRITE_TYPE);
+        mWriteThreads[i] =
+            new WriteThread(i, writeFileList[i], mWriteType,
+                mTaskConf.getLongProperty("file.length.bytes"),
+                mTaskConf.getIntProperty("grain.bytes"));
       }
       LOG.info("Create " + threadsNum + " write threads");
       tfs.close();
@@ -92,16 +86,16 @@ public class WriteTask extends PerfTask implements Supervisible {
 
   @Override
   public String getTfsFailedPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/FAILED";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/FAILED";
   }
 
   @Override
   public String getTfsReadyPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/READY";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/READY";
   }
 
   @Override
   public String getTfsSuccessPath() {
-    return PerfConf.get().TFS_DIR + "/" + getId() + "/SUCCESS";
+    return PerfConf.get().TFS_DIR + "/" + mId + "/SUCCESS";
   }
 }

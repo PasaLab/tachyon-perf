@@ -2,15 +2,12 @@ package tachyon.perf.basic;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import tachyon.client.TachyonFS;
 import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
-import tachyon.perf.benchmark.read.ReadTask;
-import tachyon.perf.benchmark.write.WriteTask;
 import tachyon.perf.conf.PerfConf;
 
 /**
@@ -20,42 +17,16 @@ import tachyon.perf.conf.PerfConf;
 public abstract class PerfTask {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
-  public static PerfTask
-      getPerfTask(String nodeName, int id, TaskType taskType, List<String> args)
-          throws IOException {
-    PerfTask ret = null;
-    if (taskType.isRead()) {
-      ret = new ReadTask(nodeName, id, args);
-    } else if (taskType.isWrite()) {
-      ret = new WriteTask(nodeName, id, args);
-    }
-    /* Add your own Task here */
-    else {
-      throw new IOException("Unsupport TaskType: " + taskType.toString());
-    }
-    ret.mId = id;
-    ret.mNodeName = nodeName;
-    ret.mTaskType = taskType;
-    return ret;
-  }
+  protected int mId;
+  protected String mNodeName;
+  protected TaskConfiguration mTaskConf;
+  protected String mTaskType;
 
-  private int mId;
-  private String mNodeName;
-  private TaskType mTaskType;
-
-  protected PerfTask() {
-  }
-
-  public int getId() {
-    return mId;
-  }
-
-  public String getNodeName() {
-    return mNodeName;
-  }
-
-  public TaskType getTaskType() {
-    return mTaskType;
+  public void initialSet(int id, String nodeName, String taskType, TaskConfiguration taskConf) {
+    mId = id;
+    mNodeName = nodeName;
+    mTaskType = taskType;
+    mTaskConf = taskConf;
   }
 
   /**
@@ -140,8 +111,7 @@ public abstract class PerfTask {
         outDir.mkdirs();
       }
       String reportFileName =
-          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + "-"
-              + mTaskType.toString();
+          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + "-" + mTaskType;
       taskContext.writeToFile(reportFileName);
     } catch (IOException e) {
       LOG.error("Error when generate the task report", e);

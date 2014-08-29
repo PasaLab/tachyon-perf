@@ -9,7 +9,7 @@ import org.junit.Test;
 public class WriteThreadTest {
   @Test
   public void readThreadConstructorTest() {
-    WriteThread readThread = new WriteThread(0, null, null);
+    WriteThread readThread = new WriteThread(0, null, null, 1, 1);
     Assert.assertEquals(0, readThread.ID);
   }
 }

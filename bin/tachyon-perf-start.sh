@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function printUsage {
-  echo "Usage: tachyon-perf-start.sh <NODENAME> <NODEID> <TaskType> [args...]"
+  echo "Usage: tachyon-perf-start.sh <NODENAME> <NODEID> <TaskType>"
   echo "This is used to start tachyon-perf on each node, see more in ./tachyon-perf"
 }
 

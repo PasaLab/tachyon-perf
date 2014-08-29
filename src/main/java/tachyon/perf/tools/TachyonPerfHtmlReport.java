@@ -13,11 +13,11 @@ import java.util.Set;
 import tachyon.client.ReadType;
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
+import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.basic.TaskType;
-import tachyon.perf.benchmark.read.ReadTaskContext;;
-import tachyon.perf.benchmark.write.WriteTaskContext;;
+import tachyon.perf.benchmark.read.ReadTaskContext;
+import tachyon.perf.benchmark.write.WriteTaskContext;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * This class is used to generate an html report. The prerequisite is that both write and read tests
@@ -102,10 +102,10 @@ public class TachyonPerfHtmlReport {
       for (String node : nodes) {
         File readContextFile =
             new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX
-                + "-" + TaskType.Read.toString() + "-" + node);
+                + "-Read-" + node);
         File writeContextFile =
             new File(REPORT_DIR + "/node-reports/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX
-                + "-" + TaskType.Write.toString() + "-" + node);
+                + "-Write-" + node);
         mNodes.add(node);
         loadSingleReadTaskContext(readContextFile);
         loadSingleWriteTaskContext(writeContextFile);
@@ -220,27 +220,28 @@ public class TachyonPerfHtmlReport {
 
   private String generatePerfConf() {
     StringBuffer sbPerfConf = new StringBuffer("\n");
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    TaskConfiguration readTaskConf = TaskConfiguration.get("Read", true);
+    TaskConfiguration writeTaskConf = TaskConfiguration.get("Write", true);
     sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.tfs.address" + "</td>\n\t<td>"
         + PerfConf.get().TFS_ADDRESS + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.files.per.thread" + "</td>\n\t<td>"
-        + perfTaskConf.READ_FILES_PER_THREAD + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.grain.bytes" + "</td>\n\t<td>"
-        + perfTaskConf.READ_GRAIN_BYTES + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.identical" + "</td>\n\t<td>"
-        + perfTaskConf.READ_IDENTICAL + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.mode" + "</td>\n\t<td>"
-        + perfTaskConf.READ_MODE + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.read.threads.num" + "</td>\n\t<td>"
-        + perfTaskConf.READ_THREADS_NUM + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.file.length.bytes" + "</td>\n\t<td>"
-        + perfTaskConf.WRITE_FILE_LENGTH + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.files.per.thread" + "</td>\n\t<td>"
-        + perfTaskConf.WRITE_FILES_PER_THREAD + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.grain.bytes" + "</td>\n\t<td>"
-        + perfTaskConf.WRITE_GRAIN_BYTES + "</td>\n</tr>\n");
-    sbPerfConf.append("<tr>\n\t<td>" + "tachyon.perf.write.threads.num" + "</td>\n\t<td>"
-        + perfTaskConf.WRITE_THREADS_NUM + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "read-files.per.thread" + "</td>\n\t<td>"
+        + readTaskConf.getProperty("files.per.thread") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "read-grain.bytes" + "</td>\n\t<td>"
+        + readTaskConf.getProperty("grain.bytes") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "read-identical" + "</td>\n\t<td>"
+        + readTaskConf.getProperty("identical") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "read-mode" + "</td>\n\t<td>"
+        + readTaskConf.getProperty("mode") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "read-threads.num" + "</td>\n\t<td>"
+        + readTaskConf.getProperty("threads.num") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "write-file.length.bytes" + "</td>\n\t<td>"
+        + writeTaskConf.getProperty("file.length.bytes") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "write-files.per.thread" + "</td>\n\t<td>"
+        + writeTaskConf.getProperty("files.per.thread") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "write-grain.bytes" + "</td>\n\t<td>"
+        + writeTaskConf.getProperty("grain.bytes") + "</td>\n</tr>\n");
+    sbPerfConf.append("<tr>\n\t<td>" + "write-threads.num" + "</td>\n\t<td>"
+        + writeTaskConf.getProperty("threads.num") + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "READ_TYPE" + "</td>\n\t<td>" + mReadType.toString()
         + "</td>\n</tr>\n");
     sbPerfConf.append("<tr>\n\t<td>" + "WRITE_TYPE" + "</td>\n\t<td>" + mWriteType.toString()

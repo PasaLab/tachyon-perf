@@ -13,7 +13,6 @@ public class FooTaskContext extends TaskContext {
   private boolean mWritten;
 
   public FooTaskContext(String nodeName) {
-    super(nodeName);
     mFoo = 0;
     mReady = false;
     mWritten = false;

@@ -13,12 +13,16 @@
     <value>RANDOM</value>
   </property>
   <property>
-    <name>indentical</name>
+    <name>identical</name>
     <value>false</value>
   </property>
   <property>
     <name>grain.bytes</name>
     <value>4194304</value>
+  </property>
+  <property>
+    <name>read.type</name>
+    <value>CACHE</value>
   </property>
 </configuration>
 

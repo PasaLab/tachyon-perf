@@ -1,12 +1,12 @@
 package tachyon.perf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import tachyon.perf.basic.PerfTask;
+import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.basic.TaskContext;
 import tachyon.perf.basic.TaskType;
 
@@ -18,29 +18,29 @@ public class TachyonPerf {
 
   public static void main(String[] args) {
     if (args.length < 3) {
-      LOG.error("Wrong program arguments. Should be <NODENAME> <NODEID> <TaskType> [args...] "
+      LOG.error("Wrong program arguments. Should be <NODENAME> <NODEID> <TaskType>"
           + "See more in bin/tachyon-perf");
       System.exit(-1);
     }
 
+    String nodeName = null;
     int nodeId = -1;
-    TaskType taskType = null;
-    List<String> remainArgs = null;
+    String taskType = null;
     try {
+      nodeName = args[0];
       nodeId = Integer.parseInt(args[1]);
-      taskType = TaskType.getTaskType(args[2]);
-      remainArgs = new ArrayList<String>(args.length - 3);
-      for (int i = 3; i < args.length; i ++) {
-        remainArgs.add(args[i]);
-      }
+      taskType = args[2];
     } catch (Exception e) {
       LOG.error("Failed to parse the input args", e);
       System.exit(-1);
     }
 
     try {
-      PerfTask task = PerfTask.getPerfTask(args[0], nodeId, taskType, remainArgs);
-      TaskContext taskContext = TaskContext.getTaskContext(args[0], nodeId, taskType, remainArgs);
+      TaskConfiguration taskConf = TaskConfiguration.get(taskType, true);
+      PerfTask task = TaskType.get().getTaskClass(taskType);
+      task.initialSet(nodeId, nodeName, taskType, taskConf);
+      TaskContext taskContext = TaskType.get().getTaskContextClass(taskType);
+      taskContext.initialSet(nodeId, nodeName, taskType);
       if (!task.setup(taskContext)) {
         LOG.error("Failed to setup task");
         System.exit(-1);
@@ -53,7 +53,7 @@ public class TachyonPerf {
         LOG.error("Failed to cleanup the task");
         System.exit(-1);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Error in task", e);
     }
   }

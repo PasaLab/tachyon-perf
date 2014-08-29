@@ -1,6 +1,7 @@
-package tachyon.perf.util;
+package tachyon.perf.basic;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
@@ -9,6 +10,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.log4j.Logger;
 
 import tachyon.perf.conf.PerfConf;
+import tachyon.perf.util.SAXConfiguration;
 
 public class TaskConfiguration {
   private static final Logger LOG = Logger.getLogger("");
@@ -19,20 +21,28 @@ public class TaskConfiguration {
 
   private static TaskConfiguration taskConf = null;
 
-  public static synchronized TaskConfiguration get(String type) {
+  public static synchronized TaskConfiguration get(String type, boolean fromFile) {
     if (taskConf == null) {
-      try {
-        taskConf =
-            new TaskConfiguration(PerfConf.get().TACHYON_PERF_HOME + "/conf/" + type + ".xml");
-      } catch (Exception e) {
-        LOG.error("Error when parse conf/" + type + ".xml", e);
-        throw new RuntimeException("Failed to parse conf/" + type + ".xml");
+      if (fromFile) {
+        try {
+          taskConf =
+              new TaskConfiguration(PerfConf.get().TACHYON_PERF_HOME + "/conf/" + type + ".xml");
+        } catch (Exception e) {
+          LOG.error("Error when parse conf/" + type + ".xml", e);
+          throw new RuntimeException("Failed to parse conf/" + type + ".xml");
+        }
+      } else {
+        taskConf = new TaskConfiguration();
       }
     }
     return taskConf;
   }
 
   private Map<String, String> mProperties;
+
+  private TaskConfiguration() {
+    mProperties = new HashMap<String, String>();
+  }
 
   private TaskConfiguration(String xmlFileName) throws Exception {
     SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -41,6 +51,10 @@ public class TaskConfiguration {
     SAXConfiguration saxConfiguration = new SAXConfiguration();
     saxParser.parse(xmlFile, saxConfiguration);
     mProperties = saxConfiguration.getProperties();
+  }
+
+  public void addProperty(String name, String value) {
+    mProperties.put(name, value);
   }
 
   public boolean getBooleanProperty(String property) {

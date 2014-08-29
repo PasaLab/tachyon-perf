@@ -11,7 +11,6 @@ import tachyon.client.TachyonFile;
 import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Thread to write files to Tachyon.
@@ -28,12 +27,12 @@ public class WriteThread implements Runnable {
   private WriteThreadStatistic mStatistic;
   private WriteType mWriteType;
 
-  public WriteThread(int id, List<String> writeFileList, WriteType writeType) {
+  public WriteThread(int id, List<String> writeFileList, WriteType writeType, long fileLength,
+      int grainBytes) {
     ID = id;
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
-    mWriteGrainBytes = perfTaskConf.WRITE_GRAIN_BYTES;
+    mWriteGrainBytes = grainBytes;
     mContent = new byte[mWriteGrainBytes];
-    mFileLength = perfTaskConf.WRITE_FILE_LENGTH;
+    mFileLength = fileLength;
     mTfsAddress = PerfConf.get().TFS_ADDRESS;
     mWriteFileList = writeFileList;
     mStatistic = new WriteThreadStatistic();

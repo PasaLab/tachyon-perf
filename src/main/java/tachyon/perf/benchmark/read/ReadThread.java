@@ -11,7 +11,6 @@ import tachyon.client.TachyonFS;
 import tachyon.client.TachyonFile;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Thread to read files from Tachyon.
@@ -28,9 +27,9 @@ public class ReadThread implements Runnable {
   private ReadThreadStatistic mStatistic;
   private String mTfsAddress;
 
-  public ReadThread(int id, List<Integer> readFileList, ReadType readType) {
+  public ReadThread(int id, List<Integer> readFileList, ReadType readType, int grainBytes) {
     ID = id;
-    mReadGrainBytes = PerfTaskConf.get().READ_GRAIN_BYTES;
+    mReadGrainBytes = grainBytes;
     mContent = new byte[mReadGrainBytes];
     mReadFileList = readFileList;
     mReadType = readType;

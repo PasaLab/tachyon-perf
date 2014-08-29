@@ -35,23 +35,21 @@ public class PerfTaskTest {
 
   @Test
   public void readTaskConstructorTest() throws IOException {
-    List<String> args = new ArrayList<String>(1);
-    args.add("CACHE");
-    ReadTask readTask = (ReadTask) PerfTask.getPerfTask("test", 0, TaskType.Read, args);
-    Assert.assertEquals(0, readTask.getId());
-    Assert.assertEquals("test", readTask.getNodeName());
-    Assert.assertEquals(TaskType.Read, readTask.getTaskType());
+    ReadTask readTask = new ReadTask();
+    readTask.initialSet(0, "test", "Read", null);
+    Assert.assertEquals(0, readTask.mId);
+    Assert.assertEquals("test", readTask.mNodeName);
+    Assert.assertEquals("Read", readTask.mTaskType);
     Assert.assertTrue(readTask instanceof Supervisible);
   }
 
   @Test
   public void writeTaskConstructorTest() throws IOException {
-    List<String> args = new ArrayList<String>(1);
-    args.add("MUST_CACHE");
-    WriteTask writeTask = (WriteTask) PerfTask.getPerfTask("test", 0, TaskType.Write, args);
-    Assert.assertEquals(0, writeTask.getId());
-    Assert.assertEquals("test", writeTask.getNodeName());
-    Assert.assertEquals(TaskType.Write, writeTask.getTaskType());
+    WriteTask writeTask = new WriteTask();
+    writeTask.initialSet(0, "test", "Write", null);
+    Assert.assertEquals(0, writeTask.mId);
+    Assert.assertEquals("test", writeTask.mNodeName);
+    Assert.assertEquals("Write", writeTask.mTaskType);
     Assert.assertTrue(writeTask instanceof Supervisible);
   }
 }

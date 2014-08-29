@@ -15,10 +15,10 @@ import tachyon.perf.basic.TaskContext;
  */
 public class WriteTaskContext extends TaskContext {
   public static WriteTaskContext loadFromFile(File contextFile) throws IOException {
+    WriteTaskContext ret = new WriteTaskContext();
     BufferedReader fin = new BufferedReader(new FileReader(contextFile));
-    String nodeName = fin.readLine();
-    String writeType = fin.readLine();
-    WriteTaskContext ret = new WriteTaskContext(nodeName, writeType);
+    ret.mNodeName = fin.readLine();
+    ret.mWriteType = WriteType.getOpType(fin.readLine());
     ret.mCores = Integer.parseInt(fin.readLine());
     ret.mTachyonWorkerBytes = Long.parseLong(fin.readLine());
     ret.mStartTimeMs = Long.parseLong(fin.readLine());
@@ -45,17 +45,9 @@ public class WriteTaskContext extends TaskContext {
 
   private long[] mWriteBytes;
   private int[] mWriteFiles;
-  private int mThreadNum;
+  private int mThreadNum = -1;
   private long[] mThreadTimeMs;
   private WriteType mWriteType;
-
-  public WriteTaskContext(String nodeName, String writeType) throws IOException {
-    super(nodeName);
-    mCores = Runtime.getRuntime().availableProcessors();
-    mTachyonWorkerBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
-    mThreadNum = -1;
-    mWriteType = WriteType.getOpType(writeType);
-  }
 
   public int getCores() {
     return mCores;
@@ -85,6 +77,12 @@ public class WriteTaskContext extends TaskContext {
     return mWriteFiles;
   }
 
+  public void initial(WriteType writeType) throws IOException {
+    mCores = Runtime.getRuntime().availableProcessors();
+    mTachyonWorkerBytes = tachyon.conf.WorkerConf.get().MEMORY_SIZE;
+    mWriteType = writeType;
+  }
+
   public void setFromWriteThreads(WriteThread[] writeThreads) {
     mThreadNum = writeThreads.length;
     mWriteBytes = new long[mThreadNum];
@@ -105,7 +103,7 @@ public class WriteTaskContext extends TaskContext {
   public void writeToFile(String fileName) throws IOException {
     File contextFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
-    fout.write(NODE_NAME + "\n");
+    fout.write(mNodeName + "\n");
     fout.write(mWriteType.toString() + "\n");
 
     fout.write(mCores + "\n");

@@ -10,17 +10,16 @@ import java.util.List;
 import tachyon.client.ReadType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.PerfTotalReport;
-import tachyon.perf.basic.TaskType;
+import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.conf.PerfConf;
-import tachyon.perf.conf.PerfTaskConf;
 
 /**
  * Total report for read test.
  */
 public class ReadTotalReport extends PerfTotalReport {
-  private String mFailedNodes;
-  private int mFailedTasks;
-  private long mId;
+  private String mFailedNodes = "";
+  private int mFailedTasks = 0;
+  private long mId = Long.MAX_VALUE;
   private int mNodesNum;
   private ReadType mReadType;
 
@@ -28,13 +27,6 @@ public class ReadTotalReport extends PerfTotalReport {
   private List<Integer> mAvaliableCores;
   private List<Long> mWorkerMemory;
   private List<Float[]> mReadThroughput;
-
-  public ReadTotalReport(TaskType taskType) {
-    super(taskType);
-    mFailedNodes = "";
-    mFailedTasks = 0;
-    mId = Long.MAX_VALUE;
-  }
 
   @Override
   public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
@@ -46,7 +38,7 @@ public class ReadTotalReport extends PerfTotalReport {
 
     for (File taskContextFile : taskContextFiles) {
       ReadTaskContext taskContext = ReadTaskContext.loadFromFile(taskContextFile);
-      mNodes.add(taskContext.NODE_NAME);
+      mNodes.add(taskContext.getNodeName());
       mReadType = taskContext.getReadType();
       mAvaliableCores.add(taskContext.getCores());
       mWorkerMemory.add(taskContext.getTachyonWorkerBytes());
@@ -55,7 +47,7 @@ public class ReadTotalReport extends PerfTotalReport {
       }
       if (!taskContext.getSuccess()) {
         mFailedTasks ++;
-        mFailedNodes = mFailedNodes + taskContext.NODE_NAME + " ";
+        mFailedNodes = mFailedNodes + taskContext.getNodeName() + " ";
         mReadThroughput.add(new Float[0]);
         continue;
       }
@@ -82,14 +74,13 @@ public class ReadTotalReport extends PerfTotalReport {
 
   private String generateReadConf() {
     StringBuffer sbReadConf = new StringBuffer();
-    PerfTaskConf perfTaskConf = PerfTaskConf.get();
+    TaskConfiguration taskConf = TaskConfiguration.get("Read", true);
     sbReadConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
-    sbReadConf.append("tachyon.perf.read.files.per.thread\t" + perfTaskConf.READ_FILES_PER_THREAD
-        + "\n");
-    sbReadConf.append("tachyon.perf.read.grain.bytes\t" + perfTaskConf.READ_GRAIN_BYTES + "\n");
-    sbReadConf.append("tachyon.perf.read.identical\t" + perfTaskConf.READ_IDENTICAL + "\n");
-    sbReadConf.append("tachyon.perf.read.mode\t" + perfTaskConf.READ_MODE + "\n");
-    sbReadConf.append("tachyon.perf.read.threads.num\t" + perfTaskConf.READ_THREADS_NUM + "\n");
+    sbReadConf.append("files.per.thread\t" + taskConf.getProperty("files.per.thread") + "\n");
+    sbReadConf.append("grain.bytes\t" + taskConf.getProperty("grain.bytes") + "\n");
+    sbReadConf.append("identical\t" + taskConf.getProperty("identical") + "\n");
+    sbReadConf.append("mode\t" + taskConf.getProperty("mode") + "\n");
+    sbReadConf.append("threads.num\t" + taskConf.getProperty("threads.num") + "\n");
     sbReadConf.append("READ_TYPE\t" + mReadType.toString() + "\n");
     return sbReadConf.toString();
   }
@@ -128,7 +119,7 @@ public class ReadTotalReport extends PerfTotalReport {
   public void writeToFile(String fileName) throws IOException {
     File outFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(outFile));
-    fout.write(TASK_TYPE.toString() + " Test - ID : " + mId + "\n");
+    fout.write(mTaskType + " Test - ID : " + mId + "\n");
     if (mFailedTasks == 0) {
       fout.write("Finished Successfully\n");
     } else {

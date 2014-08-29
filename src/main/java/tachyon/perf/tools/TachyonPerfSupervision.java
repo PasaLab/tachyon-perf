@@ -11,6 +11,7 @@ import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.PerfTask;
 import tachyon.perf.basic.Supervisible;
+import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.basic.TaskType;
 import tachyon.perf.conf.PerfConf;
 
@@ -41,7 +42,7 @@ public class TachyonPerfSupervision {
   private static boolean needAbort(int round, int percentage) {
     int failedNodes = 0;
     for (int state : sNodeStates) {
-      if ((state == NODE_STATE_FAILED) || (state == NODE_STATE_INITIAL && round > 30)) {
+      if ((state == NODE_STATE_FAILED) || (state == NODE_STATE_INITIAL && round > 10)) {
         failedNodes ++;
       }
     }
@@ -95,8 +96,7 @@ public class TachyonPerfSupervision {
   public static void main(String[] args) {
     int nodesNum = 0;
     List<String> nodes = null;
-    TaskType taskType = null;
-    List<String> taskArgs = null;
+    String taskType = null;
     try {
       int index = 0;
       nodesNum = Integer.parseInt(args[0]);
@@ -104,27 +104,24 @@ public class TachyonPerfSupervision {
       for (index = 1; index < nodesNum + 1; index ++) {
         nodes.add(args[index]);
       }
-      taskType = TaskType.getTaskType(args[index]);
-      taskArgs = new ArrayList<String>();
-      index ++;
-      for (int i = 0; i < args.length - index; i ++) {
-        taskArgs.add(args[index + i]);
-      }
+      taskType = args[index];
     } catch (Exception e) {
       e.printStackTrace();
-      System.err.println("Wrong arguments. Should be <NodesNum> [Nodes...] <TaskType> [args...]");
-      LOG.error("Wrong arguments. Should be <NodesNum> [Nodes...] <TaskType> [args...]", e);
+      System.err.println("Wrong arguments. Should be <NodesNum> [Nodes...] <TaskType>");
+      LOG.error("Wrong arguments. Should be <NodesNum> [Nodes...] <TaskType>", e);
       System.exit(-1);
     }
 
     try {
+      TaskConfiguration taskConf = TaskConfiguration.get(taskType, true);
       sNodeStates = new int[nodesNum];
       sNodeTasks = new PerfTask[nodesNum];
       for (int i = 0; i < nodesNum; i ++) {
         sNodeStates[i] = NODE_STATE_INITIAL;
-        sNodeTasks[i] = PerfTask.getPerfTask(nodes.get(i), i, taskType, taskArgs);
+        sNodeTasks[i] = TaskType.get().getTaskClass(taskType);
+        sNodeTasks[i].initialSet(i, nodes.get(i), taskType, taskConf);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
       System.err.println("Wrong arguments for task.");
       LOG.error("Wrong arguments for task.", e);

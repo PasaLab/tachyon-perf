@@ -1,13 +1,10 @@
 package tachyon.perf.basic;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import tachyon.perf.PerfConstants;
-import tachyon.perf.benchmark.read.ReadTaskContext;
-import tachyon.perf.benchmark.write.WriteTaskContext;
 
 /**
  * The abstract class for all test statistics. For new test, you should implement your own
@@ -16,32 +13,33 @@ import tachyon.perf.benchmark.write.WriteTaskContext;
 public abstract class TaskContext {
   protected static final Logger LOG = Logger.getLogger(PerfConstants.PERF_LOGGER_TYPE);
 
-  public static TaskContext getTaskContext(String nodeName, int id, TaskType taskType,
-      List<String> args) throws IOException {
-    TaskContext ret = null;
-    if (taskType.isRead()) {
-      ret = new ReadTaskContext(nodeName, args.get(0));
-    } else if (taskType.isWrite()) {
-      ret = new WriteTaskContext(nodeName, args.get(0));
-    }
-    /* Add your own TaskReport here */
-    else {
-      throw new IOException("Unsupport TaskType: " + taskType.toString());
-    }
-    return ret;
-  }
-
-  public final String NODE_NAME;
+  protected int mId;
+  protected String mNodeName;
+  protected String mTaskType;
 
   protected long mFinishTimeMs;
   protected long mStartTimeMs;
   protected boolean mSuccess;
 
-  protected TaskContext(String nodeName) {
-    NODE_NAME = nodeName;
+  public void initialSet(int id, String nodeName, String taskType) {
+    mId = id;
+    mNodeName = nodeName;
+    mTaskType = taskType;
     mStartTimeMs = System.currentTimeMillis();
     mFinishTimeMs = mStartTimeMs;
     mSuccess = false;
+  }
+
+  public int getId() {
+    return mId;
+  }
+
+  public String getNodeName() {
+    return mNodeName;
+  }
+
+  public String getTaskType() {
+    return mTaskType;
   }
 
   public long getFinishTimeMs() {
