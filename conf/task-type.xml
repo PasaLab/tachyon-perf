@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taskTypes>
+  <type>
+    <name>Read</name>
+    <taskClass>tachyon.perf.benchmark.read.ReadTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.read.ReadTaskContext</taskContextClass>
+    <totalReportClass>tachyon.perf.benchmark.read.ReadTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>Write</name>
+    <taskClass>tachyon.perf.benchmark.write.WriteTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.write.WriteTaskContext</taskContextClass>
+    <totalReportClass>tachyon.perf.benchmark.write.WriteTotalReport</totalReportClass>
+  </type>
+</taskTypes>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>threads.num</name>
+    <value>4</value>
+  </property>
+  <property>
+    <name>files.per.thread</name>
+    <value>6</value>
+  </property>
+  <property>
+    <name>file.length.bytes</name>
+    <value>134217728</value>
+  </property>
+  <property>
+    <name>grain.bytes</name>
+    <value>4194304</value>
+  </property>
+</configuration>
+

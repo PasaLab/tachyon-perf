@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>threads.num</name>
+    <value>4</value>
+  </property>
+  <property>
+    <name>files.per.thread</name>
+    <value>6</value>
+  </property>
+  <property>
+    <name>mode</name>
+    <value>RANDOM</value>
+  </property>
+  <property>
+    <name>indentical</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>grain.bytes</name>
+    <value>4194304</value>
+  </property>
+</configuration>
+
