@@ -7,6 +7,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * This class is used to parse the conf/task-type.xml
+ */
 public class SAXTaskType extends DefaultHandler {
   private String mCurrentTag = null;
   private String mCurrentType = null;

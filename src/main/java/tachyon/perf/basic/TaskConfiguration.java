@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
 import tachyon.perf.conf.PerfConf;
 import tachyon.perf.util.SAXConfiguration;
 
+/**
+ * Manage the configurations for each task.
+ */
 public class TaskConfiguration {
   private static final Logger LOG = Logger.getLogger("");
   public static final boolean DEFAULT_BOOLEAN = false;
@@ -21,6 +24,16 @@ public class TaskConfiguration {
 
   private static TaskConfiguration taskConf = null;
 
+  /**
+   * Get the configuration.
+   * 
+   * @param type
+   *          the type of the benchmark task
+   * @param fromFile
+   *          if true, it will load the configuration file, otherwise it return an empty
+   *          configuration.
+   * @return the task configuration
+   */
   public static synchronized TaskConfiguration get(String type, boolean fromFile) {
     if (taskConf == null) {
       if (fromFile) {

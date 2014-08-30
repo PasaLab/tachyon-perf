@@ -7,6 +7,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * This class is used to parse the configuration file for specified benchmark
+ */
 public class SAXConfiguration extends DefaultHandler {
   private String mCurrentName = null;
   private String mCurrentTag = null;
