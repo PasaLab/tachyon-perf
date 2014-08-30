@@ -39,10 +39,11 @@ public class TaskConfiguration {
       if (fromFile) {
         try {
           taskConf =
-              new TaskConfiguration(PerfConf.get().TACHYON_PERF_HOME + "/conf/" + type + ".xml");
+              new TaskConfiguration(PerfConf.get().TACHYON_PERF_HOME + "/conf/testSuite/" + type
+                  + ".xml");
         } catch (Exception e) {
-          LOG.error("Error when parse conf/" + type + ".xml", e);
-          throw new RuntimeException("Failed to parse conf/" + type + ".xml");
+          LOG.error("Error when parse conf/testSuite/" + type + ".xml", e);
+          throw new RuntimeException("Failed to parse conf/testSuite/" + type + ".xml");
         }
       } else {
         taskConf = new TaskConfiguration();
