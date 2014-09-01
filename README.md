@@ -6,6 +6,8 @@ A  general performance test framework for [Tachyon](http://tachyon-project.org/)
 ##Prerequisites
 As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guidelines [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
 
+The following shows how to run tachyon-perf, and you can add a new benchmark to tachyon-perf if needed. See more in [How to add a new benchmark](https://github.com/PasaLab/tachyon-perf/wiki/How-to-add-a-new-benchmark)
+
 ##Compile Tachyon-Perf
 1. The compiling command is `mvn install`, and you can specify the Tachyon version or Hadoop version by `-Dtachyon.version=X.X.X` or `-Dhadoop.version=X.X.X` as a compile parameter.
 2. The default Tachyon version is set to 0.5.0, which is now available from MVNRepository. The default Hadoop version is set to 1.0.4, which is also default in Tachyon-0.5.0.
@@ -15,7 +17,7 @@ As this project is a test framework for Tachyon, you need to get the Tachyon ins
 2. Edit `conf/slaves` and distribute the tachyon-perf directory to all the same path on the slave nodes.
 3. The running command is `./bin/tachyon-perf <TaskType>`
  * The parameter is the type of test task, and now it should be `Read` or `Write`, means the read test or the write test.
- * The task's configurations are in `conf/<TaskType>.xml`, and you can modify it as your wish. Now there has `conf/Read.xml` and `conf/Write.xml`.
+ * The task's configurations are in `conf/testSuite/<TaskType>.xml`, and you can modify it as your wish. Now there has `conf/testSuite/Read.xml` and `conf/testSuite/Write.xml`.
 4. When TachyonPerf is running, the status of the test job will be printed on the console. For some reasons, if you want to abort the tests, you can just press `Ctrl + C` to terminate current thread and then type the command `./bin/tachyon-perf-abort` at the master node to abort test processes on each slave node.
 5. After all the tests finished successfully, each node will generate a result report, locates at `result/` by default. You can also generate a graphical report by following commands in the section "Generating Test Reports".
 
