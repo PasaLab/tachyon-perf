@@ -4,10 +4,7 @@ function printUsage {
   echo "Usage: tachyon-perf <TaskType>"
   echo "now TaskType is one of:"
   echo -e "  Read, Write"
-  echo "for Read Task, the args should be one of:"
-  echo -e "  CACHE, NO_CACHE"
-  echo "for Write Task, the args should be one of:"
-  echo -e "  MUST_CACHE, TRY_CACHE, CACHE_THROUGH, THROUGH, ASYNC_THROUGH"
+  echo "the detailed configurations are in conf/testSuite/"
 }
 
 # if less than 1 args specified, show usage
