@@ -26,7 +26,7 @@ SLAVES=`cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`
 for slave in $SLAVES; do
   echo -n "Connection to $slave... "
   scp $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh $slave:$TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh
-  scp $TACHYON_PERF_CONF_DIR/$1.xml $slave:$TACHYON_PERF_CONF_DIR/$1.xml
+  scp $TACHYON_PERF_CONF_DIR/testSuite/$1.xml $slave:$TACHYON_PERF_CONF_DIR/testSuite/$1.xml
   ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $slave $nodeid $1 2>&1
   sleep 0.02
   nodeid=`expr $nodeid + 1`
