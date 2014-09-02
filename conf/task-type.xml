@@ -12,5 +12,11 @@
     <taskContextClass>tachyon.perf.benchmark.write.WriteTaskContext</taskContextClass>
     <totalReportClass>tachyon.perf.benchmark.write.WriteTotalReport</totalReportClass>
   </type>
+  <type>
+    <name>Connect</name>
+    <taskClass>tachyon.perf.benchmark.connect.ConnectTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.connect.ConnectTaskContext</taskContextClass>
+    <totalReportClass>tachyon.perf.benchmark.connect.ConnectTotalReport</totalReportClass>
+  </type>
 </taskTypes>
 

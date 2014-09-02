@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>threads.num</name>
+    <value>4</value>
+    <description>the threads num of connect test</description>
+  </property>
+  <property>
+    <name>clients.per.thread</name>
+    <value>4</value>
+    <description>the number of Tachyon Clients for each connect thread</description>
+  </property>
+  <property>
+    <name>ops.per.thread</name>
+    <value>20000</value>
+    <description>the number of metadata operations for each connect thread</description>
+  </property>
+</configuration>
+
