@@ -19,6 +19,7 @@ public class TachyonPerfCollector {
 
     try {
       PerfTotalReport summaryReport = TaskType.get().getTotalReportClass(args[0]);
+      summaryReport.initialSet(args[0]);
       File contextsDir = new File(args[1]);
       File[] contextFiles = contextsDir.listFiles();
       if (contextFiles == null || contextFiles.length == 0) {
