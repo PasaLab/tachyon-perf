@@ -23,7 +23,7 @@
   <property>
     <name>grain.bytes</name>
     <value>4194304</value>
-    <description>the size of the buffer which is read from Tachyon at once</description>
+    <description>the size of the buffer which is read from Tachyon once</description>
   </property>
   <property>
     <name>read.type</name>
