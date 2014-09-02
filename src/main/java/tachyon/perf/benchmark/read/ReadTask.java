@@ -55,11 +55,10 @@ public class ReadTask extends PerfTask implements Supervisible {
       int threadsNum = mTaskConf.getIntProperty("threads.num");
       int grainBytes = mTaskConf.getIntProperty("grain.bytes");
       List<Integer>[] readFileList =
-          ListGenerator.generateReadFiles(threadsNum,
-              mTaskConf.getIntProperty("files.per.thread"), readFileCandidates, readMode,
-              mTaskConf.getBooleanProperty("indentical"));
+          ListGenerator.generateReadFiles(threadsNum, mTaskConf.getIntProperty("files.per.thread"),
+              readFileCandidates, readMode, mTaskConf.getBooleanProperty("indentical"));
       mReadThreads = new ReadThread[threadsNum];
-      for (int i = 0; i < threadsNum; i ++) {
+      for (int i = 0; i < threadsNum; i++) {
         mReadThreads[i] = new ReadThread(i, readFileList[i], mReadType, grainBytes);
       }
       LOG.info("Create " + threadsNum + " read threads");
@@ -76,7 +75,7 @@ public class ReadTask extends PerfTask implements Supervisible {
   @Override
   protected boolean runTask(TaskContext taskContext) {
     mReadThreadsList = new ArrayList<Thread>(mReadThreads.length);
-    for (int i = 0; i < mReadThreads.length; i ++) {
+    for (int i = 0; i < mReadThreads.length; i++) {
       Thread readThread = new Thread(mReadThreads[i]);
       mReadThreadsList.add(readThread);
       readThread.start();

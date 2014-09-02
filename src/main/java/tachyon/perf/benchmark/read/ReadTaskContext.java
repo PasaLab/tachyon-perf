@@ -30,7 +30,7 @@ public class ReadTaskContext extends TaskContext {
       ret.mReadBytes = new long[threadNum];
       ret.mReadFiles = new int[threadNum];
       ret.mThreadTimeMs = new long[threadNum];
-      for (int i = 0; i < threadNum; i ++) {
+      for (int i = 0; i < threadNum; i++) {
         ret.mThreadTimeMs[i] = Long.parseLong(fin.readLine());
         ret.mReadFiles[i] = Integer.parseInt(fin.readLine());
         ret.mReadBytes[i] = Long.parseLong(fin.readLine());
@@ -88,7 +88,7 @@ public class ReadTaskContext extends TaskContext {
     mReadBytes = new long[mThreadNum];
     mReadFiles = new int[mThreadNum];
     mThreadTimeMs = new long[mThreadNum];
-    for (int i = 0; i < mThreadNum; i ++) {
+    for (int i = 0; i < mThreadNum; i++) {
       ReadThreadStatistic statistics = readThreads[i].getStatistic();
       mReadBytes[i] = statistics.getSuccessBytes();
       mReadFiles[i] = statistics.getSuccessFiles();
@@ -114,7 +114,7 @@ public class ReadTaskContext extends TaskContext {
     fout.write(mSuccess + "\n");
     fout.write(mThreadNum + "\n");
     if (mThreadNum >= 0) {
-      for (int i = 0; i < mThreadNum; i ++) {
+      for (int i = 0; i < mThreadNum; i++) {
         fout.write(mThreadTimeMs[i] + "\n");
         fout.write(mReadFiles[i] + "\n");
         fout.write(mReadBytes[i] + "\n");

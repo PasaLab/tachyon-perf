@@ -27,11 +27,9 @@ public class TaskConfiguration {
   /**
    * Get the configuration.
    * 
-   * @param type
-   *          the type of the benchmark task
-   * @param fromFile
-   *          if true, it will load the configuration file, otherwise it return an empty
-   *          configuration.
+   * @param type the type of the benchmark task
+   * @param fromFile if true, it will load the configuration file, otherwise it return an empty
+   *        configuration.
    * @return the task configuration
    */
   public static synchronized TaskConfiguration get(String type, boolean fromFile) {

@@ -17,7 +17,7 @@ public class ListGeneratorTest {
     int threadsNum = 4;
     int filesPerThread = 6;
     List<Integer> candidates = new ArrayList<Integer>(20);
-    for (int i = 0; i < 20; i ++) {
+    for (int i = 0; i < 20; i++) {
       candidates.add(i);
     }
 
@@ -26,7 +26,7 @@ public class ListGeneratorTest {
             true);
     Assert.assertEquals(threadsNum, result1.length);
     Assert.assertEquals(filesPerThread, result1[0].size());
-    for (int i = 1; i < threadsNum; i ++) {
+    for (int i = 1; i < threadsNum; i++) {
       Assert.assertEquals(result1[0], result1[i]);
     }
 
@@ -34,9 +34,9 @@ public class ListGeneratorTest {
         ListGenerator.generateReadFiles(threadsNum, filesPerThread, candidates, ReadMode.SEQUENCE,
             false);
     Assert.assertEquals(threadsNum, result2.length);
-    for (int i = 0; i < threadsNum; i ++) {
+    for (int i = 0; i < threadsNum; i++) {
       Assert.assertEquals(filesPerThread, result2[i].size());
-      for (int j = 0; j < filesPerThread; j ++) {
+      for (int j = 0; j < filesPerThread; j++) {
         Integer expect = (20 / threadsNum * i + j) % 20;
         Assert.assertEquals(expect, result2[i].get(j));
       }
@@ -48,12 +48,11 @@ public class ListGeneratorTest {
     int threadsNum = 4;
     int filesPerThread = 6;
     String dirPrefix = "xyz";
-    List<String>[] result =
-        ListGenerator.generateWriteFiles(threadsNum, filesPerThread, dirPrefix);
+    List<String>[] result = ListGenerator.generateWriteFiles(threadsNum, filesPerThread, dirPrefix);
     Assert.assertEquals(threadsNum, result.length);
-    for (int i = 0; i < threadsNum; i ++) {
+    for (int i = 0; i < threadsNum; i++) {
       Assert.assertEquals(filesPerThread, result[i].size());
-      for (int j = 0; j < filesPerThread; j ++) {
+      for (int j = 0; j < filesPerThread; j++) {
         Assert.assertEquals("xyz/" + i + "-" + j, result[i].get(j));
       }
     }

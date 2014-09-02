@@ -18,8 +18,7 @@ public abstract class PerfTotalReport {
   /**
    * Load the statistics of all the nodes and initial this total report.
    * 
-   * @param taskContextFiles
-   *          the statistics files for all the nodes
+   * @param taskContextFiles the statistics files for all the nodes
    * @throws IOException
    */
   public abstract void initialFromTaskContexts(File[] taskContextFiles) throws IOException;
@@ -27,8 +26,7 @@ public abstract class PerfTotalReport {
   /**
    * Output this total report to file.
    * 
-   * @param fileName
-   *          the name of the output file
+   * @param fileName the name of the output file
    * @throws IOException
    */
   public abstract void writeToFile(String fileName) throws IOException;

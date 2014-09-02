@@ -30,7 +30,7 @@ public class WriteTaskContext extends TaskContext {
       ret.mWriteBytes = new long[threadNum];
       ret.mWriteFiles = new int[threadNum];
       ret.mThreadTimeMs = new long[threadNum];
-      for (int i = 0; i < threadNum; i ++) {
+      for (int i = 0; i < threadNum; i++) {
         ret.mThreadTimeMs[i] = Long.parseLong(fin.readLine());
         ret.mWriteFiles[i] = Integer.parseInt(fin.readLine());
         ret.mWriteBytes[i] = Long.parseLong(fin.readLine());
@@ -88,7 +88,7 @@ public class WriteTaskContext extends TaskContext {
     mWriteBytes = new long[mThreadNum];
     mWriteFiles = new int[mThreadNum];
     mThreadTimeMs = new long[mThreadNum];
-    for (int i = 0; i < mThreadNum; i ++) {
+    for (int i = 0; i < mThreadNum; i++) {
       WriteThreadStatistic statistics = writeThreads[i].getStatistic();
       mWriteBytes[i] = statistics.getSuccessBytes();
       mWriteFiles[i] = statistics.getSuccessFiles();
@@ -114,7 +114,7 @@ public class WriteTaskContext extends TaskContext {
     fout.write(mSuccess + "\n");
     fout.write(mThreadNum + "\n");
     if (mThreadNum >= 0) {
-      for (int i = 0; i < mThreadNum; i ++) {
+      for (int i = 0; i < mThreadNum; i++) {
         fout.write(mThreadTimeMs[i] + "\n");
         fout.write(mWriteFiles[i] + "\n");
         fout.write(mWriteBytes[i] + "\n");

@@ -46,7 +46,7 @@ public class WriteTotalReport extends PerfTotalReport {
         mId = taskContext.getStartTimeMs();
       }
       if (!taskContext.getSuccess()) {
-        mFailedTasks ++;
+        mFailedTasks++;
         mFailedNodes = mFailedNodes + taskContext.getNodeName() + " ";
         mWriteThroughput.add(new Float[0]);
         continue;
@@ -54,7 +54,7 @@ public class WriteTotalReport extends PerfTotalReport {
       long[] bytes = taskContext.getWriteBytes();
       long[] timeMs = taskContext.getThreadTimeMs();
       Float[] throughput = new Float[bytes.length];
-      for (int i = 0; i < bytes.length; i ++) {
+      for (int i = 0; i < bytes.length; i++) {
         // now throughput is in MB/s
         throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
       }
@@ -88,7 +88,7 @@ public class WriteTotalReport extends PerfTotalReport {
     StringBuffer sbSystemConf = new StringBuffer("NodeName\tCores\tWorkerMemory\n");
     int totalCores = 0;
     long totalMemory = 0;
-    for (int i = 0; i < mNodesNum; i ++) {
+    for (int i = 0; i < mNodesNum; i++) {
       totalCores += mAvaliableCores.get(i);
       totalMemory += mWorkerMemory.get(i);
       sbSystemConf.append(mNodes.get(i) + "\t" + mAvaliableCores.get(i) + "\t"
@@ -102,7 +102,7 @@ public class WriteTotalReport extends PerfTotalReport {
   private String generateThroughput() {
     StringBuffer sbThroughput = new StringBuffer("NodeName\tWriteThroughput(MB/s)\n");
     float totalThroughput = 0;
-    for (int i = 0; i < mNodesNum; i ++) {
+    for (int i = 0; i < mNodesNum; i++) {
       float nodeThroughput = 0;
       for (float throughput : mWriteThroughput.get(i)) {
         nodeThroughput += throughput;
@@ -131,7 +131,7 @@ public class WriteTotalReport extends PerfTotalReport {
     fout.write("********** Write Throughput **********\n");
     fout.write(generateThroughput());
     fout.write("********** Node Details **********\n");
-    for (int i = 0; i < mNodesNum; i ++) {
+    for (int i = 0; i < mNodesNum; i++) {
       fout.write(generateNodeDetails(i));
     }
     fout.close();

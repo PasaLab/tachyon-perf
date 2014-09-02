@@ -69,8 +69,7 @@ public abstract class TaskContext {
   /**
    * Output this task report to file.
    * 
-   * @param fileName
-   *          the name of the output file
+   * @param fileName the name of the output file
    * @throws IOException
    */
   public abstract void writeToFile(String fileName) throws IOException;

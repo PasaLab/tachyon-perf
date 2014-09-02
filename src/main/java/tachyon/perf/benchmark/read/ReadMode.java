@@ -18,8 +18,7 @@ public enum ReadMode {
   /**
    * Parse the read mode
    * 
-   * @param readMode
-   *          the string format of the read mode
+   * @param readMode the string format of the read mode
    * @return the read mode
    * @throws IOException
    */

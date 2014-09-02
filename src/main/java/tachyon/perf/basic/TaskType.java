@@ -49,8 +49,7 @@ public class TaskType {
   /**
    * Get the task class of specified task. The class should be a subclass of PerfTask.
    * 
-   * @param type
-   *          the type of the benchmark task
+   * @param type the type of the benchmark task
    * @return the task class
    * @throws Exception
    */
@@ -62,8 +61,7 @@ public class TaskType {
   /**
    * Get the task context class of specified task. The class should be a subclass of TaskContext.
    * 
-   * @param type
-   *          the type of the benchmark task
+   * @param type the type of the benchmark task
    * @return the task context class
    * @throws Exception
    */
@@ -77,8 +75,7 @@ public class TaskType {
    * Note that this is not necessary for a benchmark. It only used when you want
    * TachyonPerfCollector to support to generate a total report for the benchmark.
    * 
-   * @param type
-   *          the type of the benchmark task
+   * @param type the type of the benchmark task
    * @return the task context class
    * @throws Exception
    */

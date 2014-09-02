@@ -31,9 +31,9 @@ public class TachyonPerfSupervision {
   private static boolean allFinished() {
     int nodesNum = sNodeStates.length;
     int finishedNum = 0;
-    for (int i = 0; i < nodesNum; i ++) {
+    for (int i = 0; i < nodesNum; i++) {
       if (sNodeStates[i] == NODE_STATE_FAILED || sNodeStates[i] == NODE_STATE_SUCCESS) {
-        finishedNum ++;
+        finishedNum++;
       }
     }
     return (finishedNum == nodesNum);
@@ -43,7 +43,7 @@ public class TachyonPerfSupervision {
     int failedNodes = 0;
     for (int state : sNodeStates) {
       if ((state == NODE_STATE_FAILED) || (state == NODE_STATE_INITIAL && round > 10)) {
-        failedNodes ++;
+        failedNodes++;
       }
     }
     int failedThreshold = percentage * sNodeStates.length / 100;
@@ -62,19 +62,19 @@ public class TachyonPerfSupervision {
       sbSuccessNodes = new StringBuffer("Success:");
       sbFailedNodes = new StringBuffer("Failed:");
     }
-    for (int i = 0; i < sNodeStates.length; i ++) {
+    for (int i = 0; i < sNodeStates.length; i++) {
       if (sNodeStates[i] == NODE_STATE_RUNNING) {
-        runningNodes ++;
+        runningNodes++;
         if (debug) {
           sbRunningNodes.append(" " + nodes.get(i));
         }
       } else if (sNodeStates[i] == NODE_STATE_SUCCESS) {
-        successNodes ++;
+        successNodes++;
         if (debug) {
           sbSuccessNodes.append(" " + nodes.get(i));
         }
       } else if (sNodeStates[i] == NODE_STATE_FAILED) {
-        failedNodes ++;
+        failedNodes++;
         if (debug) {
           sbFailedNodes.append(" " + nodes.get(i));
         }
@@ -85,8 +85,8 @@ public class TachyonPerfSupervision {
             + failedNodes + " nodes.";
     if (debug) {
       status =
-          status + "\n\t" + sbRunningNodes.toString() + "\n\t" + sbSuccessNodes.toString()
-              + "\n\t" + sbFailedNodes.toString();
+          status + "\n\t" + sbRunningNodes.toString() + "\n\t" + sbSuccessNodes.toString() + "\n\t"
+              + sbFailedNodes.toString();
     }
     System.out.println(status);
     LOG.info(status);
@@ -101,7 +101,7 @@ public class TachyonPerfSupervision {
       int index = 0;
       nodesNum = Integer.parseInt(args[0]);
       nodes = new ArrayList<String>(nodesNum);
-      for (index = 1; index < nodesNum + 1; index ++) {
+      for (index = 1; index < nodesNum + 1; index++) {
         nodes.add(args[index]);
       }
       taskType = args[index];
@@ -116,7 +116,7 @@ public class TachyonPerfSupervision {
       TaskConfiguration taskConf = TaskConfiguration.get(taskType, true);
       sNodeStates = new int[nodesNum];
       sNodeTasks = new PerfTask[nodesNum];
-      for (int i = 0; i < nodesNum; i ++) {
+      for (int i = 0; i < nodesNum; i++) {
         sNodeStates[i] = NODE_STATE_INITIAL;
         sNodeTasks[i] = TaskType.get().getTaskClass(taskType);
         sNodeTasks[i].initialSet(i, nodes.get(i), taskType, taskConf);
@@ -141,7 +141,7 @@ public class TachyonPerfSupervision {
       int round = 0;
       while (!allFinished()) {
         Thread.sleep(2000);
-        for (int i = 0; i < sNodeStates.length; i ++) {
+        for (int i = 0; i < sNodeStates.length; i++) {
           if (sNodeStates[i] == NODE_STATE_INITIAL) {
             String readyPath = ((Supervisible) sNodeTasks[i]).getTfsReadyPath();
             if (tfs.exist(readyPath)) {
@@ -169,7 +169,7 @@ public class TachyonPerfSupervision {
             }
           }
         }
-        round ++;
+        round++;
         printNodeStatus(perfConf.STATUS_DEBUG, nodes);
         if (perfConf.FAILED_THEN_ABORT && needAbort(round, perfConf.FAILED_PERCENTAGE)) {
           java.lang.Runtime.getRuntime().exec(

@@ -32,8 +32,7 @@ public abstract class PerfTask {
   /**
    * Setup the task. Do some preparations.
    * 
-   * @param taskContext
-   *          The statistics of this task
+   * @param taskContext The statistics of this task
    * @return true if setup successfully, false otherwise
    */
   protected abstract boolean setupTask(TaskContext taskContext);
@@ -41,8 +40,7 @@ public abstract class PerfTask {
   /**
    * Run the task.
    * 
-   * @param taskContext
-   *          The statistics of this task
+   * @param taskContext The statistics of this task
    * @return true if setup successfully, false otherwise
    */
   protected abstract boolean runTask(TaskContext taskContext);
@@ -50,8 +48,7 @@ public abstract class PerfTask {
   /**
    * Cleanup the task. Do some following work.
    * 
-   * @param taskContext
-   *          The statistics of this task
+   * @param taskContext The statistics of this task
    * @return true if setup successfully, false otherwise
    */
   protected abstract boolean cleanupTask(TaskContext taskContext);

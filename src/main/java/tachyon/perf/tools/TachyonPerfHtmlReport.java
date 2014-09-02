@@ -125,13 +125,13 @@ public class TachyonPerfHtmlReport {
       mReadStartTimeMs = readTaskContext.getStartTimeMs();
     }
     if (!readTaskContext.getSuccess()) {
-      mReadFailed ++;
+      mReadFailed++;
       return;
     }
     long[] bytes = readTaskContext.getReadBytes();
     long[] timeMs = readTaskContext.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
-    for (int i = 0; i < bytes.length; i ++) {
+    for (int i = 0; i < bytes.length; i++) {
       // now throughput is in MB/s
       throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
     }
@@ -147,13 +147,13 @@ public class TachyonPerfHtmlReport {
       mWriteStartTimeMs = writeTaskContext.getStartTimeMs();
     }
     if (!writeTaskContext.getSuccess()) {
-      mWriteFailed ++;
+      mWriteFailed++;
       return;
     }
     long[] bytes = writeTaskContext.getWriteBytes();
     long[] timeMs = writeTaskContext.getThreadTimeMs();
     Float[] throughput = new Float[bytes.length];
-    for (int i = 0; i < bytes.length; i ++) {
+    for (int i = 0; i < bytes.length; i++) {
       // now throughput is in MB/s
       throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
     }
@@ -204,7 +204,7 @@ public class TachyonPerfHtmlReport {
     StringBuffer sbNodesInfo = new StringBuffer("\n");
     int totalCores = 0;
     long totalBytes = 0;
-    for (int i = 0; i < mNodes.size(); i ++) {
+    for (int i = 0; i < mNodes.size(); i++) {
       sbNodesInfo.append("<tr>\n").append("\t<td>" + mNodes.get(i) + "</td>\n")
           .append("\t<td>" + mAvaliableCores.get(i) + "</td>\n")
           .append("\t<td>" + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "</td>\n")
@@ -251,7 +251,7 @@ public class TachyonPerfHtmlReport {
 
   private String generateNodesThroughput() {
     StringBuffer sbNodesThroughput = new StringBuffer("\n");
-    for (int i = 0; i < mNodes.size(); i ++) {
+    for (int i = 0; i < mNodes.size(); i++) {
       sbNodesThroughput.append("<tr>\n")
           .append("\t<th>" + mNodes.get(i) + " <br>(each row represents a thread)</th>\n")
           .append("\t<th id=\"svg" + (2 * i) + "\"></th>\n")
@@ -268,7 +268,7 @@ public class TachyonPerfHtmlReport {
     List<Float> nodeReadThroughput = new ArrayList<Float>();
     List<Float> nodeWriteThroughput = new ArrayList<Float>();
 
-    for (int i = 0; i < mNodes.size(); i ++) {
+    for (int i = 0; i < mNodes.size(); i++) {
       float totalReadThroughput = 0;
       float totalWriteThroughput = 0;
 
@@ -294,7 +294,7 @@ public class TachyonPerfHtmlReport {
     }
     sbNodesData.append("];\n");
 
-    for (int i = 0; i < mNodes.size(); i ++) {
+    for (int i = 0; i < mNodes.size(); i++) {
       sbReadData.append("\t{\"State\": \"" + mNodes.get(i) + "\", ").append(
           "\"Read Throughput\": \"" + formatFloat(nodeReadThroughput.get(i), 2) + "\"},\n");
       sbWriteData.append("\t{\"State\": \"" + mNodes.get(i) + "\", ").append(
