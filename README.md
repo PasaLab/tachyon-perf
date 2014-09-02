@@ -13,11 +13,13 @@ The following shows how to run tachyon-perf, and you can add a new benchmark to 
 2. The default Tachyon version is set to 0.5.0, which is now available from MVNRepository. The default Hadoop version is set to 1.0.4, which is also default in Tachyon-0.5.0.
 
 ##Run Tachyon-Perf Tests
+Following is the basic steps to run a Tachyon-Perf test. You can see more details of those benchmarks [here](https://github.com/PasaLab/tachyon-perf/wiki/Benchmarks).
+
 1. Copy `conf/tachyon-perf-env.sh.template` to `conf/tachyon-perf-env.sh` and configure it.
 2. Edit `conf/slaves` and distribute the tachyon-perf directory to all the same path on the slave nodes.
 3. The running command is `./bin/tachyon-perf <TaskType>`
- * The parameter is the type of test task, and now it should be `Read` or `Write`, means the read test or the write test.
- * The task's configurations are in `conf/testSuite/<TaskType>.xml`, and you can modify it as your wish. Now there has `conf/testSuite/Read.xml` and `conf/testSuite/Write.xml`.
+ * The parameter is the type of test task, and now it should be `Connect`, `Read` or `Write`, means the connect test, read test or the write test.
+ * The task's configurations are in `conf/testSuite/<TaskType>.xml`, and you can modify it as your wish. Now there has `conf/testSuite/Connect.xml`, `conf/testSuite/Read.xml` and `conf/testSuite/Write.xml`.
 4. When TachyonPerf is running, the status of the test job will be printed on the console. For some reasons, if you want to abort the tests, you can just press `Ctrl + C` to terminate current thread and then type the command `./bin/tachyon-perf-abort` at the master node to abort test processes on each slave node.
 5. After all the tests finished successfully, each node will generate a result report, locates at `result/` by default. You can also generate a graphical report by following commands in the section "Generating Test Reports".
 
