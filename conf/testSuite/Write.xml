@@ -23,7 +23,7 @@
   <property>
     <name>write.type</name>
     <value>THROUGH</value>
-    <description>the WriteType of the read operation</description>
+    <description>the WriteType of the write operation</description>
   </property>
 </configuration>
 
