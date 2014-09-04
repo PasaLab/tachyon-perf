@@ -187,10 +187,6 @@ public class TachyonPerfSupervision {
       e.printStackTrace();
       System.err.println("Error when thread sleep.");
       LOG.error("Error when thread sleep.", e);
-    } catch (TException e) {
-      e.printStackTrace();
-      System.out.println("Failed to close the TachyonFS.");
-      LOG.warn("Failed to close the TachyonFS.", e);
     }
     System.out.println("Tachyon-Perf End.");
   }

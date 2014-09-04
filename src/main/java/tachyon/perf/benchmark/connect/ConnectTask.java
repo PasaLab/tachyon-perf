@@ -47,8 +47,6 @@ public class ConnectTask extends PerfTask implements Supervisible {
     } catch (IOException e) {
       LOG.error("Error when setup connect task", e);
       return false;
-    } catch (TException e) {
-      LOG.warn("Failed to close the TachyonFS when setup connect task", e);
     }
     return true;
   }

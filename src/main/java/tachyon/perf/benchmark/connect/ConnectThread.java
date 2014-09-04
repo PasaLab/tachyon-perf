@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import tachyon.client.TachyonFS;
-import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 
@@ -79,7 +78,7 @@ public class ConnectThread implements Runnable {
     for (int i = 0; i < mClients.length; i++) {
       try {
         mClients[i].close();
-      } catch (TException e) {
+      } catch (IOException e) {
         LOG.warn("Connect Thread " + ID + " falied to close TachyonFS", e);
       }
     }

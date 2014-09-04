@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import tachyon.client.TachyonFS;
-import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 
@@ -74,8 +73,6 @@ public abstract class PerfTask {
       } catch (IOException e) {
         LOG.error("Failed to setup Supervisible task", e);
         return false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return setupTask(taskContext);
@@ -91,8 +88,6 @@ public abstract class PerfTask {
       } catch (IOException e) {
         LOG.error("Failed to start Supervisible task", e);
         return false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return runTask(taskContext);
@@ -128,8 +123,6 @@ public abstract class PerfTask {
       } catch (IOException e) {
         LOG.error("Failed to start Supervisible task", e);
         ret = false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return ret;

@@ -59,8 +59,6 @@ public class WriteTask extends PerfTask implements Supervisible {
     } catch (IOException e) {
       LOG.error("Error when setup write task", e);
       return false;
-    } catch (TException e) {
-      LOG.warn("Failed to close the TachyonFS when setup write task", e);
     }
     return true;
   }
