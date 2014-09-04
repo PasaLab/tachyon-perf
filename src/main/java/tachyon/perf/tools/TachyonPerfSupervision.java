@@ -176,6 +176,7 @@ public class TachyonPerfSupervision {
               perfConf.TACHYON_PERF_HOME + "/bin/tachyon-perf-abort");
           System.out.println("Enough nodes failed. Abort all the nodes.");
           LOG.error("Enough nodes failed. Abort all the nodes.");
+          break;
         }
       }
       tfs.close();
