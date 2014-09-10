@@ -71,6 +71,11 @@ public class ConnectTask extends PerfTask implements Supervisible {
   }
 
   @Override
+  public boolean cleanupWorkspace() {
+    return true;
+  }
+  
+  @Override
   public String getTfsFailedPath() {
     return PerfConf.get().TFS_DIR + "/" + mId + "/FAILED";
   }

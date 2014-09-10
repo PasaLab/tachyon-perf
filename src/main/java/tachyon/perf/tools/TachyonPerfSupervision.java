@@ -138,6 +138,8 @@ public class TachyonPerfSupervision {
     PerfConf perfConf = PerfConf.get();
     try {
       TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
+      tfs.createFile(perfConf.TFS_DIR + "/SYNC_START_SIGNAL");
+
       int round = 0;
       while (!allFinished()) {
         Thread.sleep(2000);
@@ -178,6 +180,12 @@ public class TachyonPerfSupervision {
           LOG.error("Enough nodes failed. Abort all the nodes.");
           break;
         }
+      }
+      if (tfs.exist(perfConf.TFS_DIR + "/SYNC_START_SIGNAL")) {
+        tfs.delete(perfConf.TFS_DIR + "/SYNC_START_SIGNAL", false);
+      }
+      if (((Supervisible) sNodeTasks[0]).cleanupWorkspace()) {
+        tfs.delete(perfConf.TFS_DIR, true);
       }
       tfs.close();
     } catch (IOException e) {

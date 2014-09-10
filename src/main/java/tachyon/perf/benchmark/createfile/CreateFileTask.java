@@ -82,16 +82,12 @@ public class CreateFileTask extends PerfTask implements Supervisible {
 
   @Override
   protected boolean cleanupTask(TaskContext taskContext) {
-    PerfConf perfConf = PerfConf.get();
-    try {
-      TachyonFS tfs = TachyonFS.get(perfConf.TFS_ADDRESS);
-      String workDir = perfConf.TFS_DIR + "/CreateFile";
-      tfs.delete(workDir, true);
-      tfs.close();
-    } catch (IOException e) {
-      LOG.warn("Failed to clean up the work dir", e);
-    }
     taskContext.setSuccess(true);
+    return true;
+  }
+  
+  @Override
+  public boolean cleanupWorkspace() {
     return true;
   }
 

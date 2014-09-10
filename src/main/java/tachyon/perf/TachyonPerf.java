@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import tachyon.client.TachyonFS;
 import tachyon.perf.basic.PerfTask;
 import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.basic.TaskContext;
 import tachyon.perf.basic.TaskType;
+import tachyon.perf.conf.PerfConf;
 
 /**
  * Entry point for a tachyon-perf process
@@ -36,6 +38,12 @@ public class TachyonPerf {
     }
 
     try {
+      TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
+      while (!tfs.exist(PerfConf.get().TFS_DIR + "/SYNC_START_SIGNAL")) {
+        Thread.sleep(500);
+      }
+      tfs.close();
+
       TaskConfiguration taskConf = TaskConfiguration.get(taskType, true);
       PerfTask task = TaskType.get().getTaskClass(taskType);
       task.initialSet(nodeId, nodeName, taskType, taskConf);

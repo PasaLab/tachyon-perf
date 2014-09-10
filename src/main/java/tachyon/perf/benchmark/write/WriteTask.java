@@ -83,6 +83,11 @@ public class WriteTask extends PerfTask implements Supervisible {
   }
 
   @Override
+  public boolean cleanupWorkspace() {
+    return false;
+  }
+
+  @Override
   public String getTfsFailedPath() {
     return PerfConf.get().TFS_DIR + "/" + mId + "/FAILED";
   }
