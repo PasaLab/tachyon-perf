@@ -17,6 +17,7 @@ public class WriteTaskContext extends TaskContext {
   public static WriteTaskContext loadFromFile(File contextFile) throws IOException {
     WriteTaskContext ret = new WriteTaskContext();
     BufferedReader fin = new BufferedReader(new FileReader(contextFile));
+    ret.mId = Integer.parseInt(fin.readLine());
     ret.mNodeName = fin.readLine();
     ret.mWriteType = WriteType.getOpType(fin.readLine());
     ret.mCores = Integer.parseInt(fin.readLine());
@@ -103,6 +104,7 @@ public class WriteTaskContext extends TaskContext {
   public void writeToFile(String fileName) throws IOException {
     File contextFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
+    fout.write(mId + "\n");
     fout.write(mNodeName + "\n");
     fout.write(mWriteType.toString() + "\n");
 

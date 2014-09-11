@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import tachyon.client.ReadType;
 import tachyon.perf.PerfConstants;
@@ -17,37 +19,37 @@ import tachyon.perf.conf.PerfConf;
  * Total report for read test.
  */
 public class ReadTotalReport extends PerfTotalReport {
-  private String mFailedNodes = "";
+  private String mFailedSlaves = "";
   private int mFailedTasks = 0;
   private long mId = Long.MAX_VALUE;
-  private int mNodesNum;
+  private int mSlavesNum;
   private ReadType mReadType;
 
-  private List<String> mNodes;
-  private List<Integer> mAvaliableCores;
-  private List<Long> mWorkerMemory;
+  private List<String> mSlaves;
+  private Map<String, Integer> mAvaliableCores;
+  private Map<String, Long> mWorkerMemory;
   private List<Float[]> mReadThroughput;
 
   @Override
   public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
-    mNodesNum = taskContextFiles.length;
-    mNodes = new ArrayList<String>(mNodesNum);
-    mAvaliableCores = new ArrayList<Integer>(mNodesNum);
-    mWorkerMemory = new ArrayList<Long>(mNodesNum);
-    mReadThroughput = new ArrayList<Float[]>(mNodesNum);
+    mSlavesNum = taskContextFiles.length;
+    mSlaves = new ArrayList<String>(mSlavesNum);
+    mAvaliableCores = new HashMap<String, Integer>();
+    mWorkerMemory = new HashMap<String, Long>();
+    mReadThroughput = new ArrayList<Float[]>(mSlavesNum);
 
     for (File taskContextFile : taskContextFiles) {
       ReadTaskContext taskContext = ReadTaskContext.loadFromFile(taskContextFile);
-      mNodes.add(taskContext.getNodeName());
+      mSlaves.add(taskContext.getId() + "@" + taskContext.getNodeName());
       mReadType = taskContext.getReadType();
-      mAvaliableCores.add(taskContext.getCores());
-      mWorkerMemory.add(taskContext.getTachyonWorkerBytes());
+      mAvaliableCores.put(taskContext.getNodeName(), taskContext.getCores());
+      mWorkerMemory.put(taskContext.getNodeName(), taskContext.getTachyonWorkerBytes());
       if (taskContext.getStartTimeMs() < mId) {
         mId = taskContext.getStartTimeMs();
       }
       if (!taskContext.getSuccess()) {
         mFailedTasks++;
-        mFailedNodes = mFailedNodes + taskContext.getNodeName() + " ";
+        mFailedSlaves += taskContext.getId() + "@" + taskContext.getNodeName() + " ";
         mReadThroughput.add(new Float[0]);
         continue;
       }
@@ -62,14 +64,14 @@ public class ReadTotalReport extends PerfTotalReport {
     }
   }
 
-  private String generateNodeDetails(int nodeIndex) {
-    StringBuffer sbNodeDetail =
-        new StringBuffer(mNodes.get(nodeIndex) + "'s throughput(MB/s) for each threads:\n\t");
-    for (float throughput : mReadThroughput.get(nodeIndex)) {
-      sbNodeDetail.append("[ " + throughput + " ]");
+  private String generateSlaveDetails(int slaveIndex) {
+    StringBuffer sbSlaveDetail =
+        new StringBuffer(mSlaves.get(slaveIndex) + "'s throughput(MB/s) for each threads:\n\t");
+    for (float throughput : mReadThroughput.get(slaveIndex)) {
+      sbSlaveDetail.append("[ " + throughput + " ]");
     }
-    sbNodeDetail.append("\n\n");
-    return sbNodeDetail.toString();
+    sbSlaveDetail.append("\n\n");
+    return sbSlaveDetail.toString();
   }
 
   private String generateReadConf() {
@@ -89,11 +91,13 @@ public class ReadTotalReport extends PerfTotalReport {
     StringBuffer sbSystemConf = new StringBuffer("NodeName\tCores\tWorkerMemory\n");
     int totalCores = 0;
     long totalMemory = 0;
-    for (int i = 0; i < mNodesNum; i++) {
-      totalCores += mAvaliableCores.get(i);
-      totalMemory += mWorkerMemory.get(i);
-      sbSystemConf.append(mNodes.get(i) + "\t" + mAvaliableCores.get(i) + "\t"
-          + PerfConstants.parseSizeByte(mWorkerMemory.get(i)) + "\n");
+    for (Map.Entry<String, Integer> nodeCores : mAvaliableCores.entrySet()) {
+      String node = nodeCores.getKey();
+      int core = nodeCores.getValue();
+      long memory = mWorkerMemory.get(node);
+      totalCores += core;
+      totalMemory += memory;
+      sbSystemConf.append(node + "\t" + core + "\t" + PerfConstants.parseSizeByte(memory) + "\n");
     }
     sbSystemConf.append("Total\t" + totalCores + "\t" + PerfConstants.parseSizeByte(totalMemory)
         + "\n");
@@ -101,15 +105,15 @@ public class ReadTotalReport extends PerfTotalReport {
   }
 
   private String generateThroughput() {
-    StringBuffer sbThroughput = new StringBuffer("NodeName\tReadThroughput(MB/s)\n");
+    StringBuffer sbThroughput = new StringBuffer("SlaveName\tReadThroughput(MB/s)\n");
     float totalThroughput = 0;
-    for (int i = 0; i < mNodesNum; i++) {
-      float nodeThroughput = 0;
+    for (int i = 0; i < mSlavesNum; i++) {
+      float slaveThroughput = 0;
       for (float throughput : mReadThroughput.get(i)) {
-        nodeThroughput += throughput;
+        slaveThroughput += throughput;
       }
-      totalThroughput += nodeThroughput;
-      sbThroughput.append(mNodes.get(i) + "\t" + nodeThroughput + "\n");
+      totalThroughput += slaveThroughput;
+      sbThroughput.append(mSlaves.get(i) + "\t" + slaveThroughput + "\n");
     }
     sbThroughput.append("Total\t" + totalThroughput + "\n");
     return sbThroughput.toString();
@@ -123,7 +127,7 @@ public class ReadTotalReport extends PerfTotalReport {
     if (mFailedTasks == 0) {
       fout.write("Finished Successfully\n");
     } else {
-      fout.write("Failed: " + mFailedTasks + " nodes failed ( " + mFailedNodes + ")\n");
+      fout.write("Failed: " + mFailedTasks + " slaves failed ( " + mFailedSlaves + ")\n");
     }
     fout.write("********** System Configuratiom **********\n");
     fout.write(generateSystemConf());
@@ -131,9 +135,9 @@ public class ReadTotalReport extends PerfTotalReport {
     fout.write(generateReadConf());
     fout.write("********** Read Throughput **********\n");
     fout.write(generateThroughput());
-    fout.write("********** Node Details **********\n");
-    for (int i = 0; i < mNodesNum; i++) {
-      fout.write(generateNodeDetails(i));
+    fout.write("********** Slave Details **********\n");
+    for (int i = 0; i < mSlavesNum; i++) {
+      fout.write(generateSlaveDetails(i));
     }
     fout.close();
   }

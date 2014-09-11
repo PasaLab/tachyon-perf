@@ -103,7 +103,8 @@ public abstract class PerfTask {
         outDir.mkdirs();
       }
       String reportFileName =
-          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + "-" + mTaskType;
+          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + mTaskType + "-" + mId
+              + "@" + mNodeName;
       taskContext.writeToFile(reportFileName);
     } catch (IOException e) {
       LOG.error("Error when generate the task report", e);

@@ -16,6 +16,7 @@ public class CreateFileTaskContext extends TaskContext {
     CreateFileTaskContext ret = new CreateFileTaskContext();
     ret.initial();
     BufferedReader fin = new BufferedReader(new FileReader(contextFile));
+    ret.mId = Integer.parseInt(fin.readLine());
     ret.mNodeName = fin.readLine();
     ret.mCores = Integer.parseInt(fin.readLine());
     ret.mTachyonWorkerBytes = Long.parseLong(fin.readLine());
@@ -72,6 +73,7 @@ public class CreateFileTaskContext extends TaskContext {
   public void writeToFile(String fileName) throws IOException {
     File contextFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
+    fout.write(mId + "\n");
     fout.write(mNodeName + "\n");
 
     fout.write(mCores + "\n");
