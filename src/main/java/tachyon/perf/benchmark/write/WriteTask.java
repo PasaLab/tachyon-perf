@@ -56,11 +56,11 @@ public class WriteTask extends PerfTask implements Supervisible {
       }
       LOG.info("Create " + threadsNum + " write threads");
       tfs.close();
+    } catch (TException e) {
+      LOG.warn("Failed to close TachyonFS", e);
     } catch (IOException e) {
       LOG.error("Error when setup write task", e);
       return false;
-    } catch (TException e) {
-      LOG.warn("Failed to close the TachyonFS when setup write task", e);
     }
     return true;
   }
@@ -82,6 +82,11 @@ public class WriteTask extends PerfTask implements Supervisible {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public boolean cleanupWorkspace() {
+    return false;
   }
 
   @Override

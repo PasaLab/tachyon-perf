@@ -1,10 +1,11 @@
-package tachyon.perf.benchmark.write;
+package tachyon.perf.benchmark.createfile;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,22 +14,23 @@ import tachyon.client.WriteType;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.PerfTotalReport;
 import tachyon.perf.basic.TaskConfiguration;
+import tachyon.perf.benchmark.write.WriteTaskContext;
 import tachyon.perf.conf.PerfConf;
 
-/**
- * Total report for write test.
- */
-public class WriteTotalReport extends PerfTotalReport {
+public class CreateFileTotalReport extends PerfTotalReport {
   private String mFailedSlaves = "";
   private int mFailedTasks = 0;
   private long mId = Long.MAX_VALUE;
   private int mSlavesNum;
-  private WriteType mWriteType;
 
   private List<String> mSlaves;
+
   private Map<String, Integer> mAvaliableCores;
   private Map<String, Long> mWorkerMemory;
-  private List<Float[]> mWriteThroughput;
+
+  private List<Long> mElapsedTimeMs;
+  private List<Integer[]> mSuccessFiles;
+  private List<Long[]> mTimeStamps;
 
   @Override
   public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
@@ -36,12 +38,13 @@ public class WriteTotalReport extends PerfTotalReport {
     mSlaves = new ArrayList<String>(mSlavesNum);
     mAvaliableCores = new HashMap<String, Integer>();
     mWorkerMemory = new HashMap<String, Long>();
-    mWriteThroughput = new ArrayList<Float[]>(mSlavesNum);
+    mElapsedTimeMs = new ArrayList<Long>(mSlavesNum);
+    mSuccessFiles = new ArrayList<Integer[]>(mSlavesNum);
+    mTimeStamps = new ArrayList<Long[]>(mSlavesNum);
 
     for (File taskContextFile : taskContextFiles) {
-      WriteTaskContext taskContext = WriteTaskContext.loadFromFile(taskContextFile);
+      CreateFileTaskContext taskContext = CreateFileTaskContext.loadFromFile(taskContextFile);
       mSlaves.add(taskContext.getId() + "@" + taskContext.getNodeName());
-      mWriteType = taskContext.getWriteType();
       mAvaliableCores.put(taskContext.getNodeName(), taskContext.getCores());
       mWorkerMemory.put(taskContext.getNodeName(), taskContext.getTachyonWorkerBytes());
       if (taskContext.getStartTimeMs() < mId) {
@@ -50,40 +53,52 @@ public class WriteTotalReport extends PerfTotalReport {
       if (!taskContext.getSuccess()) {
         mFailedTasks++;
         mFailedSlaves += taskContext.getId() + "@" + taskContext.getNodeName() + " ";
-        mWriteThroughput.add(new Float[0]);
+        mElapsedTimeMs.add(0L);
+        mSuccessFiles.add(new Integer[0]);
+        mTimeStamps.add(new Long[0]);
         continue;
       }
-      long[] bytes = taskContext.getWriteBytes();
-      long[] timeMs = taskContext.getThreadTimeMs();
-      Float[] throughput = new Float[bytes.length];
-      for (int i = 0; i < bytes.length; i++) {
-        // now throughput is in MB/s
-        throughput[i] = bytes[i] / 1024.0f / 1024.0f / (timeMs[i] / 1000.0f);
+      mElapsedTimeMs.add(taskContext.getFinishTimeMs() - taskContext.getStartTimeMs());
+      List<Integer> slaveSuccessFiles = taskContext.getSuccessFiles();
+      List<Long> slaveTimeStamps = taskContext.getTimeStamps();
+      Integer[] files = new Integer[slaveSuccessFiles.size()];
+      Long[] timeMs = new Long[slaveTimeStamps.size()];
+      for (int i = 0; i < files.length; i++) {
+        files[i] = slaveSuccessFiles.get(i);
+        timeMs[i] = slaveTimeStamps.get(i);
       }
-      mWriteThroughput.add(throughput);
+      mSuccessFiles.add(files);
+      mTimeStamps.add(timeMs);
     }
   }
 
   private String generateSlaveDetails(int slaveIndex) {
     StringBuffer sbSlaveDetail =
-        new StringBuffer(mSlaves.get(slaveIndex) + "'s throughput(MB/s) for each threads:\n\t");
-    for (float throughput : mWriteThroughput.get(slaveIndex)) {
-      sbSlaveDetail.append("[ " + throughput + " ]");
+        new StringBuffer(mSlaves.get(slaveIndex)
+            + "'s performance(files/sec) of creating files: [total "
+            + mElapsedTimeMs.get(slaveIndex) / 1000 + " seconds]\n");
+    Integer[] files = mSuccessFiles.get(slaveIndex);
+    Long[] timeMs = mTimeStamps.get(slaveIndex);
+    sbSlaveDetail.append("\t" + new Date(timeMs[0]) + ":" + files[0] + " operations\n");
+    for (int i = 1; i < files.length; i++) {
+      double perf = (files[i] - files[i - 1]) * 1000.0 / (timeMs[i] - timeMs[i - 1]);
+      sbSlaveDetail.append("\t" + new Date(timeMs[i]) + ":" + files[i] + " operations; "
+          + ((int) (perf * 100)) / 100.0 + " files/sec\n");
     }
-    sbSlaveDetail.append("\n\n");
+    sbSlaveDetail.append("\n");
     return sbSlaveDetail.toString();
   }
 
-  private String generateWriteConf() {
-    StringBuffer sbWriteConf = new StringBuffer();
-    TaskConfiguration taskConf = TaskConfiguration.get("Write", true);
-    sbWriteConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
-    sbWriteConf.append("file.length.bytes\t" + taskConf.getProperty("file.length.bytes") + "\n");
-    sbWriteConf.append("files.per.thread\t" + taskConf.getProperty("files.per.thread") + "\n");
-    sbWriteConf.append("grain.bytes\t" + taskConf.getProperty("grain.bytes") + "\n");
-    sbWriteConf.append("threads.num\t" + taskConf.getProperty("threads.num") + "\n");
-    sbWriteConf.append("WRITE_TYPE\t" + mWriteType.toString() + "\n");
-    return sbWriteConf.toString();
+  private String generateCreateFileConf() {
+    StringBuffer sbCreateFileConf = new StringBuffer();
+    TaskConfiguration taskConf = TaskConfiguration.get("CreateFile", true);
+    sbCreateFileConf.append("tachyon.perf.tfs.address\t" + PerfConf.get().TFS_ADDRESS + "\n");
+    sbCreateFileConf.append("file.length.bytes\t" + taskConf.getProperty("file.length.bytes")
+        + "\n");
+    sbCreateFileConf.append("files.per.thread\t" + taskConf.getProperty("files.per.thread") + "\n");
+    sbCreateFileConf.append("interval.seconds\t" + taskConf.getProperty("interval.seconds") + "\n");
+    sbCreateFileConf.append("threads.num\t" + taskConf.getProperty("threads.num") + "\n");
+    return sbCreateFileConf.toString();
   }
 
   private String generateSystemConf() {
@@ -103,21 +118,6 @@ public class WriteTotalReport extends PerfTotalReport {
     return sbSystemConf.toString();
   }
 
-  private String generateThroughput() {
-    StringBuffer sbThroughput = new StringBuffer("SlaveName\tWriteThroughput(MB/s)\n");
-    float totalThroughput = 0;
-    for (int i = 0; i < mSlavesNum; i++) {
-      float slaveThroughput = 0;
-      for (float throughput : mWriteThroughput.get(i)) {
-        slaveThroughput += throughput;
-      }
-      totalThroughput += slaveThroughput;
-      sbThroughput.append(mSlaves.get(i) + "\t" + slaveThroughput + "\n");
-    }
-    sbThroughput.append("Total\t" + totalThroughput + "\n");
-    return sbThroughput.toString();
-  }
-
   @Override
   public void writeToFile(String fileName) throws IOException {
     File outFile = new File(fileName);
@@ -130,10 +130,8 @@ public class WriteTotalReport extends PerfTotalReport {
     }
     fout.write("********** System Configuratiom **********\n");
     fout.write(generateSystemConf());
-    fout.write("********** Write Test Settings **********\n");
-    fout.write(generateWriteConf());
-    fout.write("********** Write Throughput **********\n");
-    fout.write(generateThroughput());
+    fout.write("********** CreateFile Test Settings **********\n");
+    fout.write(generateCreateFileConf());
     fout.write("********** Slave Details **********\n");
     for (int i = 0; i < mSlavesNum; i++) {
       fout.write(generateSlaveDetails(i));

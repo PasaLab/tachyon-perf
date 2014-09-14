@@ -21,17 +21,23 @@ TACHYON_PERF_LIBEXEC_DIR=${TACHYON_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
 
 NODELIST=$TACHYON_PERF_CONF_DIR/slaves
 
-nodeid=0
+taskid=0
 SLAVES=`cat "$NODELIST"|sed  "s/#.*$//;/^$/d"`
-for slave in $SLAVES; do
-  echo -n "Connection to $slave... "
+UNIQ_SLAVES=`sort "$NODELIST" | uniq | sed  "s/#.*$//;/^$/d"`
+for slave in $UNIQ_SLAVES; do
+  echo -n "Copy configurations to $slave... "
   scp $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh $slave:$TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh
   scp $TACHYON_PERF_CONF_DIR/testSuite/$1.xml $slave:$TACHYON_PERF_CONF_DIR/testSuite/$1.xml
-  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $slave $nodeid $1 2>&1
   sleep 0.02
-  nodeid=`expr $nodeid + 1`
 done
-
 wait
 
-$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_STATUS_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.tools.TachyonPerfSupervision $nodeid $SLAVES $1
+for slave in $SLAVES; do
+  echo -n "Connect to $slave... "
+  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/tachyon-perf-start.sh $slave $taskid $1 2>&1
+  sleep 0.02
+  taskid=`expr $taskid + 1`
+done
+wait
+
+$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_STATUS_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.tools.TachyonPerfSupervision $taskid $SLAVES $1

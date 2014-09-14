@@ -5,39 +5,42 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import tachyon.perf.PerfConstants;
 import tachyon.perf.basic.PerfTotalReport;
 import tachyon.perf.basic.TaskConfiguration;
 import tachyon.perf.conf.PerfConf;
 
 public class ConnectTotalReport extends PerfTotalReport {
-  private String mFailedNodes = "";
+  private String mFailedSlaves = "";
   private int mFailedTasks = 0;
   private long mId = Long.MAX_VALUE;
-  private int mNodesNum;
+  private int mSlavesNum;
 
-  private List<String> mNodes;
-  private List<Integer> mAvaliableCores;
+  private List<String> mSlaves;
+  private Map<String, Integer> mAvaliableCores;
   private List<Float[]> mMetadataPerf;
 
   @Override
   public void initialFromTaskContexts(File[] taskContextFiles) throws IOException {
-    mNodesNum = taskContextFiles.length;
-    mNodes = new ArrayList<String>(mNodesNum);
-    mAvaliableCores = new ArrayList<Integer>(mNodesNum);
-    mMetadataPerf = new ArrayList<Float[]>(mNodesNum);
+    mSlavesNum = taskContextFiles.length;
+    mSlaves = new ArrayList<String>(mSlavesNum);
+    mAvaliableCores = new HashMap<String, Integer>();
+    mMetadataPerf = new ArrayList<Float[]>(mSlavesNum);
 
     for (File taskContextFile : taskContextFiles) {
       ConnectTaskContext taskContext = ConnectTaskContext.loadFromFile(taskContextFile);
-      mNodes.add(taskContext.getNodeName());
-      mAvaliableCores.add(taskContext.getCores());
+      mSlaves.add(taskContext.getId() + "@" + taskContext.getNodeName());
+      mAvaliableCores.put(taskContext.getNodeName(), taskContext.getCores());
       if (taskContext.getStartTimeMs() < mId) {
         mId = taskContext.getStartTimeMs();
       }
       if (!taskContext.getSuccess()) {
         mFailedTasks++;
-        mFailedNodes = mFailedNodes + taskContext.getNodeName() + " ";
+        mFailedSlaves += taskContext.getId() + "@" + taskContext.getNodeName() + " ";
         mMetadataPerf.add(new Float[0]);
         continue;
       }
@@ -52,15 +55,15 @@ public class ConnectTotalReport extends PerfTotalReport {
     }
   }
 
-  private String generateNodeDetails(int nodeIndex) {
-    StringBuffer sbNodeDetail =
-        new StringBuffer(mNodes.get(nodeIndex)
+  private String generateSlaveDetails(int slaveIndex) {
+    StringBuffer sbSlaveDetail =
+        new StringBuffer(mSlaves.get(slaveIndex)
             + "'s metadata operation performance(ops/sec) for each threads:\n\t");
-    for (float metadataPerf : mMetadataPerf.get(nodeIndex)) {
-      sbNodeDetail.append("[ " + metadataPerf + " ]");
+    for (float metadataPerf : mMetadataPerf.get(slaveIndex)) {
+      sbSlaveDetail.append("[ " + metadataPerf + " ]");
     }
-    sbNodeDetail.append("\n\n");
-    return sbNodeDetail.toString();
+    sbSlaveDetail.append("\n\n");
+    return sbSlaveDetail.toString();
   }
 
   private String generateConnectConf() {
@@ -77,9 +80,11 @@ public class ConnectTotalReport extends PerfTotalReport {
   private String generateSystemConf() {
     StringBuffer sbSystemConf = new StringBuffer("NodeName\tCores\n");
     int totalCores = 0;
-    for (int i = 0; i < mNodesNum; i++) {
-      totalCores += mAvaliableCores.get(i);
-      sbSystemConf.append(mNodes.get(i) + "\t" + mAvaliableCores.get(i) + "\n");
+    for (Map.Entry<String, Integer> nodeCores : mAvaliableCores.entrySet()) {
+      String node = nodeCores.getKey();
+      int core = nodeCores.getValue();
+      totalCores += core;
+      sbSystemConf.append(node + "\t" + core + "\n");
     }
     sbSystemConf.append("Total\t" + totalCores + "\n");
     return sbSystemConf.toString();
@@ -87,15 +92,15 @@ public class ConnectTotalReport extends PerfTotalReport {
 
   private String generateMetadataPerf() {
     StringBuffer sbThroughput =
-        new StringBuffer("NodeName\tMetadataOperationPerformance(ops/sec)\n");
+        new StringBuffer("SlaveName\tMetadataOperationPerformance(ops/sec)\n");
     float totalPerf = 0;
-    for (int i = 0; i < mNodesNum; i++) {
-      float nodePerf = 0;
+    for (int i = 0; i < mSlavesNum; i++) {
+      float slavePerf = 0;
       for (float metadataPerf : mMetadataPerf.get(i)) {
-        nodePerf += metadataPerf;
+        slavePerf += metadataPerf;
       }
-      totalPerf += nodePerf;
-      sbThroughput.append(mNodes.get(i) + "\t" + nodePerf + "\n");
+      totalPerf += slavePerf;
+      sbThroughput.append(mSlaves.get(i) + "\t" + slavePerf + "\n");
     }
     sbThroughput.append("Total\t" + totalPerf + "\n");
     return sbThroughput.toString();
@@ -109,7 +114,7 @@ public class ConnectTotalReport extends PerfTotalReport {
     if (mFailedTasks == 0) {
       fout.write("Finished Successfully\n");
     } else {
-      fout.write("Failed: " + mFailedTasks + " nodes failed ( " + mFailedNodes + ")\n");
+      fout.write("Failed: " + mFailedTasks + " nodes failed ( " + mFailedSlaves + ")\n");
     }
     fout.write("********** System Configuratiom **********\n");
     fout.write(generateSystemConf());
@@ -117,9 +122,9 @@ public class ConnectTotalReport extends PerfTotalReport {
     fout.write(generateConnectConf());
     fout.write("********** Metadata Operation Performace **********\n");
     fout.write(generateMetadataPerf());
-    fout.write("********** Node Details **********\n");
-    for (int i = 0; i < mNodesNum; i++) {
-      fout.write(generateNodeDetails(i));
+    fout.write("********** Slave Details **********\n");
+    for (int i = 0; i < mSlavesNum; i++) {
+      fout.write(generateSlaveDetails(i));
     }
     fout.close();
   }

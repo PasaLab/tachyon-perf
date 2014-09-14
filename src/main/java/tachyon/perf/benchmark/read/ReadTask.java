@@ -12,6 +12,7 @@ import tachyon.perf.basic.Supervisible;
 import tachyon.perf.basic.TaskContext;
 import tachyon.perf.benchmark.ListGenerator;
 import tachyon.perf.conf.PerfConf;
+import tachyon.thrift.ClientFileInfo;
 
 /**
  * The read test task. It will read files from Tachyon in multi-thread.
@@ -44,7 +45,11 @@ public class ReadTask extends PerfTask implements Supervisible {
         LOG.error("The read dir " + readDir + " is not a directory. " + "Do the write test fisrt");
         return false;
       }
-      List<Integer> readFileCandidates = tfs.listFiles(readDir, true);
+      List<ClientFileInfo> listedFiles = tfs.listStatus(readDir);
+      List<Integer> readFileCandidates = new ArrayList<Integer>(listedFiles.size());
+      for (ClientFileInfo fileInfo : listedFiles) {
+        readFileCandidates.add(fileInfo.id);
+      }
       if (readFileCandidates.isEmpty()) {
         LOG.error("The read dir " + readDir + " is empty");
         return false;
@@ -63,11 +68,11 @@ public class ReadTask extends PerfTask implements Supervisible {
       }
       LOG.info("Create " + threadsNum + " read threads");
       tfs.close();
+    } catch (TException e) {
+      LOG.warn("Failed to close TachyonFS", e);
     } catch (IOException e) {
       LOG.error("Error when setup read task", e);
       return false;
-    } catch (TException e) {
-      LOG.warn("Failed to close the TachyonFS when setup read task", e);
     }
     return true;
   }
@@ -89,6 +94,11 @@ public class ReadTask extends PerfTask implements Supervisible {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public boolean cleanupWorkspace() {
+    return false;
   }
 
   @Override

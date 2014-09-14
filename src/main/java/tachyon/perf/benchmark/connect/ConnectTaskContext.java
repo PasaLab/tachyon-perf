@@ -13,6 +13,7 @@ public class ConnectTaskContext extends TaskContext {
   public static ConnectTaskContext loadFromFile(File contextFile) throws IOException {
     ConnectTaskContext ret = new ConnectTaskContext();
     BufferedReader fin = new BufferedReader(new FileReader(contextFile));
+    ret.mId = Integer.parseInt(fin.readLine());
     ret.mNodeName = fin.readLine();
     ret.mCores = Integer.parseInt(fin.readLine());
     ret.mStartTimeMs = Long.parseLong(fin.readLine());
@@ -72,6 +73,7 @@ public class ConnectTaskContext extends TaskContext {
   public void writeToFile(String fileName) throws IOException {
     File contextFile = new File(fileName);
     BufferedWriter fout = new BufferedWriter(new FileWriter(contextFile));
+    fout.write(mId + "\n");
     fout.write(mNodeName + "\n");
     fout.write(mCores + "\n");
 

@@ -44,11 +44,11 @@ public class ConnectTask extends PerfTask implements Supervisible {
       }
       LOG.info("Create " + threadsNum + " connect threads");
       tfs.close();
+    } catch (TException e) {
+      LOG.warn("Failed to close TachyonFS", e);
     } catch (IOException e) {
       LOG.error("Error when setup connect task", e);
       return false;
-    } catch (TException e) {
-      LOG.warn("Failed to close the TachyonFS when setup connect task", e);
     }
     return true;
   }
@@ -72,6 +72,11 @@ public class ConnectTask extends PerfTask implements Supervisible {
     return true;
   }
 
+  @Override
+  public boolean cleanupWorkspace() {
+    return true;
+  }
+  
   @Override
   public String getTfsFailedPath() {
     return PerfConf.get().TFS_DIR + "/" + mId + "/FAILED";

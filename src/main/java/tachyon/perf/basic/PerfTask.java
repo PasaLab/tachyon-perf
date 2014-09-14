@@ -71,11 +71,11 @@ public abstract class PerfTask {
           tfs.delete(tfsSuccessFilePath, true);
         }
         tfs.close();
+      } catch (TException e) {
+        LOG.warn("Failed to close TachyonFS", e);
       } catch (IOException e) {
         LOG.error("Failed to setup Supervisible task", e);
         return false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return setupTask(taskContext);
@@ -88,11 +88,11 @@ public abstract class PerfTask {
         String tfsReadyFilePath = ((Supervisible) this).getTfsReadyPath();
         tfs.createFile(tfsReadyFilePath);
         tfs.close();
+      } catch (TException e) {
+        LOG.warn("Failed to close TachyonFS", e);
       } catch (IOException e) {
         LOG.error("Failed to start Supervisible task", e);
         return false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return runTask(taskContext);
@@ -108,7 +108,8 @@ public abstract class PerfTask {
         outDir.mkdirs();
       }
       String reportFileName =
-          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + "-" + mTaskType;
+          outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + mTaskType + "-" + mId
+              + "@" + mNodeName;
       taskContext.writeToFile(reportFileName);
     } catch (IOException e) {
       LOG.error("Error when generate the task report", e);
@@ -125,11 +126,11 @@ public abstract class PerfTask {
           tfs.createFile(tfsFailedFilePath);
         }
         tfs.close();
+      } catch (TException e) {
+        LOG.warn("Failed to close TachyonFS", e);
       } catch (IOException e) {
         LOG.error("Failed to start Supervisible task", e);
         ret = false;
-      } catch (TException e) {
-        LOG.warn("Error when close TachyonFS", e);
       }
     }
     return ret;

@@ -17,7 +17,7 @@ export TACHYON_PERF_PREFIX=`dirname "$this"`/..
 export TACHYON_PERF_HOME=${TACHYON_PERF_PREFIX}
 export TACHYON_PERF_CONF_DIR="$TACHYON_PERF_HOME/conf"
 export TACHYON_PERF_LOGS_DIR="$TACHYON_PERF_HOME/logs"
-export TACHYON_PERF_JAR=$TACHYON_PERF_HOME/target/tachyon-perf-0.1.0-SNAPSHOT-jar-with-dependencies.jar
+export TACHYON_PERF_JAR=$TACHYON_PERF_HOME/target/tachyon-perf-0.2.0-SNAPSHOT-jar-with-dependencies.jar
 export JAVA="$JAVA_HOME/bin/java"
 
 if [ -e $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh ] ; then
