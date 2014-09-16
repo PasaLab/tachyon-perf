@@ -186,8 +186,11 @@ public class TachyonPerfSupervision {
       if (tfs.exist(perfConf.TFS_DIR + "/SYNC_START_SIGNAL")) {
         tfs.delete(perfConf.TFS_DIR + "/SYNC_START_SIGNAL", false);
       }
-      if (((Supervisible) sSlaveTasks[0]).cleanupWorkspace()) {
-        tfs.delete(perfConf.TFS_DIR, true);
+	  for (PerfTask task : sSlaveTasks) {
+        String cleanup = ((Supervisible) task).cleanupWorkspace();
+        if (cleanup != null) {
+          tfs.delete(cleanup, true);
+        }
       }
       tfs.close();
     } catch (TException e) {

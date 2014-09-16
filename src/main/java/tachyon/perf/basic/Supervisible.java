@@ -7,11 +7,12 @@ package tachyon.perf.basic;
  */
 public interface Supervisible {
   /**
-   * If true, the workspace will be deleted after the test finished.
+   * Return the path of workspace to clean up at the end of the test. If don't want to clean up,
+   * return null.
    * 
-   * @return true or false
+   * @return null or the path to clean up
    */
-  public boolean cleanupWorkspace();
+  public String cleanupWorkspace();
 
   /**
    * If the test failed, it will write a failed file to TachyonFS, and this is the file path.

@@ -73,8 +73,8 @@ public class ConnectTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  public boolean cleanupWorkspace() {
-    return true;
+  public String cleanupWorkspace() {
+    return PerfConf.get().TFS_DIR;
   }
   
   @Override

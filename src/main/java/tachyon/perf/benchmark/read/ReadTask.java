@@ -97,8 +97,8 @@ public class ReadTask extends PerfTask implements Supervisible {
   }
 
   @Override
-  public boolean cleanupWorkspace() {
-    return false;
+  public String cleanupWorkspace() {
+    return null;
   }
 
   @Override
