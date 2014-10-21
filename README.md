@@ -4,9 +4,9 @@ Tachyon-Perf
 A  general performance test framework for [Tachyon](http://tachyon-project.org/).The master branch is in version 0.2.0-SNAPSHOT.
 
 ##Prerequisites
-As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guidelines [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). We support  tachyon-0.5.0 currently.
+As this project is a test framework for Tachyon, you need to get the Tachyon installed first. If you are not clear how to setup Tachyon, please refer to the guidelines [here](http://tachyon-project.org/Running-Tachyon-on-a-Cluster.html). 
 
-Now Tachyon has 0.6.0-SNAPSHOT and [this page](https://github.com/PasaLab/tachyon-perf/wiki/Support-Tachyon-0.6.0-SNAPSHOT) shows how to use Tachyon-Perf against certain snapshot of Tachyon-0.6.0.
+Currently the master branch of Tachyon-Perf supports testing tachyon-0.5.0 (the lastest released version). We also provide a special branch supports a version of Tachyon-0.6.0-Snapshot (Commit NO. 1f512044b939b9b0a2c58f64bca4516642daf8a8). Please see [this page](https://github.com/PasaLab/tachyon-perf/wiki/Support-Tachyon-0.6.0-SNAPSHOT) to find out how to use Tachyon-Perf against the Tachyon-0.6.0-Snapshot.
 
 The following shows how to run tachyon-perf, and you can add a new benchmark to tachyon-perf if needed. See more in [How to add a new benchmark](https://github.com/PasaLab/tachyon-perf/wiki/How-to-add-a-new-benchmark)
 
