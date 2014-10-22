@@ -73,7 +73,7 @@ public class TachyonPerfMaster {
         }
       }
       taskType = args[index];
-      System.out.println("Supervise DFS-Perf " + taskType + " Test");
+      System.out.println("Supervise Tachyon-Perf " + taskType + " Test");
     } catch (Exception e) {
       abortAllSlaves();
       e.printStackTrace();

@@ -22,7 +22,7 @@ public class TaskConfiguration {
   public static final long DEFAULT_LONG = 0;
   public static final String DEFAULT_STRING = "";
 
-  private static TaskConfiguration taskConf = null;
+  private static TaskConfiguration TASK_CONF = null;
 
   /**
    * Get the configuration.
@@ -33,10 +33,10 @@ public class TaskConfiguration {
    * @return the task configuration
    */
   public static synchronized TaskConfiguration get(String type, boolean fromFile) {
-    if (taskConf == null) {
+    if (TASK_CONF == null) {
       if (fromFile) {
         try {
-          taskConf =
+          TASK_CONF =
               new TaskConfiguration(PerfConf.get().TACHYON_PERF_HOME + "/conf/testSuite/" + type
                   + ".xml");
         } catch (Exception e) {
@@ -44,19 +44,19 @@ public class TaskConfiguration {
           throw new RuntimeException("Failed to parse conf/testSuite/" + type + ".xml");
         }
       } else {
-        taskConf = new TaskConfiguration();
+        TASK_CONF = new TaskConfiguration();
       }
     }
-    return taskConf;
+    return TASK_CONF;
   }
 
   private Map<String, String> mProperties;
 
-  private TaskConfiguration() {
+  protected TaskConfiguration() {
     mProperties = new HashMap<String, String>();
   }
 
-  private TaskConfiguration(String xmlFileName) throws Exception {
+  protected TaskConfiguration(String xmlFileName) throws Exception {
     SAXParserFactory spf = SAXParserFactory.newInstance();
     SAXParser saxParser = spf.newSAXParser();
     File xmlFile = new File(xmlFileName);
