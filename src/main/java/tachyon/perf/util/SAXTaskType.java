@@ -15,6 +15,7 @@ public class SAXTaskType extends DefaultHandler {
   private String mCurrentType = null;
   private Map<String, String> mTaskClasses;
   private Map<String, String> mTaskContextClasses;
+  private Map<String, String> mTaskThreadClasses;
   private Map<String, String> mTotalReportClasses;
 
   public Map<String, String> getTaskClasses() {
@@ -25,6 +26,10 @@ public class SAXTaskType extends DefaultHandler {
     return mTaskContextClasses;
   }
 
+  public Map<String, String> getTaskThreadClasses() {
+    return mTaskThreadClasses;
+  }
+
   public Map<String, String> getTotalReportClasses() {
     return mTotalReportClasses;
   }
@@ -33,6 +38,7 @@ public class SAXTaskType extends DefaultHandler {
   public void startDocument() throws SAXException {
     mTaskClasses = new HashMap<String, String>();
     mTaskContextClasses = new HashMap<String, String>();
+    mTaskThreadClasses = new HashMap<String, String>();
     mTotalReportClasses = new HashMap<String, String>();
   }
 
@@ -60,6 +66,8 @@ public class SAXTaskType extends DefaultHandler {
         mTaskClasses.put(mCurrentType, content);
       } else if ("taskContextClass".equals(mCurrentTag)) {
         mTaskContextClasses.put(mCurrentType, content);
+      } else if ("taskThreadClass".equals(mCurrentTag)) {
+        mTaskThreadClasses.put(mCurrentType, content);
       } else if ("totalReportClass".equals(mCurrentTag)) {
         mTotalReportClasses.put(mCurrentType, content);
       }

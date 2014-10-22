@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>time.seconds</name>
+    <value>10</value>
+    <description>the time to do the global read/write</description>
+  </property>
+  <property>
+    <name>shuffle.mode</name>
+    <value>false</value>
+    <description>shuffle mode means it may read remotely</description>
+  </property>
+  <property>
+    <name>basic.files.per.thread</name>
+    <value>2</value>
+    <description>the number of global files to write at the beginning for each thread</description>
+  </property>
+  <property>
+    <name>block.size.bytes</name>
+    <value>134217728</value>
+    <description>the block size of a file</description>
+  </property>
+  <property>
+    <name>file.length.bytes</name>
+    <value>134217728</value>
+    <description>the file size in bytes</description>
+  </property>
+  <property>
+    <name>buffer.size.bytes</name>
+    <value>4194304</value>
+    <description>the size of the buffer read and write once</description>
+  </property>
+  <property>
+    <name>read.type</name>
+    <value>NO_CACHE</value>
+    <description>the ReadType of the read operation, now only used for Tachyon</description>
+  </property>
+  <property>
+    <name>write.type</name>
+    <value>TRY_CACHE</value>
+    <description>the WriteType of the write operation, now only used for Tachyon</description>
+  </property>
+</configuration>
+

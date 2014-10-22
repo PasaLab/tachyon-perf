@@ -8,6 +8,14 @@
   <name>tachyon-perf</name>
   <url>http://pasa-bigdata.nju.edu.cn</url>
 
+  <repositories>
+    <repository>
+      <id>in-project</id>
+      <name>In Project Repo</name>
+      <url>file://${project.basedir}/lib</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -17,12 +25,16 @@
     </dependency>
     <dependency>
       <groupId>org.tachyonproject</groupId>
-      <artifactId>tachyon-client</artifactId>
+      <artifactId>tachyon</artifactId>
       <version>${tachyon.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.gluster</groupId>
+          <artifactId>glusterfs-hadoop</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -31,12 +43,41 @@
       <artifactId>hadoop-client</artifactId>
       <version>${hadoop.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.gluster</groupId>
+      <artifactId>glusterfs-hadoop</artifactId>
+      <version>${glusterfs-hadoop.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.thrift</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>${libthrift.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
   </dependencies>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hadoop.version>1.0.4</hadoop.version>
-    <tachyon.version>0.5.0</tachyon.version>
+    <glusterfs-hadoop.version>2.3.5</glusterfs-hadoop.version>
+    <hadoop.version>2.3.0</hadoop.version>
+    <libthrift.version>0.9.1</libthrift.version>
+    <slf4j.version>1.7.2</slf4j.version>
+    <tachyon.version>0.6.0-SNAPSHOT</tachyon.version>
   </properties>
 
   <build>

@@ -2,11 +2,11 @@ package tachyon.perf.basic;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import tachyon.client.TachyonFS;
-import tachyon.org.apache.thrift.TException;
 import tachyon.perf.PerfConstants;
 import tachyon.perf.conf.PerfConf;
 
@@ -22,12 +22,22 @@ public abstract class PerfTask {
   protected TaskConfiguration mTaskConf;
   protected String mTaskType;
 
-  public void initialSet(int id, String nodeName, String taskType, TaskConfiguration taskConf) {
+  private PerfThread[] mThreads;
+
+  public void initialSet(int id, String nodeName, TaskConfiguration taskConf, String taskType) {
     mId = id;
     mNodeName = nodeName;
-    mTaskType = taskType;
     mTaskConf = taskConf;
+    mTaskType = taskType;
   }
+
+  /**
+   * If you want to cleanup certain work directory after the whole test finished, return in here.
+   * Otherwise return null.
+   * 
+   * @return the work directory to cleanup, otherwise null;
+   */
+  public abstract String getCleanupDir();
 
   /**
    * Setup the task. Do some preparations.
@@ -35,71 +45,63 @@ public abstract class PerfTask {
    * @param taskContext The statistics of this task
    * @return true if setup successfully, false otherwise
    */
-  protected abstract boolean setupTask(TaskContext taskContext);
-
-  /**
-   * Run the task.
-   * 
-   * @param taskContext The statistics of this task
-   * @return true if setup successfully, false otherwise
-   */
-  protected abstract boolean runTask(TaskContext taskContext);
+  protected abstract boolean setupTask(PerfTaskContext taskContext);
 
   /**
    * Cleanup the task. Do some following work.
    * 
    * @param taskContext The statistics of this task
-   * @return true if setup successfully, false otherwise
+   * @return true if cleanup successfully, false otherwise
    */
-  protected abstract boolean cleanupTask(TaskContext taskContext);
+  protected abstract boolean cleanupTask(PerfTaskContext taskContext);
 
-  public boolean setup(TaskContext taskContext) {
+  public boolean setup(PerfTaskContext taskContext) {
     taskContext.setStartTimeMs(System.currentTimeMillis());
-    if (this instanceof Supervisible) {
-      try {
-        TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
-        String tfsFailedFilePath = ((Supervisible) this).getTfsFailedPath();
-        String tfsReadyFilePath = ((Supervisible) this).getTfsReadyPath();
-        String tfsSuccessFilePath = ((Supervisible) this).getTfsSuccessPath();
-        if (tfs.exist(tfsFailedFilePath)) {
-          tfs.delete(tfsFailedFilePath, true);
-        }
-        if (tfs.exist(tfsReadyFilePath)) {
-          tfs.delete(tfsReadyFilePath, true);
-        }
-        if (tfs.exist(tfsSuccessFilePath)) {
-          tfs.delete(tfsSuccessFilePath, true);
-        }
-        tfs.close();
-      } catch (TException e) {
-        LOG.warn("Failed to close TachyonFS", e);
-      } catch (IOException e) {
-        LOG.error("Failed to setup Supervisible task", e);
-        return false;
+    boolean ret = setupTask(taskContext);
+    mThreads = new PerfThread[PerfConf.get().THREADS_NUM];
+    try {
+      for (int i = 0; i < mThreads.length; i ++) {
+        mThreads[i] = TaskType.get().getTaskThreadClass(mTaskType);
+        mThreads[i].initialSet(i, mId, mNodeName, mTaskType);
+        ret &= mThreads[i].setupThread(mTaskConf);
       }
+    } catch (Exception e) {
+      LOG.error("Error to create task thread", e);
+      return false;
     }
-    return setupTask(taskContext);
+    return ret;
   }
 
-  public boolean run(TaskContext taskContext) {
-    if (this instanceof Supervisible) {
-      try {
-        TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
-        String tfsReadyFilePath = ((Supervisible) this).getTfsReadyPath();
-        tfs.createFile(tfsReadyFilePath);
-        tfs.close();
-      } catch (TException e) {
-        LOG.warn("Failed to close TachyonFS", e);
-      } catch (IOException e) {
-        LOG.error("Failed to start Supervisible task", e);
-        return false;
+  public boolean run(PerfTaskContext taskContext) {
+    List<Thread> threadList = new ArrayList<Thread>(mThreads.length);
+    try {
+      for (int i = 0; i < mThreads.length; i ++) {
+        Thread t = new Thread(mThreads[i]);
+        threadList.add(t);
       }
+      for (Thread t : threadList) {
+        t.start();
+      }
+      for (Thread t : threadList) {
+        t.join();
+      }
+    } catch (InterruptedException e) {
+      LOG.error("Error when wait all threads", e);
+      return false;
+    } catch (Exception e) {
+      LOG.error("Error to create task thread", e);
+      return false;
     }
-    return runTask(taskContext);
+    return true;
   }
 
-  public boolean cleanup(TaskContext taskContext) {
-    boolean ret = cleanupTask(taskContext);
+  public boolean cleanup(PerfTaskContext taskContext) {
+    boolean ret = true;
+    for (int i = 0; i < mThreads.length; i ++) {
+      ret &= mThreads[i].cleanupThread(mTaskConf);
+    }
+    ret &= cleanupTask(taskContext);
+    taskContext.setFromThread(mThreads);
     taskContext.setFinishTimeMs(System.currentTimeMillis());
     try {
       String outDirPath = PerfConf.get().OUT_FOLDER;
@@ -110,28 +112,10 @@ public abstract class PerfTask {
       String reportFileName =
           outDirPath + "/" + PerfConstants.PERF_CONTEXT_FILE_NAME_PREFIX + mTaskType + "-" + mId
               + "@" + mNodeName;
-      taskContext.writeToFile(reportFileName);
+      taskContext.writeToFile(new File(reportFileName));
     } catch (IOException e) {
       LOG.error("Error when generate the task report", e);
       ret = false;
-    }
-    if (this instanceof Supervisible) {
-      try {
-        TachyonFS tfs = TachyonFS.get(PerfConf.get().TFS_ADDRESS);
-        String tfsFailedFilePath = ((Supervisible) this).getTfsFailedPath();
-        String tfsSuccessFilePath = ((Supervisible) this).getTfsSuccessPath();
-        if (taskContext.getSuccess() && ret) {
-          tfs.createFile(tfsSuccessFilePath);
-        } else {
-          tfs.createFile(tfsFailedFilePath);
-        }
-        tfs.close();
-      } catch (TException e) {
-        LOG.warn("Failed to close TachyonFS", e);
-      } catch (IOException e) {
-        LOG.error("Failed to start Supervisible task", e);
-        ret = false;
-      }
     }
     return ret;
   }

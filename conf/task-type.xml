@@ -1,28 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taskTypes>
   <type>
-    <name>Read</name>
-    <taskClass>tachyon.perf.benchmark.read.ReadTask</taskClass>
-    <taskContextClass>tachyon.perf.benchmark.read.ReadTaskContext</taskContextClass>
-    <totalReportClass>tachyon.perf.benchmark.read.ReadTotalReport</totalReportClass>
+    <name>SimpleRead</name>
+    <taskClass>tachyon.perf.benchmark.simpleRead.SimpleReadTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.simpleRead.SimpleReadTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.simpleRead.SimpleReadThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
   </type>
   <type>
-    <name>Write</name>
-    <taskClass>tachyon.perf.benchmark.write.WriteTask</taskClass>
-    <taskContextClass>tachyon.perf.benchmark.write.WriteTaskContext</taskContextClass>
-    <totalReportClass>tachyon.perf.benchmark.write.WriteTotalReport</totalReportClass>
+    <name>SimpleWrite</name>
+    <taskClass>tachyon.perf.benchmark.simpleWrite.SimpleWriteTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.simpleWrite.SimpleWriteTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.simpleWrite.SimpleWriteThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
   </type>
   <type>
-    <name>Connect</name>
-    <taskClass>tachyon.perf.benchmark.connect.ConnectTask</taskClass>
-    <taskContextClass>tachyon.perf.benchmark.connect.ConnectTaskContext</taskContextClass>
-    <totalReportClass>tachyon.perf.benchmark.connect.ConnectTotalReport</totalReportClass>
+    <name>Metadata</name>
+    <taskClass>tachyon.perf.benchmark.metadata.MetadataTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.metadata.MetadataTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.metadata.MetadataThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
   </type>
   <type>
-    <name>CreateFile</name>
-    <taskClass>tachyon.perf.benchmark.createfile.CreateFileTask</taskClass>
-    <taskContextClass>tachyon.perf.benchmark.createfile.CreateFileTaskContext</taskContextClass>
-    <totalReportClass>tachyon.perf.benchmark.createfile.CreateFileTotalReport</totalReportClass>
+    <name>SkipRead</name>
+    <taskClass>tachyon.perf.benchmark.skipRead.SkipReadTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.skipRead.SkipReadTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.skipRead.SkipReadThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>SkipRead2</name>
+    <taskClass>tachyon.perf.benchmark.skipRead.SkipReadTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.skipRead.SkipReadTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.skipRead.SkipRead2Thread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>Iterate</name>
+    <taskClass>tachyon.perf.benchmark.iterate.IterateTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.iterate.IterateTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.iterate.IterateThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>Iterate2</name>
+    <taskClass>tachyon.perf.benchmark.iterate.IterateTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.iterate.IterateTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.iterate.Iterate2Thread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>Massive</name>
+    <taskClass>tachyon.perf.benchmark.massive.MassiveTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.massive.MassiveTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.massive.MassiveThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
+  </type>
+  <type>
+    <name>Mixture</name>
+    <taskClass>tachyon.perf.benchmark.mixture.MixtureTask</taskClass>
+    <taskContextClass>tachyon.perf.benchmark.mixture.MixtureTaskContext</taskContextClass>
+    <taskThreadClass>tachyon.perf.benchmark.mixture.MixtureThread</taskThreadClass>
+    <totalReportClass>tachyon.perf.benchmark.SimpleTotalReport</totalReportClass>
   </type>
 </taskTypes>
 

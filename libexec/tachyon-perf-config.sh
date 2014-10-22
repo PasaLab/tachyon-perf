@@ -23,7 +23,3 @@ export JAVA="$JAVA_HOME/bin/java"
 if [ -e $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh ] ; then
   . $TACHYON_PERF_CONF_DIR/tachyon-perf-env.sh
 fi
-
-if [ -e $TACHYON_CONF_DIR_SH ] ; then
-  . $TACHYON_CONF_DIR_SH
-fi

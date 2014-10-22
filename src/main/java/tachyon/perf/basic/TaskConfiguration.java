@@ -65,32 +65,38 @@ public class TaskConfiguration {
     mProperties = saxConfiguration.getProperties();
   }
 
-  public void addProperty(String name, String value) {
+  public synchronized void addProperty(String name, String value) {
     mProperties.put(name, value);
   }
 
-  public boolean getBooleanProperty(String property) {
+  public synchronized Map<String, String> getAllProperties() {
+    Map<String, String> ret = new HashMap<String, String>(mProperties.size());
+    ret.putAll(mProperties);
+    return ret;
+  }
+
+  public synchronized boolean getBooleanProperty(String property) {
     if (mProperties.containsKey(property)) {
       return Boolean.valueOf(mProperties.get(property));
     }
     return DEFAULT_BOOLEAN;
   }
 
-  public int getIntProperty(String property) {
+  public synchronized int getIntProperty(String property) {
     if (mProperties.containsKey(property)) {
       return Integer.valueOf(mProperties.get(property));
     }
     return DEFAULT_INTEGER;
   }
 
-  public long getLongProperty(String property) {
+  public synchronized long getLongProperty(String property) {
     if (mProperties.containsKey(property)) {
       return Long.valueOf(mProperties.get(property));
     }
     return DEFAULT_LONG;
   }
 
-  public String getProperty(String property) {
+  public synchronized String getProperty(String property) {
     if (mProperties.containsKey(property)) {
       return mProperties.get(property);
     }

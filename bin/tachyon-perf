@@ -3,7 +3,8 @@
 function printUsage {
   echo "Usage: tachyon-perf <TaskType>"
   echo "now TaskType is one of:"
-  echo -e "  Read, Write"
+  echo -e "  SimpleWrite SimpleRead SkipRead SkipRead2 Metadata"
+  echo -e "  Iterate Iterate2 Massive"
   echo "the detailed configurations are in conf/testSuite/"
 }
 
@@ -40,4 +41,4 @@ for slave in $SLAVES; do
 done
 wait
 
-$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_STATUS_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.tools.TachyonPerfSupervision $taskid $SLAVES $1
+$JAVA -cp $TACHYON_PERF_CONF_DIR/:$TACHYON_PERF_JAR -Dtachyon.perf.home=$TACHYON_PERF_HOME -Dtachyon.perf.logger.type="PERF_MASTER_LOGGER" -Dlog4j.configuration=file:$TACHYON_PERF_CONF_DIR/log4j.properties $TACHYON_PERF_JAVA_OPTS tachyon.perf.TachyonPerfMaster $taskid $SLAVES $1

@@ -15,17 +15,24 @@ fi
 
 export JAVA="$JAVA_HOME/bin/java"
 
-#the Tachyon Master address
-export TACHYON_PERF_TFS_ADRESS="tachyon://master:19998"
+#the FS address
+export TACHYON_PERF_FS_ADRESS="tachyon://master:19998"
 
-#the workspace dir in Tachyon File System
-export TACHYON_PERF_WORKSPACE="/tachyon-perf-workspace"
+#the workspace dir in FS
+export TACHYON_PERF_WORKSPACE="/tmp/tachyon-perf-workspace"
 
 #the report output path
 export TACHYON_PERF_OUT_DIR="$TACHYON_PERF_HOME/result"
 
-#the Tachyon configuration file
-export TACHYON_CONF_DIR_SH="/tachyonhome/conf/tachyon-env.sh"
+#the tachyon-perf master service address
+TACHYON_PERF_MASTER_HOSTNAME="master"
+TACHYON_PERF_MASTER_PORT=23333
+
+#the threads num
+TACHYON_PERF_THREADS_NUM=1
+
+#the slave is considered to be failed if not register in this time
+TACHYON_PERF_UNREGISTER_TIMEOUT_MS=10000
 
 #if true, the TachyonPerfSupervision will print the names of those running and remaining nodes
 TACHYON_PERF_STATUS_DEBUG="false"
@@ -41,7 +48,22 @@ export TACHYON_PERF_JAVA_OPTS+="
   -Dtachyon.perf.failed.abort=$TACHYON_PERF_FAILED_ABORT
   -Dtachyon.perf.failed.percentage=$TACHYON_PERF_FAILED_PERCENTAGE
   -Dtachyon.perf.status.debug=$TACHYON_PERF_STATUS_DEBUG
-  -Dtachyon.perf.tfs.address=$TACHYON_PERF_TFS_ADRESS
-  -Dtachyon.perf.tfs.dir=$TACHYON_PERF_WORKSPACE
+  -Dtachyon.perf.master.hostname=$TACHYON_PERF_MASTER_HOSTNAME
+  -Dtachyon.perf.master.port=$TACHYON_PERF_MASTER_PORT
+  -Dtachyon.perf.fs.address=$TACHYON_PERF_FS_ADRESS
+  -Dtachyon.perf.fs.work.dir=$TACHYON_PERF_WORKSPACE
   -Dtachyon.perf.out.dir=$TACHYON_PERF_OUT_DIR
+  -Dtachyon.perf.threads.num=$TACHYON_PERF_THREADS_NUM
+  -Dtachyon.perf.unregister.timeout.ms=$TACHYON_PERF_UNREGISTER_TIMEOUT_MS
 "
+
+#Configurations for file systems
+export TACHYON_PERF_FS_OPTS="
+  -Dtachyon.perf.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
+  -Dtachyon.user.master.client.timeout.ms=600000
+  -Dtachyon.perf.glusterfs.impl=org.apache.hadoop.fs.glusterfs.GlusterFileSystem
+  -Dtachyon.perf.glusterfs.volumes=glusterfs_vol
+  -Dtachyon.perf.glusterfs.mounts=/vol
+"
+
+export TACHYON_PERF_JAVA_OPTS+=$TACHYON_PERF_FS_OPTS

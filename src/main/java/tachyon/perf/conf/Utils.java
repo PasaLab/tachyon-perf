@@ -3,7 +3,7 @@ package tachyon.perf.conf;
 import com.google.common.base.Preconditions;
 
 /**
- * Utils for tachyon.perf.conf package
+ * Utils for pasalab.dfs.perf.conf package
  */
 public class Utils {
   public static boolean getBooleanProperty(String property) {
