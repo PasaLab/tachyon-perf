@@ -11,16 +11,17 @@ import tachyon.perf.conf.PerfConf;
 import tachyon.perf.fs.PerfFileSystem;
 
 public class SkipReadThread extends PerfThread {
-  protected int mBufferSize;
-  protected PerfFileSystem mFileSystem;
-  protected long mReadBytes;
-  protected List<String> mReadFiles;
-  protected String mReadType;
-  protected long mSkipBytes;
-  protected boolean mSkipOnce;
+  private int mBufferSize;
+  private PerfFileSystem mFileSystem;
+  private long mReadBytes;
+  private List<String> mReadFiles;
+  private String mReadType;
+  private long mSkipBytes;
+  private int mSkipTimes;
+  private String mSkipMode;
 
-  protected boolean mSuccess;
-  protected double mThroughput; // in MB/s
+  private boolean mSuccess;
+  private double mThroughput; // in MB/s
 
   public boolean getSuccess() {
     return mSuccess;
@@ -37,14 +38,14 @@ public class SkipReadThread extends PerfThread {
     mSuccess = true;
     for (String fileName : mReadFiles) {
       try {
-        if (mSkipOnce) {
+        if ("FORWARD".equals(mSkipMode)) {
           readBytes +=
-              Operators.skipReadOnce(mFileSystem, fileName, mBufferSize, mSkipBytes, mReadBytes,
-                  mReadType);
+              Operators.forwardSkipRead(mFileSystem, fileName, mBufferSize, mSkipBytes, mReadBytes,
+                  mReadType, mSkipTimes);
         } else {
           readBytes +=
-              Operators.skipReadToEnd(mFileSystem, fileName, mBufferSize, mSkipBytes, mReadBytes,
-                  mReadType);
+              Operators.randomSkipRead(mFileSystem, fileName, mBufferSize, mReadBytes, mReadType,
+                  mSkipTimes);
         }
       } catch (IOException e) {
         LOG.error("Failed to read file " + fileName, e);
@@ -60,7 +61,8 @@ public class SkipReadThread extends PerfThread {
     mBufferSize = taskConf.getIntProperty("buffer.size.bytes");
     mReadBytes = taskConf.getLongProperty("read.bytes");
     mSkipBytes = taskConf.getLongProperty("skip.bytes");
-    mSkipOnce = taskConf.getBooleanProperty("skip.and.read.once");
+    mSkipTimes = taskConf.getIntProperty("skip.times.per.file");
+    mSkipMode = taskConf.getProperty("skip.mode");
     mReadType = taskConf.getProperty("read.type");
     try {
       mFileSystem = Operators.connect((PerfConf.get().FS_ADDRESS));

@@ -31,9 +31,14 @@
     <description>the skip bytes for each skip-and-read operator</description>
   </property>
   <property>
-    <name>skip.and.read.once</name>
-    <value>true</value>
-    <description>if true, it will skip-and-read once for each file. Otherwise it will skip-and-read to the end of the file</description>
+    <name>skip.times.per.file</name>
+    <value>2</value>
+    <description>the skip-and-read times for each read file</description>
+  </property>
+  <property>
+    <name>skip.mode</name>
+    <value>FORWARD</value>
+    <description>the skip mode, should be FORWARD or RANDOM</description>
   </property>
 </configuration>
 
